@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" data-dr-expect="dark" data-dr-settle="1400">
+
+<head>
+  <meta charset="utf-8">
+  <title>Darkrai fixture: var() inside a background shorthand (OneTrust / YouTube pattern)</title>
+  <style>
+    body {
+      --blue-100: #edf5fd;
+      --surface: #ffffff;
+      --banner-text: #3b4045;
+      margin: 0;
+      padding: 24px;
+      background: #ffffff;
+      color: #232629;
+      font: 15px/1.6 system-ui, sans-serif;
+    }
+
+    /* Like StackOverflow's cookie banner: a token inside the shorthand, !important. */
+    #banner {
+      background: var(--blue-100, #f0f4ff) !important;
+      color: var(--banner-text);
+      max-width: 420px;
+      padding: 16px;
+    }
+
+    /* Like YouTube's guide and masthead: a bare token in the shorthand. */
+    #guide {
+      background: var(--surface);
+      max-width: 420px;
+      padding: 16px;
+      margin-top: 12px;
+    }
+  </style>
+  <script>window.__DR_SHIM__ = {};</script>
+  <script src="../shim/chrome-shim.js"></script>
+</head>
+
+<body>
+  <h1>Shorthands with tokens</h1>
+  <div id="banner">By continuing to use this website, you agree to cookies.</div>
+  <div id="guide">Home, Shorts, Subscriptions</div>
+  <div id="inline" style="background: var(--surface); max-width: 420px; padding: 16px; margin-top: 12px;">Inline shorthand with a token</div>
+
+  <script src="../../extension/shared/timing.js"></script>
+  <script src="../../extension/shared/color.js"></script>
+  <script src="../../extension/shared/settings.js"></script>
+  <script src="../../extension/shared/restricted.js"></script>
+  <script src="../../extension/content/detect.js"></script>
+  <script src="../../extension/content/engine-smart.js"></script>
+  <script src="../../extension/content/engine-simple.js"></script>
+  <script src="../../extension/content/readability.js"></script>
+  <script src="../../extension/content/icons.js"></script>
+  <script src="../../extension/content/picker.js"></script>
+  <script src="../../extension/content/main.js"></script>
+  <script>
+    window.__DR_EXTRA_CHECKS__ = function (api) {
+      ['banner', 'guide', 'inline'].forEach(function (id) {
+        var bg = getComputedStyle(document.getElementById(id)).backgroundColor;
+        var l = api.lightnessOf(bg);
+        api.add('#' + id + ' background (var() in shorthand) is darkened', l != null && l < 0.5,
+          'background-color ' + bg + ', OKLCH L ' + (l == null ? '?' : l.toFixed(2)));
+      });
+    };
+  </script>
+  <script src="./assert.js"></script>
+</body>
+
+</html>

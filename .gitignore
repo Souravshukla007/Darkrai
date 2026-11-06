@@ -1,0 +1,10 @@
+# Agent task notes and scratch (run-perf.js writes its default perf-before.json here)
+.agents/
+
+# Real-Chrome runs: per-run screenshots of third-party sites, report.json and the Chrome log
+tests/real-chrome/results/
+
+node_modules/
+*.log
+Thumbs.db
+.DS_Store

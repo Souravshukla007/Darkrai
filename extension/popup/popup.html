@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Darkrai</title>
+  <!-- The bundled Nunito Sans (SIL OFL 1.1, see fonts/OFL.txt): one variable
+       latin woff2 covers weights 400-800, requested by popup.css's @font-face
+       (font-display: swap). Deliberately NOT preloaded: in interleaved
+       headless loads the preload held first contentful paint back by about a
+       quarter (median 228 vs 168 ms on a busy machine), because the 5 deferred
+       scripts that paint waits on queued behind the font. -->
+  <!-- The shared tokens and fallbacks, then the popup's own Pokedex layout
+       (a port of the Lovable DarkraiPopup design), which refines them. -->
+  <link rel="stylesheet" href="../shared/handheld.css">
+  <link rel="stylesheet" href="../shared/select.css">
+  <link rel="stylesheet" href="popup.css">
+</head>
+
+<body>
+  <!-- One sprite of Lucide icons (lucide-static 0.575.0, ISC; see
+       licenses/lucide-LICENSE.txt), inlined so nothing loads at run time.
+       Every use is aria-hidden: the text next to each icon says what the
+       control does. -->
+  <svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false">
+    <symbol id="i-sparkles" viewBox="0 0 24 24">
+      <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" />
+      <path d="M20 2v4" />
+      <path d="M22 4h-4" />
+      <circle cx="4" cy="20" r="2" />
+    </symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24">
+      <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" />
+      <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" />
+      <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" />
+    </symbol>
+    <symbol id="i-wrench" viewBox="0 0 24 24">
+      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z" />
+    </symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24">
+      <path d="M8 2v4" />
+      <path d="M16 2v4" />
+      <rect width="18" height="18" x="3" y="4" rx="2" />
+      <path d="M3 10h18" />
+    </symbol>
+    <symbol id="i-chevron-down" viewBox="0 0 24 24">
+      <path d="m6 9 6 6 6-6" />
+    </symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 6v6l4 2" />
+    </symbol>
+    <symbol id="i-refresh-cw" viewBox="0 0 24 24">
+      <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+      <path d="M21 3v5h-5" />
+      <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+      <path d="M8 16H3v5" />
+    </symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24">
+      <path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" />
+      <circle cx="12" cy="12" r="3" />
+    </symbol>
+    <symbol id="i-rotate-ccw" viewBox="0 0 24 24">
+      <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+      <path d="M3 3v5h5" />
+    </symbol>
+    <symbol id="i-trash-2" viewBox="0 0 24 24">
+      <path d="M10 11v6" />
+      <path d="M14 11v6" />
+      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+      <path d="M3 6h18" />
+      <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+    </symbol>
+    <symbol id="i-keyboard" viewBox="0 0 24 24">
+      <path d="M10 8h.01" />
+      <path d="M12 12h.01" />
+      <path d="M14 8h.01" />
+      <path d="M16 12h.01" />
+      <path d="M18 8h.01" />
+      <path d="M6 8h.01" />
+      <path d="M7 16h10" />
+      <path d="M8 12h.01" />
+      <rect width="20" height="16" x="2" y="4" rx="2" />
+    </symbol>
+  </svg>
+
+  <!--
+    The device: the red Pokedex casing from the Lovable design. data-state on
+    #device (on | native | off | unknown) is what the LED, the LCD and the
+    status dot follow; popup.js sets it from the same verdict that writes the
+    status sentence, so colour is never the only signal.
+
+    Everything outside #panel is decoration: aria-hidden, no tab stop and no
+    handler. The Poke Balls, the LED, the screws, vents and speaker dots are
+    not controls, and none of them stands in for one.
+  -->
+  <div class="device" id="device" data-state="unknown">
+    <!-- The chamfered casing: a darker red rim with the glossy shell inset 3px. -->
+    <div class="casing" aria-hidden="true"><div class="shell"></div></div>
+    <span class="screw screw-tl" aria-hidden="true"></span>
+    <span class="screw screw-tr" aria-hidden="true"></span>
+    <span class="screw screw-bl" aria-hidden="true"></span>
+    <span class="screw screw-br" aria-hidden="true"></span>
+
+    <!-- The raised LCD module, 200x104, at the top right. -->
+    <div class="lcd-module" id="lcd" aria-hidden="true">
+      <div class="lcd-screen">
+        <img class="lcd-art" id="lcd-art" src="art/lcd-darkrai.png" width="282" height="164" alt="" decoding="async">
+      </div>
+    </div>
+    <div class="vents" aria-hidden="true"><i></i><i></i><i></i></div>
+
+    <div class="body">
+      <div class="bezel-top" aria-hidden="true">
+        <div class="hw-block">
+          <img class="pokeball pokeball-lg" src="art/pokeball.png" width="116" height="105" alt="" decoding="async">
+        </div>
+        <!-- Three lit layers over an unlit lens, so a state change cross-fades
+             on opacity alone: amber is standby (off), green is darkening, ice
+             blue is the site's own dark theme. -->
+        <span class="led" id="led"><i class="led-glow led-on"></i><i
+            class="led-glow led-native"></i><i class="led-glow led-off"></i></span>
+      </div>
+
+      <!--
+        Everything below is real markup with sensible defaults, so the popup is
+        fully drawn before a single chrome.* call comes back (PLAN section 2,
+        problem 1). Nothing here ever says "Loading". This screen is the only
+        thing that scrolls; the casing and its hardware never do.
+      -->
+      <div class="dr-panel panel" id="panel" tabindex="0" role="region" aria-label="Darkrai controls">
+        <header class="head">
+          <div class="avatar" aria-hidden="true">
+            <img id="avatar-art" src="art/avatar-darkrai.png" width="78" height="80" alt="" decoding="async">
+          </div>
+          <div class="title">
+            <h1>Darkrai</h1>
+            <p class="host" id="host">this page</p>
+          </div>
+          <label class="switch" for="enabled">
+            <span class="switch-text" id="enabled-text">On</span>
+            <input type="checkbox" id="enabled" checked>
+            <span class="track" aria-hidden="true"><span class="track-on"></span><span class="knob"></span></span>
+          </label>
+        </header>
+
+        <!-- role="status": this line is also where the per-site reset reports, so a
+             screen reader has to hear it change. -->
+        <p class="status" id="status" role="status">
+          <span class="dot" id="dot" data-state="unknown" aria-hidden="true"></span>
+          <span id="status-text">Checking this tab&hellip;</span>
+        </p>
+
+        <p class="notice" id="notice" hidden></p>
+
+        <fieldset id="site-fieldset" class="group">
+          <legend>This site</legend>
+          <!-- Native radios, untouched: they already carry the group semantics and
+               the tab order. The white pill is decoration that follows :checked. -->
+          <div class="seg">
+            <span class="seg-pill" aria-hidden="true"></span>
+            <input type="radio" name="site-mode" id="mode-auto" value="auto" checked>
+            <label for="mode-auto">Auto</label>
+            <input type="radio" name="site-mode" id="mode-on" value="on">
+            <label for="mode-on">Always</label>
+            <input type="radio" name="site-mode" id="mode-off" value="off">
+            <label for="mode-off">Never</label>
+          </div>
+          <p class="help" id="site-help">Auto leaves a site alone when it already has a dark theme.</p>
+        </fieldset>
+
+        <fieldset id="engine-fieldset" class="group">
+          <legend>Mode</legend>
+          <div class="seg">
+            <span class="seg-pill" aria-hidden="true"></span>
+            <input type="radio" name="engine" id="engine-smart" value="smart" checked>
+            <label for="engine-smart"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-sparkles" /></svg>Smart</label>
+            <input type="radio" name="engine" id="engine-filter" value="filter">
+            <label for="engine-filter"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-layers" /></svg>Simple</label>
+          </div>
+          <p class="help">Simple inverts the whole page. Use it for apps that draw text on a canvas.</p>
+        </fieldset>
+
+        <!-- The Play triangle and the chevron are drawn by CSS on the summary
+             itself: popup.js rewrites the summary's text, which would wipe
+             child icons. -->
+        <details class="look" id="look-details">
+          <summary id="look-summary">Look: Dark gray &middot; Brightness 100</summary>
+
+          <fieldset id="look-fieldset">
+            <legend><label for="look">Preset</label></legend>
+            <div class="select-pill select-pill-sm">
+              <select id="look">
+                <option value="gray">Dark gray</option>
+                <option value="black">True black</option>
+                <option value="soft">Soft</option>
+              </select>
+              <svg class="ic ic-trail" aria-hidden="true" focusable="false"><use href="#i-chevron-down" /></svg>
+            </div>
+
+            <div class="slider">
+              <label for="brightness">Brightness</label>
+              <input type="range" id="brightness" min="50" max="150" step="5" value="100"
+                aria-describedby="brightness-value">
+              <output id="brightness-value" for="brightness">100</output>
+            </div>
+
+            <div class="slider">
+              <label for="contrast">Contrast</label>
+              <input type="range" id="contrast" min="50" max="150" step="5" value="100"
+                aria-describedby="contrast-value">
+              <output id="contrast-value" for="contrast">100</output>
+            </div>
+
+            <div class="slider">
+              <label for="warmth">Warmth</label>
+              <input type="range" id="warmth" min="0" max="100" step="5" value="0"
+                aria-describedby="warmth-value">
+              <output id="warmth-value" for="warmth">0</output>
+            </div>
+
+            <label class="check" for="dim-images">
+              <input type="checkbox" id="dim-images">
+              <span>Dim images a little</span>
+            </label>
+          </fieldset>
+        </details>
+
+        <div class="pick-row">
+          <button type="button" id="pick" class="pill-btn wide"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-wrench" /></svg>Fix something unreadable</button>
+          <p class="help" id="pick-help" role="status">Click an element, then choose how to fix it.</p>
+        </div>
+
+        <fieldset id="schedule-fieldset" class="group">
+          <legend><label for="schedule">Schedule</label></legend>
+          <div class="select-pill">
+            <svg class="ic ic-lead" aria-hidden="true" focusable="false"><use href="#i-calendar" /></svg>
+            <select id="schedule">
+              <option value="always">Always</option>
+              <option value="system">Follow system</option>
+              <option value="hours">Custom hours</option>
+            </select>
+            <svg class="ic ic-trail" aria-hidden="true" focusable="false"><use href="#i-chevron-down" /></svg>
+          </div>
+          <!-- Always on screen; the two times take input only for Custom hours
+               (popup.js keeps disabled in step with the schedule). -->
+          <div class="hours" id="hours" hidden aria-disabled="true">
+            <label for="from">From</label>
+            <span class="time-pill">
+              <input type="time" id="from" value="19:00" disabled>
+              <svg class="ic" aria-hidden="true" focusable="false"><use href="#i-clock" /></svg>
+            </span>
+            <label for="to">To</label>
+            <span class="time-pill">
+              <input type="time" id="to" value="07:00" disabled>
+              <svg class="ic" aria-hidden="true" focusable="false"><use href="#i-clock" /></svg>
+            </span>
+          </div>
+        </fieldset>
+
+        <div class="actions foot">
+          <button type="button" id="reload" class="pill-btn"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-refresh-cw" /></svg>Reload this tab</button>
+          <button type="button" id="options" class="pill-btn"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-settings" /></svg>Options</button>
+        </div>
+
+        <!--
+          Two clicks from the toolbar icon to a hard reset, and the small per-site
+          reset in place. Both report through the status line above.
+        -->
+        <div class="actions danger-row" id="danger-row">
+          <button type="button" id="reset-site" class="pill-btn"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-rotate-ccw" /></svg><span id="reset-site-text">Reset this site</span></button>
+          <button type="button" id="hard-reset" class="pill-btn btn-danger"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-trash-2" /></svg>Hard reset&hellip;</button>
+        </div>
+
+        <p class="hint"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-keyboard" /></svg>Shortcut: <span id="shortcut">Alt+Shift+D</span></p>
+      </div>
+
+      <div class="bezel-bottom" aria-hidden="true">
+        <span class="speaker"><i></i><i></i><i></i></span>
+        <div class="ball-module">
+          <img class="pokeball pokeball-sm" src="art/pokeball.png" width="116" height="105" alt="" decoding="async">
+        </div>
+        <span class="slot"></span>
+      </div>
+    </div>
+  </div>
+
+  <!--
+    defer, in this exact order. The markup above already holds the popup's
+    whole layout with sensible defaults, so the first paint does not have to
+    wait for a script (PLAN section 6.9). Execution order is still top to
+    bottom, so popup.js finds Darkrai.settings, .restricted and .motion.
+  -->
+  <script src="../shared/color.js" defer></script>
+  <script src="../shared/settings.js" defer></script>
+  <script src="../shared/restricted.js" defer></script>
+  <script src="../shared/motion.js" defer></script>
+  <script src="popup.js" defer></script>
+</body>
+
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" data-dr-expect="dark" data-dr-settle="1400">
+
+<head>
+  <meta charset="utf-8">
+  <title>Darkrai fixture: CSS-mask icons (Wikimedia Codex pattern)</title>
+  <style>
+    :root {
+      --color-base: #202122;
+      --color-neutral: #404244;
+    }
+
+    body {
+      margin: 0;
+      padding: 24px;
+      background: #ffffff;
+      color: #202122;
+      font: 15px/1.6 system-ui, sans-serif;
+    }
+
+    ul { list-style: none; padding: 0; max-width: 420px; }
+    li { display: flex; align-items: center; gap: 8px; padding: 4px 0; }
+
+    .cdx-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      padding: 0;
+      border: 0;
+      background-color: transparent;
+    }
+
+    /* The mask comes from one rule ... */
+    .vector-icon {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path d='m16.7 8-6 6H9.3l-6-6 1.4-1.4 5.3 5.3 5.3-5.3z'/></svg>");
+      mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path d='m16.7 8-6 6H9.3l-6-6 1.4-1.4 5.3 5.3 5.3-5.3z'/></svg>");
+      -webkit-mask-size: 100%;
+      mask-size: 100%;
+    }
+
+    /* ... and the glyph colour from another, through a token. */
+    .cdx-button .vector-icon {
+      background-color: var(--color-base, #202122);
+    }
+
+    /* One rule that declares both the mask and the glyph colour. */
+    .self-icon {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><circle cx='10' cy='10' r='8'/></svg>") center / 100% no-repeat;
+      mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><circle cx='10' cy='10' r='8'/></svg>") center / 100% no-repeat;
+      background-color: var(--color-neutral);
+    }
+  </style>
+  <script>window.__DR_SHIM__ = {};</script>
+  <script src="../shim/chrome-shim.js"></script>
+</head>
+
+<body>
+  <h1>Contents</h1>
+  <ul>
+    <li><button class="cdx-button" id="toggle-1" aria-label="Toggle section"><span class="vector-icon" id="glyph-split"></span></button> <span>Names and etymology</span></li>
+    <li><button class="cdx-button" id="toggle-2" aria-label="Toggle section"><span class="vector-icon"></span></button> <span>Natural history</span></li>
+    <li><span class="self-icon" id="glyph-self" role="img" aria-label="Status"></span> <span>Observation</span></li>
+  </ul>
+
+  <script src="../../extension/shared/timing.js"></script>
+  <script src="../../extension/shared/color.js"></script>
+  <script src="../../extension/shared/settings.js"></script>
+  <script src="../../extension/shared/restricted.js"></script>
+  <script src="../../extension/content/detect.js"></script>
+  <script src="../../extension/content/engine-smart.js"></script>
+  <script src="../../extension/content/engine-simple.js"></script>
+  <script src="../../extension/content/readability.js"></script>
+  <script src="../../extension/content/icons.js"></script>
+  <script src="../../extension/content/picker.js"></script>
+  <script src="../../extension/content/main.js"></script>
+  <script>
+    // The glyph of a mask icon is its background colour; it must stand out at
+    // 3:1 from what is painted behind the icon.
+    window.__DR_EXTRA_CHECKS__ = function (api) {
+      var c = window.Darkrai.color, ra = window.Darkrai.readability;
+      ['glyph-split', 'glyph-self'].forEach(function (id) {
+        var el = document.getElementById(id);
+        var glyph = c.parse(getComputedStyle(el).backgroundColor);
+        var behind = ra.effectiveBackground(el, true);
+        var ratio = glyph && behind ? c.contrastRatio(c.composite(glyph, behind), behind) : 0;
+        api.add('mask icon #' + id + ' glyph meets 3:1', ratio >= 3,
+          'glyph ' + getComputedStyle(el).backgroundColor + ' on ' + (behind ? c.toCss(behind) : 'unknown') +
+          ' = ' + ratio.toFixed(2) + ':1');
+      });
+    };
+  </script>
+  <script src="./assert.js"></script>
+</body>
+
+</html>

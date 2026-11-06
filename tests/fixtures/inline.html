@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" data-dr-expect="dark" data-dr-settle="1100">
+
+<head>
+  <meta charset="utf-8">
+  <title>Darkrai fixture: inline styles and legacy attributes</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 24px;
+      font: 15px/1.6 system-ui, sans-serif;
+    }
+  </style>
+  <script>window.__DR_SHIM__ = {};</script>
+  <script src="../shim/chrome-shim.js"></script>
+</head>
+
+<body style="background:#ffffff; color:#222222">
+  <h1 style="color:#111111">Colours set straight on the element</h1>
+
+  <p style="background:#f0f0f0; color:#333333; padding:10px">A background and a colour, inline.</p>
+
+  <p style="color:#999999 !important">An inline value marked important, which can only be beaten by
+    rewriting it in place.</p>
+
+  <div style="border:2px solid #cccccc; padding:10px; margin-top:10px">An inline border.</div>
+
+  <table bgcolor="#eeeeee" style="margin-top:12px; border-collapse:collapse">
+    <tr>
+      <td bgcolor="#ffffff" style="padding:8px; border:1px solid #cccccc">
+        <font color="#444444">Legacy bgcolor and color attributes.</font>
+      </td>
+    </tr>
+  </table>
+
+  <p style="background:linear-gradient(90deg,#ffffff,#ffe0b2); padding:8px; color:#5d4037">
+    An inline gradient.
+  </p>
+
+  <script>
+    // A colour set by script after load, the way a widget would.
+    setTimeout(function () {
+      var el = document.createElement('p');
+      el.setAttribute('style', 'background:#ffffff;color:#555555;padding:8px');
+      el.textContent = 'Added later by script, with inline colours.';
+      document.body.appendChild(el);
+    }, 250);
+  </script>
+
+  <script src="../../extension/shared/timing.js"></script>
+  <script src="../../extension/shared/color.js"></script>
+  <script src="../../extension/shared/settings.js"></script>
+  <script src="../../extension/shared/restricted.js"></script>
+  <script src="../../extension/content/detect.js"></script>
+  <script src="../../extension/content/engine-smart.js"></script>
+  <script src="../../extension/content/engine-simple.js"></script>
+  <script src="../../extension/content/readability.js"></script>
+  <script src="../../extension/content/icons.js"></script>
+  <script src="../../extension/content/picker.js"></script>
+  <script src="../../extension/content/main.js"></script>
+  <script src="./assert.js"></script>
+</body>
+
+</html>

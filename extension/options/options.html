@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Darkrai options</title>
+  <!-- The Handheld theme tokens, LED / LCD pieces and the shared fallbacks,
+       then this page's own layout. -->
+  <link rel="stylesheet" href="../shared/handheld.css">
+  <link rel="stylesheet" href="../shared/select.css">
+  <link rel="stylesheet" href="options.css">
+</head>
+
+<body>
+  <main>
+    <!-- The red device band. data-state (on | off) follows the master switch;
+         the switch's own label says the same thing in words. -->
+    <header class="head dr-band dr-lift" id="band" data-state="on">
+      <span class="dr-led" aria-hidden="true"></span>
+      <div class="dr-lcd band-lcd" aria-hidden="true">
+        <div class="dr-screen">
+          <img class="dr-art" src="../popup/screen-art.png" width="32" height="32" alt="">
+        </div>
+      </div>
+      <h1>Darkrai</h1>
+      <label class="switch" for="enabled">
+        <input type="checkbox" id="enabled" checked>
+        <span>Darkrai is on</span>
+      </label>
+    </header>
+
+    <p class="saved" id="saved" role="status">Changes save as you make them.</p>
+
+    <section class="dr-panel dr-rise" aria-labelledby="look-title">
+      <h2 id="look-title">Look</h2>
+
+      <div class="row">
+        <label for="look">Preset</label>
+        <select id="look">
+          <option value="gray">Dark gray (default)</option>
+          <option value="black">True black</option>
+          <option value="soft">Soft</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <label for="brightness">Brightness</label>
+        <input type="range" id="brightness" min="50" max="150" step="5" value="100"
+          aria-describedby="brightness-value">
+        <output id="brightness-value" for="brightness">100</output>
+      </div>
+
+      <div class="row">
+        <label for="contrast">Contrast</label>
+        <input type="range" id="contrast" min="50" max="150" step="5" value="100"
+          aria-describedby="contrast-value">
+        <output id="contrast-value" for="contrast">100</output>
+      </div>
+
+      <div class="row">
+        <label for="warmth">Warmth</label>
+        <input type="range" id="warmth" min="0" max="100" step="5" value="0"
+          aria-describedby="warmth-value">
+        <output id="warmth-value" for="warmth">0</output>
+      </div>
+
+      <div class="row">
+        <label for="default-mode">New sites start as</label>
+        <select id="default-mode">
+          <option value="auto">Auto (default)</option>
+          <option value="on">Always dark</option>
+          <option value="off">Never</option>
+        </select>
+      </div>
+
+      <label class="check" for="dim-images">
+        <input type="checkbox" id="dim-images">
+        <span>Dim images a little, for night use</span>
+      </label>
+
+      <p class="help">No filters are used in Smart mode, so photos keep their own colours.</p>
+    </section>
+
+    <section class="dr-panel dr-rise" aria-labelledby="schedule-title">
+      <h2 id="schedule-title">Schedule</h2>
+
+      <div class="row">
+        <label for="schedule">Darken</label>
+        <select id="schedule">
+          <option value="always">Always</option>
+          <option value="system">Follow system theme</option>
+          <option value="hours">Custom hours</option>
+        </select>
+      </div>
+
+      <div class="row hours" id="hours" hidden>
+        <label for="from">From</label>
+        <input type="time" id="from" value="19:00">
+        <label for="to">To</label>
+        <input type="time" id="to" value="07:00">
+      </div>
+
+      <p class="help" id="schedule-help">Always on, every hour of the day.</p>
+    </section>
+
+    <section class="dr-panel dr-rise" aria-labelledby="sites-title">
+      <h2 id="sites-title">Sites</h2>
+
+      <div class="row">
+        <label for="search">Search</label>
+        <input type="search" id="search" placeholder="youtube.com" autocomplete="off">
+        <span class="count" id="count">0 sites</span>
+      </div>
+
+      <table id="sites">
+        <caption class="sr-only">Your site settings. Each row can be changed or removed.</caption>
+        <thead>
+          <tr>
+            <th scope="col">Site</th>
+            <th scope="col">Setting</th>
+            <th scope="col">Mode</th>
+            <th scope="col">Fixes</th>
+            <th scope="col"><span class="sr-only">Remove</span></th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+
+      <p class="empty" id="empty" hidden>No sites of your own yet. Use the popup on any page to add
+        one.</p>
+      <p class="help">Subdomains follow the main site unless they have a row of their own.</p>
+    </section>
+
+    <!-- The danger area. Deliberately last, deliberately set apart: one button
+         here forgets a single site, the other one erases everything. -->
+    <section class="danger dr-panel dr-rise" id="danger" tabindex="-1"
+      aria-labelledby="danger-title">
+      <h2 id="danger-title">Danger area</h2>
+
+      <div class="danger-mild">
+        <h3>Reset this site</h3>
+        <p class="help">Forgets one site: its Auto / Always / Never setting, its Smart or Simple
+          mode and every fix you saved there. That site follows the global default again. Nothing
+          else changes, and no other site is touched.</p>
+        <div class="row">
+          <label for="reset-host">Site</label>
+          <select id="reset-host" aria-describedby="reset-site-status">
+            <option value="">No sites of your own yet</option>
+          </select>
+          <button type="button" id="reset-site">Reset this site</button>
+        </div>
+        <p class="saved" id="reset-site-status" role="status"></p>
+      </div>
+
+      <div class="danger-hard">
+        <h3>Hard reset</h3>
+        <p>A hard reset erases, with nothing kept:</p>
+        <ul class="danger-list">
+          <li>every setting &mdash; the master switch, the look and its three sliders, image
+            dimming, and what new sites start as;</li>
+          <li>your whole site list, with every Auto / Always / Never and Smart / Simple choice
+            in it;</li>
+          <li>every fix you saved with the picker, on every site;</li>
+          <li>the schedule, and the timer behind it;</li>
+          <li>all per-tab state &mdash; open tabs are cleaned and put back on the defaults
+            without a reload.</li>
+        </ul>
+        <p class="danger-warning"><strong>A hard reset cannot be undone.</strong> There is no copy
+          to go back to. The only step beyond it is removing Darkrai at
+          <code>chrome://extensions</code> and installing it again.</p>
+        <button type="button" id="reset" class="btn-danger">Hard reset everything</button>
+        <p class="saved" id="reset-status" role="status"></p>
+      </div>
+    </section>
+
+    <footer>
+      <p class="help">Shortcut: Alt+Shift+D toggles the current site. Change it at
+        <code>chrome://extensions/shortcuts</code>.</p>
+    </footer>
+  </main>
+
+  <!--
+    The two-step confirmation, in the page. Never window.confirm: a native
+    dialog cannot be styled, cannot be read out with the list of what is about
+    to be erased, and on a wedged page it is the one thing you cannot escape.
+
+    It starts hidden and sits outside <main>, which options.js marks inert
+    while this is open, so nothing behind it can be reached by Tab.
+  -->
+  <div class="dr-modal" id="reset-modal" hidden>
+    <!-- tabindex="-1" so the dialog itself can hold focus while the reset is
+         running and both of its buttons are disabled: focus must never leave
+         the dialog, least of all mid-erase. It stays out of the tab order. -->
+    <div class="dr-dialog dr-panel dr-rise" id="reset-dialog" role="dialog" aria-modal="true"
+      tabindex="-1" aria-labelledby="reset-dialog-title" aria-describedby="reset-dialog-body">
+      <h2 id="reset-dialog-title">Hard reset everything?</h2>
+      <div id="reset-dialog-body">
+        <p id="reset-dialog-lead">This erases every setting, your whole site list, every saved
+          picker fix, the schedule and all per-tab state.</p>
+        <p class="danger-warning" id="reset-dialog-warning"><strong>It cannot be undone.</strong>
+          Removing and reinstalling Darkrai is the only step beyond it.</p>
+      </div>
+      <div class="dr-dialog-actions">
+        <button type="button" id="reset-cancel">Cancel</button>
+        <button type="button" id="reset-go" class="btn-danger">Continue</button>
+      </div>
+      <!-- One live region over both the summary and the itemised steps, so a
+           screen reader is told which steps failed and why, not only that
+           some did. A <ul> cannot live inside a <p>, hence the wrapper. -->
+      <div id="reset-dialog-report" role="status" aria-live="polite">
+        <p class="saved" id="reset-dialog-status"></p>
+        <ul class="danger-result" id="reset-dialog-result" hidden></ul>
+      </div>
+    </div>
+  </div>
+
+  <script src="../shared/settings.js"></script>
+  <script src="../shared/restricted.js"></script>
+  <script src="../shared/preload-reg.js"></script>
+  <script src="../shared/motion.js"></script>
+  <script src="../shared/reset.js"></script>
+  <script src="options.js"></script>
+</body>
+
+</html>

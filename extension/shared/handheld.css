@@ -1,0 +1,272 @@
+/*
+ * Darkrai - shared/handheld.css
+ *
+ * The "Handheld" theme tokens shared by the popup and the options page: a red
+ * device chassis, charcoal panels, pill controls, and the LED / LCD pieces
+ * that show the extension's state. Also the entrance keyframes both pages'
+ * scripts manage (.dr-rise / .dr-lift / .dr-settled) and the shared
+ * reduced-motion, forced-colors and more-contrast fallbacks.
+ *
+ * Linked BEFORE each page's own stylesheet. No images except the one screen
+ * art PNG the pages reference, no fonts, no remote anything.
+ *
+ * Only transform and opacity ever animate. Every colour change between states
+ * is instant on the element itself; anything that fades does so through an
+ * overlay's opacity.
+ */
+
+:root {
+  --dr-page: #0e0e10;
+  --dr-fg: #f2f2f2;
+  --dr-muted: #c4c7ce;
+  --dr-soft: #b8bcc4;
+  --dr-label: #e6e7ea;
+
+  /* The chassis. */
+  --dr-red: #d3262a;
+  --dr-red-hi: #e8443f;
+  --dr-red-lo: #8e1416;
+  --dr-red-line: #2a0506;
+
+  /* Panels and pills. */
+  --dr-panel: #17181c;
+  --dr-panel-2: #1e2025;
+  --dr-panel-line: #3b3d44;
+  --dr-pill: #23252b;
+  --dr-seg: #202228;
+  --dr-pill-line: rgb(255 255 255 / 0.22);
+  --dr-pick: #dadce1;
+  --dr-pick-fg: #111111;
+
+  /* The LCD. */
+  --dr-lcd-bezel: #3a3a3a;
+  --dr-lcd-on: #a7c66a;
+  --dr-lcd-on-2: #9dbb5c;
+
+  /* The LED's three meanings. Colour is never the only signal: the status
+     sentence says the same thing in words. */
+  --dr-led-on: #3ee26b;
+  --dr-led-native: #4aa8ff;
+  --dr-led-off: #f5b82e;
+
+  /* The ten names the pages' scripts and older rules relied on. */
+  --dr-bg: var(--dr-page);
+  --dr-line: var(--dr-panel-line);
+  --dr-surface: var(--dr-panel);
+  --dr-accent: #f5f6f8;
+  --dr-accent-fg: #111111;
+  --dr-on: var(--dr-led-on);
+  --dr-native: var(--dr-led-native);
+  --dr-off: #8b8f98;
+
+  --dr-danger: #d52b2b;
+  --dr-danger-hover: #b92121;
+  --dr-danger-fg: #ffffff;
+  --dr-danger-line: #d52b2b;
+
+  /* The focus ring: near-white on charcoal, dark-on-light pills ring outside. */
+  --dr-ring: #ffd24a;
+
+  --dr-radius: 12px;
+  --dr-radius-sm: 10px;
+
+  --dr-press: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dr-enter: cubic-bezier(0.22, 1, 0.36, 1);
+  --dr-t-fast: 120ms;
+  --dr-t-mid: 200ms;
+  --dr-t-slow: 260ms;
+
+  color-scheme: dark;
+}
+
+html {
+  background-color: var(--dr-page);
+}
+
+/* ------------------------------------------------------------- the panel */
+
+/* A charcoal surface. Opaque in every mode, with a real border. */
+.dr-panel {
+  position: relative;
+  border: 1px solid var(--dr-panel-line);
+  border-radius: 18px;
+  background-color: var(--dr-panel);
+  background-image: linear-gradient(180deg, var(--dr-panel-2), var(--dr-panel) 60%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.05), 0 2px 0 rgb(0 0 0 / 0.35);
+}
+
+/* -------------------------------------------------------- LED and LCD */
+
+.dr-led {
+  position: relative;
+  display: inline-block;
+  flex: 0 0 auto;
+  width: 10px;
+  height: 10px;
+  border: 1px solid rgb(0 0 0 / 0.6);
+  border-radius: 50%;
+  background: var(--dr-led-off);
+}
+
+/* The glow is its own layer, so it can fade with opacity alone. */
+.dr-led::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  background: radial-gradient(circle, currentColor 0%, transparent 70%);
+  color: var(--dr-led-off);
+  opacity: 0.55;
+  pointer-events: none;
+  transition: opacity var(--dr-t-slow) ease;
+}
+
+[data-state="on"] .dr-led { background: var(--dr-led-on); }
+[data-state="on"] .dr-led::after { color: var(--dr-led-on); opacity: 0.8; }
+[data-state="native"] .dr-led { background: var(--dr-led-native); }
+[data-state="native"] .dr-led::after { color: var(--dr-led-native); opacity: 0.65; }
+
+.dr-lcd {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border: 1px solid #1d1d1d;
+  border-radius: 8px;
+  background: var(--dr-lcd-bezel);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.12), inset 0 -2px 0 rgb(0 0 0 / 0.35);
+}
+
+.dr-screen {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 3px;
+  background: linear-gradient(160deg, var(--dr-lcd-on), var(--dr-lcd-on-2));
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.35);
+}
+
+/* The backlight dims through an overlay, which is what lets it fade. */
+.dr-screen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #2a3020;
+  opacity: 0.62;
+  pointer-events: none;
+  transition: opacity var(--dr-t-slow) ease;
+}
+
+[data-state="on"] .dr-screen::after { opacity: 0; }
+[data-state="native"] .dr-screen::after { opacity: 0.3; }
+
+.dr-art {
+  display: block;
+  position: relative;
+  z-index: 0;
+  image-rendering: pixelated;
+  filter: grayscale(1);
+  opacity: 0.85;
+  transition: opacity var(--dr-t-slow) ease;
+}
+
+[data-state="on"] .dr-art { filter: none; opacity: 1; }
+[data-state="native"] .dr-art { filter: saturate(0.35); opacity: 0.5; }
+
+/* ------------------------------------------------- entrances (both pages) */
+
+/* fill-mode backwards, never forwards: a finished animation stops mattering. */
+@keyframes dr-rise {
+  from { opacity: 0; transform: translate3d(0, 6px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@keyframes dr-lift {
+  from { transform: translate3d(0, 6px, 0); }
+  to { transform: translate3d(0, 0, 0); }
+}
+
+.dr-rise { animation: dr-rise var(--dr-t-slow) var(--dr-enter) backwards; }
+.dr-lift { animation: dr-lift var(--dr-t-slow) var(--dr-enter) backwards; }
+
+/* Script adds this on animationend (and on a safety timer). */
+.dr-settled {
+  animation: none;
+  will-change: auto;
+}
+
+/* --------------------------------------------------------------- fallbacks */
+
+@media (prefers-reduced-motion: reduce) {
+  .dr-rise,
+  .dr-lift {
+    animation: none;
+  }
+
+  .dr-led::after,
+  .dr-screen::after,
+  .dr-art {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  html {
+    background-color: Canvas;
+  }
+
+  .dr-panel {
+    background: Canvas;
+    border-color: CanvasText;
+    box-shadow: none;
+  }
+
+  .dr-led {
+    forced-color-adjust: none;
+    border-color: CanvasText;
+  }
+
+  .dr-led::after,
+  .dr-screen::after {
+    display: none;
+  }
+
+  .dr-rise,
+  .dr-lift {
+    animation: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --dr-fg: #ffffff;
+    --dr-muted: #e8e9ec;
+    --dr-soft: #e8e9ec;
+    --dr-label: #ffffff;
+    --dr-panel: #000000;
+    --dr-panel-2: #000000;
+    --dr-panel-line: #c9ccd3;
+    --dr-pill: #000000;
+    --dr-seg: #000000;
+    --dr-pill-line: #e8e9ec;
+    --dr-pick: #ffffff;
+    --dr-pick-fg: #000000;
+    --dr-danger: #b01414;
+    --dr-danger-hover: #8f0f0f;
+  }
+
+  .dr-panel {
+    background-image: none;
+    box-shadow: none;
+  }
+
+  .dr-rise,
+  .dr-lift {
+    animation: none;
+  }
+}

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" data-dr-expect="dark" data-dr-settle="1400">
+
+<head>
+  <meta charset="utf-8">
+  <title>Darkrai fixture: a colour in a var() fallback (Wikipedia's sticky-sidebar fade)</title>
+  <style>
+    :root {
+      --background-color-base: #fff;
+    }
+
+    body {
+      --declared-bg: #ffffff;
+      margin: 0;
+      padding: 24px;
+      background: #ffffff;
+      color: #202122;
+      font: 15px/1.6 system-ui, sans-serif;
+    }
+
+    /* Vector 2022's pinned-sidebar fade, as Wikipedia ships it: a var()
+       shorthand followed by one of its own longhands, after which CSSOM
+       reports 'background' and every longhand as ''. */
+    #fade {
+      position: relative;
+      width: 240px;
+      height: 120px;
+    }
+
+    #fade::after {
+      content: '';
+      display: block;
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 40px;
+      background: linear-gradient(rgba(255, 255, 255, 0), var(--background-color-base, #fff));
+      background-repeat: no-repeat;
+      pointer-events: none;
+    }
+
+    #plain {
+      background-color: var(--never-declared, #ffffff);
+      padding: 12px;
+      margin-top: 12px;
+      max-width: 240px;
+    }
+
+    #declared {
+      background-color: var(--declared-bg, #fafafa);
+      padding: 12px;
+      margin-top: 12px;
+      max-width: 240px;
+    }
+  </style>
+  <script>window.__DR_SHIM__ = {};</script>
+  <script src="../shim/chrome-shim.js"></script>
+</head>
+
+<body>
+  <h1>Fallback colours</h1>
+  <div id="fade">A list that fades out at the bottom.</div>
+  <div id="plain">An undeclared token with a white fallback.</div>
+  <div id="declared">A declared token with a fallback.</div>
+
+  <script>
+    // The content scripts, in manifest order. ?ext=<relative folder> loads
+    // another copy (the code from before the fix); anything but a plain
+    // relative path is ignored.
+    (function () {
+      var ext = new URLSearchParams(location.search).get('ext') || '';
+      if (!/^\.{0,2}\/?[\w\-./]+\/$/.test(ext) || /:/.test(ext)) ext = '../../extension/';
+      ['shared/timing.js', 'shared/color.js', 'shared/settings.js', 'shared/restricted.js',
+        'content/detect.js', 'content/engine-smart.js', 'content/engine-simple.js',
+        'content/readability.js', 'content/icons.js', 'content/picker.js', 'content/main.js'
+      ].forEach(function (f) { document.write('<script src="' + ext + f + '"><\/script>'); });
+    })();
+  </script>
+  <script>
+    window.__DR_EXTRA_CHECKS__ = function (api) {
+      // Every colour stop of the fade, in order; the last is the one at the bottom.
+      var img = getComputedStyle(document.getElementById('fade'), '::after').backgroundImage;
+      var stops = img.match(/rgba?\([^)]*\)/g) || [];
+      var last = stops[stops.length - 1];
+      var l = last ? api.lightnessOf(last) : null;
+      api.add('the fade under a sticky list ends dark (var() shorthand + longhand)', l != null && l < 0.5,
+        'background-image ' + img + '; last stop OKLCH L ' + (l == null ? '?' : l.toFixed(2)));
+      ['plain', 'declared'].forEach(function (id) {
+        var bg = getComputedStyle(document.getElementById(id)).backgroundColor;
+        var lb = api.lightnessOf(bg);
+        api.add('#' + id + ' background from var(--token, #fff) is darkened', lb != null && lb < 0.5,
+          'background-color ' + bg + ', OKLCH L ' + (lb == null ? '?' : lb.toFixed(2)));
+      });
+    };
+  </script>
+  <script src="./assert.js"></script>
+</body>
+
+</html>

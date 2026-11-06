@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" data-dr-expect="native" data-dr-settle="2600">
+
+<head>
+  <meta charset="utf-8">
+  <title>Darkrai fixture: the site switches its own theme while open</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 24px;
+      background: #ffffff;
+      color: #222222;
+      font: 15px/1.6 system-ui, sans-serif;
+    }
+
+    .panel {
+      max-width: 560px;
+      padding: 14px;
+      border: 1px solid #dddddd;
+      background: #f7f7f8;
+      color: #333333;
+    }
+
+    /* The site's own dark theme, switched on by an attribute on <html>, the way
+       YouTube and GitHub do it. */
+    html[data-theme="dark"] body {
+      background: #10131a;
+      color: #e6e6e6;
+    }
+
+    html[data-theme="dark"] .panel {
+      border-color: #2a2f3a;
+      background: #181c24;
+      color: #d6d6d6;
+    }
+  </style>
+  <script>window.__DR_SHIM__ = {};</script>
+  <script src="../shim/chrome-shim.js"></script>
+</head>
+
+<body>
+  <h1>This page turns its own dark theme on after a moment</h1>
+  <div class="panel">
+    <p>Darkrai should darken this page at first, then notice the site's own dark
+      theme and hand the page back.</p>
+    <button id="flip" type="button">Flip the theme by hand</button>
+  </div>
+
+  <script>
+    document.getElementById('flip').addEventListener('click', function () {
+      var on = document.documentElement.getAttribute('data-theme') === 'dark';
+      document.documentElement.setAttribute('data-theme', on ? 'light' : 'dark');
+    });
+    // Flip automatically so the fixture can run unattended.
+    setTimeout(function () {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }, 1100);
+  </script>
+
+  <script src="../../extension/shared/timing.js"></script>
+  <script src="../../extension/shared/color.js"></script>
+  <script src="../../extension/shared/settings.js"></script>
+  <script src="../../extension/shared/restricted.js"></script>
+  <script src="../../extension/content/detect.js"></script>
+  <script src="../../extension/content/engine-smart.js"></script>
+  <script src="../../extension/content/engine-simple.js"></script>
+  <script src="../../extension/content/readability.js"></script>
+  <script src="../../extension/content/icons.js"></script>
+  <script src="../../extension/content/picker.js"></script>
+  <script src="../../extension/content/main.js"></script>
+  <script>
+    window.__DR_EXTRA_CHECKS__ = function (api) {
+      api.add("the site's own theme attribute is still set",
+        document.documentElement.getAttribute('data-theme') === 'dark',
+        'data-theme="' + document.documentElement.getAttribute('data-theme') + '"');
+      var l = api.lightnessOf(getComputedStyle(document.body).backgroundColor);
+      api.add("the page shows the site's own dark background",
+        l != null && l < 0.45,
+        'body background L=' + (l == null ? 'n/a' : l.toFixed(3)));
+    };
+  </script>
+  <script src="./assert.js"></script>
+</body>
+
+</html>

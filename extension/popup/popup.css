@@ -1,0 +1,1058 @@
+/*
+ * Darkrai - popup/popup.css
+ *
+ * A plain-CSS port of the Lovable "DarkraiPopup" design (Pokedex casing,
+ * Nunito Sans, Lucide icons). Every Tailwind utility of the design is written
+ * out here; the Lovable --dex-* tokens live on as --dr-* names below.
+ *
+ * Rules:
+ *   - only transform and opacity ever animate, and nothing loops;
+ *   - colours a test reads back (LED layers, the status dot) are plain rgb();
+ *   - the casing, the top hardware and the bottom hardware never move or
+ *     scroll: Chrome caps a toolbar popup at 600px and the design is taller,
+ *     so only the dark screen (#panel) scrolls.
+ */
+
+@font-face {
+  font-family: "Nunito Sans";
+  font-style: normal;
+  font-weight: 200 1000;
+  font-stretch: 100%;
+  /* swap, not block: block held the first paint past the 100 ms budget. */
+  font-display: swap;
+  src: url("fonts/nunito-sans-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  /* The Lovable design tokens (src/styles.css), under the --dr- prefix. */
+  --dr-red: oklch(0.56 0.2 27);
+  --dr-red-hi: oklch(0.66 0.2 27);
+  --dr-red-lo: oklch(0.4 0.16 27);
+  --dr-screen: oklch(0.2 0.012 260);
+  --dr-surface: oklch(0.26 0.012 260);
+  --dr-surface-hi: oklch(0.32 0.012 260);
+  --dr-line: oklch(0.42 0.01 260);
+  --dr-silver: oklch(0.9 0.005 260);
+  --dr-text: oklch(0.95 0.003 260);
+  --dr-dim: oklch(0.72 0.008 260);
+  --dr-lcd: oklch(0.8 0.13 128);
+  --dr-led: oklch(0.88 0.17 95);
+  --dr-backdrop: oklch(0.15 0.01 20);
+
+  /* The same colours in sRGB, for the pieces whose colour is read back. */
+  --dr-silver-rgb: rgb(220 222 225);
+  --dr-lcd-rgb: rgb(165 205 111);
+  --dr-led-rgb: rgb(251 213 48);
+  --dr-ice-rgb: rgb(110 195 240);
+
+  --dr-ring: #ffd24a;
+  --dr-chamfer: polygon(28px 0, calc(100% - 28px) 0, 100% 28px, 100% calc(100% - 28px),
+      calc(100% - 28px) 100%, 28px 100%, 0 calc(100% - 28px), 0 28px);
+  --dr-font: "Nunito Sans", system-ui, sans-serif;
+  --dr-fade: 200ms ease;
+
+  color-scheme: dark;
+}
+
+/* ---------------------------------------------------------------- preflight */
+
+*,
+::before,
+::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: 0 solid;
+}
+
+/* The casing's dark red, not the design's near-black --dr-backdrop page:
+   Chrome paints a toolbar popup as an opaque rectangle, so any pixel the
+   casing leaves uncovered (even on the first paint) must not read black. */
+html {
+  background-color: var(--dr-red-lo);
+}
+
+body {
+  width: 360px;
+  font-family: var(--dr-font);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--dr-text);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+button,
+input,
+select,
+summary {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+}
+
+button,
+summary,
+label[for],
+select {
+  cursor: pointer;
+}
+
+img,
+svg {
+  display: block;
+}
+
+.sprite {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.ic {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ---------------------------------------------------------- the dex pieces */
+
+/* dex-pill */
+.seg,
+.pill-btn,
+.look summary,
+#look-fieldset,
+.select-pill,
+.time-pill,
+.notice {
+  background: linear-gradient(180deg, var(--dr-surface-hi), var(--dr-surface));
+  border: 1px solid var(--dr-line);
+  box-shadow: inset 0 1px 0 color-mix(in oklab, white 10%, transparent);
+}
+
+/* dex-module */
+.lcd-module,
+.hw-block,
+.ball-module {
+  background: linear-gradient(180deg, var(--dr-red-hi), var(--dr-red));
+  border: 3px solid var(--dr-red-lo);
+  box-shadow: inset 0 2px 0 color-mix(in oklab, white 30%, transparent),
+    0 4px 8px color-mix(in oklab, black 45%, transparent);
+}
+
+/* dex-screw */
+.screw,
+.speaker i {
+  background: radial-gradient(circle at 35% 35%, var(--dr-red-hi), var(--dr-red-lo));
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, black 30%, transparent);
+}
+
+/* dex-vent */
+.vents i,
+.slot {
+  background: var(--dr-red-lo);
+  box-shadow: inset 0 1px 2px black, 0 1px 0 color-mix(in oklab, white 20%, transparent);
+}
+
+/* ------------------------------------------------------------- the casing */
+
+.device {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 360px;
+  height: 600px;
+  padding-bottom: 8px;
+}
+
+/* Edge to edge, with no chamfer of its own: a popup cannot have see-through
+   corners, so the casing fills the window and the shell's cut corners show
+   this dark red as corner guards. The LCD module overlaps the shell's top. */
+.casing {
+  position: absolute;
+  inset: 0;
+  background: var(--dr-red-lo);
+}
+
+/* dex-chamfer dex-shell */
+.shell {
+  position: absolute;
+  inset: 3px;
+  clip-path: var(--dr-chamfer);
+  background: linear-gradient(180deg, var(--dr-red-hi), var(--dr-red) 12%, var(--dr-red) 88%,
+      color-mix(in oklab, var(--dr-red) 80%, black));
+  box-shadow: inset 0 0 0 2px color-mix(in oklab, white 18%, transparent),
+    inset 0 -4px 6px var(--dr-red-lo);
+}
+
+.screw {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.screw-tl { left: 14px; top: 44px; }
+.screw-tr { right: 14px; top: 44px; }
+.screw-bl { left: 14px; bottom: 64px; }
+.screw-br { right: 14px; bottom: 64px; }
+
+/* The raised LCD module. */
+.lcd-module {
+  position: absolute;
+  right: 34px;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 200px;
+  height: 104px;
+  padding: 8px;
+  border-radius: 20px;
+}
+
+.lcd-screen {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  height: 100%;
+}
+
+/* A soft halo behind the art while Darkrai is darkening the page. */
+.lcd-screen::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  z-index: -1;
+  border-radius: 14px;
+  background: radial-gradient(closest-side, rgb(165 205 111 / 0.45), transparent);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dr-fade);
+}
+
+/* The backlight dimmer: kept at 0, the art's own opacity does the ghosting. */
+.lcd-screen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* dex-pixel, object-contain */
+.lcd-art {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: none;
+  opacity: 1;
+  transition: opacity var(--dr-fade);
+}
+
+.vents {
+  position: absolute;
+  right: 12px;
+  top: 54px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.vents i {
+  display: block;
+  width: 16px;
+  height: 5px;
+  border-radius: 9999px;
+}
+
+.body {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0 14px;
+}
+
+/* ---------------------------------------------------------- top hardware */
+
+.bezel-top {
+  position: relative;
+  flex: none;
+  height: 118px;
+}
+
+.hw-block {
+  position: absolute;
+  left: 22px;
+  top: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+}
+
+.pokeball {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.pokeball-lg {
+  width: 52px;
+  height: 52px;
+}
+
+/* The LED: three lit layers over the lens, cross-faded on opacity. */
+.led {
+  position: absolute;
+  left: 8px;
+  top: 82px;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--dr-red-lo);
+  border-radius: 50%;
+}
+
+.led-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity var(--dr-fade);
+}
+
+/* off: the design's half-lit amber LED. */
+.led-off { background: rgb(251 213 48 / 0.5); }
+.led-on { background: var(--dr-lcd-rgb); box-shadow: 0 0 12px var(--dr-lcd-rgb); }
+.led-native { background: var(--dr-ice-rgb); box-shadow: 0 0 10px var(--dr-ice-rgb); }
+
+[data-state="off"] .led-off,
+[data-state="unknown"] .led-off,
+[data-state="on"] .led-on,
+[data-state="native"] .led-native {
+  opacity: 1;
+}
+
+[data-state="on"] .lcd-screen::before { opacity: 1; }
+[data-state="native"] .lcd-art { opacity: 0.6; }
+
+/* ------------------------------------------------------------- the screen */
+
+/* dex-inset, rounded-[18px], bg-dex-screen, px-3.5 py-3. The 1px border is
+   the screen colour (it only shows under forced colors), so the padding is
+   1px smaller to keep the design's content box. */
+.panel.dr-panel {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  /* The right padding gives way to the thin scrollbar (10px in Chrome), so
+     the content box stays the design's 304px. */
+  padding: 11px 3px 11px 13px;
+  scrollbar-gutter: stable;
+  border: 1px solid var(--dr-screen);
+  border-radius: 18px;
+  background: var(--dr-screen);
+  background-image: none;
+  color: var(--dr-text);
+  box-shadow: inset 0 3px 8px black, 0 0 0 3px var(--dr-red-lo),
+    0 1px 0 4px color-mix(in oklab, white 15%, transparent);
+  scrollbar-width: thin;
+  scrollbar-color: var(--dr-line) transparent;
+}
+
+.panel:focus-visible {
+  outline: 2px solid var(--dr-ring);
+  outline-offset: -3px;
+}
+
+/* Header */
+.head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  overflow: hidden;
+  border: 2px solid var(--dr-line);
+  border-radius: 6px;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.title {
+  flex: 1 1 0%;
+  min-width: 0;
+}
+
+.title h1 {
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.host {
+  overflow: hidden;
+  font-size: 13px;
+  color: var(--dr-dim);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.switch {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 12px;
+}
+
+.switch-text {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.switch input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.track {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  border: 1px solid var(--dr-line);
+  border-radius: 9999px;
+  background: var(--dr-surface-hi);
+}
+
+.track-on {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: var(--dr-red);
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+
+.knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--dr-silver);
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  transition: transform 150ms ease;
+}
+
+.switch input:checked + .track .track-on { opacity: 1; }
+.switch input:checked + .track .knob { transform: translateX(20px); }
+
+.switch input:focus-visible + .track {
+  outline: 2px solid var(--dr-ring);
+  outline-offset: 2px;
+}
+
+/* Status line */
+.status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  font-size: 13px;
+}
+
+.dot {
+  position: relative;
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--dr-silver-rgb);
+}
+
+.dot::before,
+.dot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity var(--dr-fade);
+}
+
+.dot::before { background: var(--dr-lcd-rgb); box-shadow: 0 0 6px rgb(165 205 111 / 0.8); }
+.dot::after { background: var(--dr-ice-rgb); box-shadow: 0 0 6px rgb(110 195 240 / 0.8); }
+.dot[data-state="on"]::before { opacity: 1; }
+.dot[data-state="native"]::after { opacity: 1; }
+
+.notice {
+  margin-top: 10px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  line-height: 1.375;
+}
+
+/* Sections: "This site" mt-3, the rest mt-2.5 */
+.group {
+  min-width: 0;
+  margin-top: 10px;
+}
+
+#site-fieldset {
+  margin-top: 12px;
+}
+
+.group > legend,
+#look-fieldset > legend {
+  float: left;
+  width: 100%;
+  margin-bottom: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--dr-text);
+}
+
+.group > legend + *,
+#look-fieldset > legend + * {
+  clear: both;
+}
+
+.help {
+  margin-top: 6px;
+  font-size: 12px;
+  line-height: 1.375;
+  color: var(--dr-dim);
+}
+
+/* Segmented control: dex-pill rounded-full p-[3px], the white dex-active
+   pill slides under the checked label. */
+.seg {
+  position: relative;
+  display: flex;
+  padding: 3px;
+  border-radius: 9999px;
+}
+
+.seg input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.seg label {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 1 1 0%;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 0;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--dr-text);
+}
+
+.seg label:hover {
+  background: var(--dr-surface-hi);
+}
+
+.seg input:checked + label {
+  font-weight: 800;
+  color: var(--dr-screen);
+  background: transparent;
+}
+
+/* The design's divider: between two neighbours that are both unselected. */
+.seg input:not(:checked) + label + input:not(:checked) + label {
+  border-left: 1px solid var(--dr-line);
+  border-radius: 0;
+}
+
+.seg-pill {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 0;
+  width: var(--dr-pill-w, calc((100% - 6px) / 3));
+  border-radius: 9999px;
+  background: linear-gradient(180deg, white, var(--dr-silver));
+  box-shadow: inset 0 -2px 0 color-mix(in oklab, black 15%, transparent);
+  transform: translateX(var(--dr-pill-x, 3px));
+  transition: transform 200ms ease;
+}
+
+#engine-fieldset .seg-pill {
+  width: var(--dr-pill-w, calc((100% - 6px) / 2));
+}
+
+.seg input:focus-visible + label {
+  outline: 2px solid var(--dr-ring);
+  outline-offset: 1px;
+}
+
+.seg input:disabled + label {
+  cursor: default;
+  opacity: 0.55;
+}
+
+/* PillButton: flex gap-2 rounded-full px-3 py-1.5 text-[13px] font-semibold */
+.pill-btn,
+.look summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--dr-text);
+  text-align: center;
+  transition: transform 100ms ease;
+}
+
+.pill-btn:hover:not(:disabled),
+.look summary:hover {
+  filter: brightness(1.25);
+}
+
+.pill-btn:active:not(:disabled),
+.look summary:active {
+  transform: translateY(1px);
+}
+
+.pill-btn:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.wide {
+  width: 100%;
+}
+
+/* dex-danger, a shade deeper than the design so white text keeps 4.5:1. */
+.btn-danger {
+  border: 1px solid var(--dr-red-lo);
+  background: linear-gradient(180deg, var(--dr-red), color-mix(in oklab, var(--dr-red) 82%, black));
+  box-shadow: inset 0 1px 0 color-mix(in oklab, white 25%, transparent);
+  color: #ffffff;
+}
+
+.btn-danger:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+/* The Look row: Play, the summary text, a chevron that turns when open. */
+.look {
+  margin-top: 10px;
+}
+
+.look summary {
+  justify-content: space-between;
+  width: 100%;
+  list-style: none;
+}
+
+.look summary::-webkit-details-marker {
+  display: none;
+}
+
+.look summary::before,
+.look summary::after {
+  content: '';
+  flex: none;
+  background: currentColor;
+  -webkit-mask: var(--dr-mask) center / contain no-repeat;
+  mask: var(--dr-mask) center / contain no-repeat;
+}
+
+/* Lucide "play" (fill-current) and "chevron-right", as masks. */
+.look summary::before {
+  width: 14px;
+  height: 14px;
+  --dr-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z'/%3E%3C/svg%3E");
+}
+
+.look summary::after {
+  width: 16px;
+  height: 16px;
+  --dr-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E");
+  transition: transform 150ms ease;
+}
+
+.look[open] summary::after {
+  transform: rotate(90deg);
+}
+
+/* dex-pill mt-1.5 space-y-2 rounded-xl p-2.5 */
+#look-fieldset {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  margin-top: 6px;
+  padding: 10px;
+  border-radius: 12px;
+}
+
+#look-fieldset > legend {
+  margin-bottom: 0;
+}
+
+.slider {
+  display: grid;
+  grid-template-columns: 74px 1fr 30px;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.slider output {
+  text-align: right;
+  color: var(--dr-text);
+}
+
+input[type="range"],
+input[type="checkbox"] {
+  accent-color: var(--dr-red);
+}
+
+input[type="range"] {
+  width: 100%;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.check input {
+  width: 14px;
+  height: 14px;
+}
+
+.pick-row {
+  margin-top: 8px;
+}
+
+#pick-help {
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+/* Schedule: dex-pill flex gap-2.5 rounded-full px-3 py-1.5 */
+.select-pill {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  border-radius: 9999px;
+}
+
+.select-pill .ic {
+  color: var(--dr-silver);
+}
+
+.select-pill .ic-trail {
+  pointer-events: none;
+}
+
+.select-pill select {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--dr-text);
+  outline: none;
+}
+
+/* Where Chrome has the customizable select, shared/select.css sets
+   appearance: base-select instead; it also holds the open list and the
+   classic list's option colours, shared with the options page. */
+@supports not (appearance: base-select) {
+  .select-pill select {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+}
+
+.select-pill:focus-within,
+.time-pill:focus-within {
+  outline: 2px solid var(--dr-ring);
+  outline-offset: 2px;
+}
+
+.hours {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: opacity 150ms ease;
+}
+
+.hours[aria-disabled="true"] {
+  opacity: 0.5;
+}
+
+.time-pill {
+  display: flex;
+  flex: 1 1 0%;
+  align-items: center;
+  min-width: 0;
+  padding: 4px 12px;
+  border-radius: 9999px;
+}
+
+.time-pill .ic {
+  color: var(--dr-silver);
+}
+
+.time-pill input[type="time"] {
+  width: 100%;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--dr-text);
+  outline: none;
+  color-scheme: dark;
+}
+
+.time-pill input[type="time"]::-webkit-calendar-picker-indicator {
+  display: none;
+}
+
+/* Actions: grid grid-cols-2 gap-2, mt-3 */
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.foot {
+  margin-top: 12px;
+}
+
+.danger-row {
+  margin-top: 8px;
+}
+
+.hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--dr-dim);
+}
+
+/* -------------------------------------------------------- bottom hardware */
+
+.bezel-bottom {
+  position: relative;
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  height: 52px;
+  padding: 0 12px;
+}
+
+.speaker {
+  display: flex;
+  gap: 6px;
+}
+
+.speaker i {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.ball-module {
+  position: absolute;
+  left: 50%;
+  top: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  transform: translateX(-50%);
+}
+
+.pokeball-sm {
+  width: 44px;
+  height: 44px;
+}
+
+.slot {
+  display: block;
+  width: 72px;
+  height: 6px;
+  border-radius: 9999px;
+}
+
+/* ------------------------------------------------------------- focus */
+
+:focus-visible {
+  outline: 2px solid var(--dr-ring);
+  outline-offset: 2px;
+}
+
+/* ------------------------------------------------------------- fallbacks */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* Solid surfaces, real borders, nothing moves: every border below already
+   exists in the normal layout, so no box changes size. */
+@media (forced-colors: active) {
+  html { background: Canvas; }
+
+  .casing,
+  .shell,
+  .lcd-module,
+  .hw-block,
+  .ball-module,
+  .screw,
+  .speaker i,
+  .vents i,
+  .slot {
+    background: Canvas;
+    box-shadow: none;
+  }
+
+  .panel.dr-panel {
+    background: Canvas;
+    border-color: CanvasText;
+    box-shadow: none;
+  }
+
+  .seg,
+  .pill-btn,
+  .look summary,
+  #look-fieldset,
+  .select-pill,
+  .time-pill,
+  .notice,
+  .track,
+  .avatar {
+    background: ButtonFace;
+    border-color: ButtonText;
+    box-shadow: none;
+    color: ButtonText;
+  }
+
+  .seg-pill {
+    background: Highlight;
+    box-shadow: none;
+  }
+
+  .seg input:checked + label {
+    color: HighlightText;
+  }
+
+  .track-on { background: Highlight; }
+  .knob { background: ButtonText; box-shadow: none; }
+
+  .led,
+  .dot {
+    forced-color-adjust: none;
+  }
+
+  .look summary::before,
+  .look summary::after {
+    forced-color-adjust: none;
+    background: ButtonText;
+  }
+
+  .lcd-screen::before { display: none; }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --dr-text: #ffffff;
+    --dr-dim: #e8e9ec;
+    --dr-line: #c9ccd3;
+    --dr-screen: #000000;
+  }
+
+  .seg,
+  .pill-btn,
+  .look summary,
+  #look-fieldset,
+  .select-pill,
+  .time-pill,
+  .notice {
+    background: #000000;
+    box-shadow: none;
+  }
+
+  .seg-pill {
+    background: #ffffff;
+    box-shadow: none;
+  }
+
+  .btn-danger {
+    background: #a3161a;
+  }
+
+  .panel.dr-panel {
+    background: #000000;
+    border-color: #c9ccd3;
+  }
+
+  .hours[aria-disabled="true"] {
+    opacity: 0.7;
+  }
+}

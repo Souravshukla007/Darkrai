@@ -1,0 +1,2730 @@
+{
+  "recordedAgainst": "extension/popup/popup.html before the Minimal Pokedex redesign",
+  "recordedAt": "2026-11-02",
+  "clock": "recorded with the real clock at 23:55 local, inside every custom-hours window below; the replay pins 23:30 local, which gives the same schedule verdicts",
+  "shim": "tests/shim/chrome-ui-shim.js, tab https://example.com/ answering state \"on\"",
+  "actions": [
+    {
+      "name": "open the popup",
+      "blocked": [],
+      "calls": [
+        {
+          "api": "storage.local.get",
+          "args": [
+            null,
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.query",
+          "args": [
+            {
+              "active": true,
+              "currentWindow": true
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-status"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        }
+      ],
+      "writes": [],
+      "ui": {
+        "status": "Darkened by Darkrai",
+        "enabledText": "On",
+        "host": "example.com",
+        "siteHelp": "Auto leaves a site alone when it already has a dark theme.",
+        "pickHelp": "Click an element, then choose how to fix it.",
+        "resetSite": "Reset this site",
+        "lookSummary": "Look: Dark gray · Brightness 100",
+        "shortcut": "Alt+Shift+D",
+        "enabled": true,
+        "siteMode": "auto",
+        "engine": "smart",
+        "look": "gray",
+        "brightness": "100",
+        "contrast": "100",
+        "warmth": "0",
+        "dimImages": false,
+        "schedule": "always",
+        "from": "19:00",
+        "to": "07:00",
+        "dot": "on"
+      }
+    },
+    {
+      "name": "master toggle: off",
+      "blocked": [],
+      "calls": [
+        {
+          "api": "storage.local.set",
+          "args": [
+            {
+              "schema": 2,
+              "debug": false,
+              "settings": {
+                "enabled": false,
+                "defaultMode": "auto",
+                "look": "gray",
+                "brightness": 100,
+                "contrast": 100,
+                "warmth": 0,
+                "dimImages": false,
+                "schedule": {
+                  "type": "always",
+                  "from": "19:00",
+                  "to": "07:00"
+                }
+              },
+              "sites": {
+                "docs.google.com": {
+                  "mode": "on",
+                  "engine": "filter"
+                }
+              }
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "storage.local.get",
+          "args": [
+            null,
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-refresh"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-status"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "api": "storage.local.set",
+          "items": {
+            "schema": 2,
+            "debug": false,
+            "settings": {
+              "enabled": false,
+              "defaultMode": "auto",
+              "look": "gray",
+              "brightness": 100,
+              "contrast": 100,
+              "warmth": 0,
+              "dimImages": false,
+              "schedule": {
+                "type": "always",
+                "from": "19:00",
+                "to": "07:00"
+              }
+            },
+            "sites": {
+              "docs.google.com": {
+                "mode": "on",
+                "engine": "filter"
+              }
+            }
+          }
+        }
+      ],
+      "ui": {
+        "status": "Darkrai is off everywhere.",
+        "enabledText": "Off",
+        "host": "example.com",
+        "siteHelp": "Auto leaves a site alone when it already has a dark theme.",
+        "pickHelp": "Click an element, then choose how to fix it.",
+        "resetSite": "Reset this site",
+        "lookSummary": "Look: Dark gray · Brightness 100",
+        "shortcut": "Alt+Shift+D",
+        "enabled": false,
+        "siteMode": "auto",
+        "engine": "smart",
+        "look": "gray",
+        "brightness": "100",
+        "contrast": "100",
+        "warmth": "0",
+        "dimImages": false,
+        "schedule": "always",
+        "from": "19:00",
+        "to": "07:00",
+        "dot": "off"
+      }
+    },
+    {
+      "name": "master toggle: back on",
+      "blocked": [],
+      "calls": [
+        {
+          "api": "storage.local.set",
+          "args": [
+            {
+              "schema": 2,
+              "debug": false,
+              "settings": {
+                "enabled": true,
+                "defaultMode": "auto",
+                "look": "gray",
+                "brightness": 100,
+                "contrast": 100,
+                "warmth": 0,
+                "dimImages": false,
+                "schedule": {
+                  "type": "always",
+                  "from": "19:00",
+                  "to": "07:00"
+                }
+              },
+              "sites": {
+                "docs.google.com": {
+                  "mode": "on",
+                  "engine": "filter"
+                }
+              }
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "storage.local.get",
+          "args": [
+            null,
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-refresh"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-status"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "api": "storage.local.set",
+          "items": {
+            "schema": 2,
+            "debug": false,
+            "settings": {
+              "enabled": true,
+              "defaultMode": "auto",
+              "look": "gray",
+              "brightness": 100,
+              "contrast": 100,
+              "warmth": 0,
+              "dimImages": false,
+              "schedule": {
+                "type": "always",
+                "from": "19:00",
+                "to": "07:00"
+              }
+            },
+            "sites": {
+              "docs.google.com": {
+                "mode": "on",
+                "engine": "filter"
+              }
+            }
+          }
+        }
+      ],
+      "ui": {
+        "status": "Darkened by Darkrai",
+        "enabledText": "On",
+        "host": "example.com",
+        "siteHelp": "Auto leaves a site alone when it already has a dark theme.",
+        "pickHelp": "Click an element, then choose how to fix it.",
+        "resetSite": "Reset this site",
+        "lookSummary": "Look: Dark gray · Brightness 100",
+        "shortcut": "Alt+Shift+D",
+        "enabled": true,
+        "siteMode": "auto",
+        "engine": "smart",
+        "look": "gray",
+        "brightness": "100",
+        "contrast": "100",
+        "warmth": "0",
+        "dimImages": false,
+        "schedule": "always",
+        "from": "19:00",
+        "to": "07:00",
+        "dot": "on"
+      }
+    },
+    {
+      "name": "this site: Always",
+      "blocked": [],
+      "calls": [
+        {
+          "api": "storage.local.set",
+          "args": [
+            {
+              "schema": 2,
+              "debug": false,
+              "settings": {
+                "enabled": true,
+                "defaultMode": "auto",
+                "look": "gray",
+                "brightness": 100,
+                "contrast": 100,
+                "warmth": 0,
+                "dimImages": false,
+                "schedule": {
+                  "type": "always",
+                  "from": "19:00",
+                  "to": "07:00"
+                }
+              },
+              "sites": {
+                "docs.google.com": {
+                  "mode": "on",
+                  "engine": "filter"
+                },
+                "example.com": {
+                  "mode": "on"
+                }
+              }
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "storage.local.get",
+          "args": [
+            null,
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-refresh"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-status"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "api": "storage.local.set",
+          "items": {
+            "schema": 2,
+            "debug": false,
+            "settings": {
+              "enabled": true,
+              "defaultMode": "auto",
+              "look": "gray",
+              "brightness": 100,
+              "contrast": 100,
+              "warmth": 0,
+              "dimImages": false,
+              "schedule": {
+                "type": "always",
+                "from": "19:00",
+                "to": "07:00"
+              }
+            },
+            "sites": {
+              "docs.google.com": {
+                "mode": "on",
+                "engine": "filter"
+              },
+              "example.com": {
+                "mode": "on"
+              }
+            }
+          }
+        }
+      ],
+      "ui": {
+        "status": "Darkened by Darkrai",
+        "enabledText": "On",
+        "host": "example.com",
+        "siteHelp": "Auto leaves a site alone when it already has a dark theme.",
+        "pickHelp": "Click an element, then choose how to fix it.",
+        "resetSite": "Reset this site",
+        "lookSummary": "Look: Dark gray · Brightness 100",
+        "shortcut": "Alt+Shift+D",
+        "enabled": true,
+        "siteMode": "on",
+        "engine": "smart",
+        "look": "gray",
+        "brightness": "100",
+        "contrast": "100",
+        "warmth": "0",
+        "dimImages": false,
+        "schedule": "always",
+        "from": "19:00",
+        "to": "07:00",
+        "dot": "on"
+      }
+    },
+    {
+      "name": "this site: Never",
+      "blocked": [],
+      "calls": [
+        {
+          "api": "storage.local.set",
+          "args": [
+            {
+              "schema": 2,
+              "debug": false,
+              "settings": {
+                "enabled": true,
+                "defaultMode": "auto",
+                "look": "gray",
+                "brightness": 100,
+                "contrast": 100,
+                "warmth": 0,
+                "dimImages": false,
+                "schedule": {
+                  "type": "always",
+                  "from": "19:00",
+                  "to": "07:00"
+                }
+              },
+              "sites": {
+                "docs.google.com": {
+                  "mode": "on",
+                  "engine": "filter"
+                },
+                "example.com": {
+                  "mode": "off"
+                }
+              }
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "storage.local.get",
+          "args": [
+            null,
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-refresh"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-status"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "api": "storage.local.set",
+          "items": {
+            "schema": 2,
+            "debug": false,
+            "settings": {
+              "enabled": true,
+              "defaultMode": "auto",
+              "look": "gray",
+              "brightness": 100,
+              "contrast": 100,
+              "warmth": 0,
+              "dimImages": false,
+              "schedule": {
+                "type": "always",
+                "from": "19:00",
+                "to": "07:00"
+              }
+            },
+            "sites": {
+              "docs.google.com": {
+                "mode": "on",
+                "engine": "filter"
+              },
+              "example.com": {
+                "mode": "off"
+              }
+            }
+          }
+        }
+      ],
+      "ui": {
+        "status": "Darkened by Darkrai",
+        "enabledText": "On",
+        "host": "example.com",
+        "siteHelp": "Auto leaves a site alone when it already has a dark theme.",
+        "pickHelp": "Click an element, then choose how to fix it.",
+        "resetSite": "Reset this site",
+        "lookSummary": "Look: Dark gray · Brightness 100",
+        "shortcut": "Alt+Shift+D",
+        "enabled": true,
+        "siteMode": "off",
+        "engine": "smart",
+        "look": "gray",
+        "brightness": "100",
+        "contrast": "100",
+        "warmth": "0",
+        "dimImages": false,
+        "schedule": "always",
+        "from": "19:00",
+        "to": "07:00",
+        "dot": "on"
+      }
+    },
+    {
+      "name": "this site: Auto (from Always)",
+      "blocked": [],
+      "calls": [
+        {
+          "api": "storage.local.set",
+          "args": [
+            {
+              "schema": 2,
+              "debug": false,
+              "settings": {
+                "enabled": true,
+                "defaultMode": "auto",
+                "look": "gray",
+                "brightness": 100,
+                "contrast": 100,
+                "warmth": 0,
+                "dimImages": false,
+                "schedule": {
+                  "type": "always",
+                  "from": "19:00",
+                  "to": "07:00"
+                }
+              },
+              "sites": {
+                "docs.google.com": {
+                  "mode": "on",
+                  "engine": "filter"
+                },
+                "example.com": {
+                  "mode": "auto"
+                }
+              }
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "storage.local.get",
+          "args": [
+            null,
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-refresh"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-status"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "api": "storage.local.set",
+          "items": {
+            "schema": 2,
+            "debug": false,
+            "settings": {
+              "enabled": true,
+              "defaultMode": "auto",
+              "look": "gray",
+              "brightness": 100,
+              "contrast": 100,
+              "warmth": 0,
+              "dimImages": false,
+              "schedule": {
+                "type": "always",
+                "from": "19:00",
+                "to": "07:00"
+              }
+            },
+            "sites": {
+              "docs.google.com": {
+                "mode": "on",
+                "engine": "filter"
+              },
+              "example.com": {
+                "mode": "auto"
+              }
+            }
+          }
+        }
+      ],
+      "ui": {
+        "status": "Darkened by Darkrai",
+        "enabledText": "On",
+        "host": "example.com",
+        "siteHelp": "Auto leaves a site alone when it already has a dark theme.",
+        "pickHelp": "Click an element, then choose how to fix it.",
+        "resetSite": "Reset this site",
+        "lookSummary": "Look: Dark gray · Brightness 100",
+        "shortcut": "Alt+Shift+D",
+        "enabled": true,
+        "siteMode": "auto",
+        "engine": "smart",
+        "look": "gray",
+        "brightness": "100",
+        "contrast": "100",
+        "warmth": "0",
+        "dimImages": false,
+        "schedule": "always",
+        "from": "19:00",
+        "to": "07:00",
+        "dot": "on"
+      }
+    },
+    {
+      "name": "mode: Simple",
+      "blocked": [],
+      "calls": [
+        {
+          "api": "storage.local.set",
+          "args": [
+            {
+              "schema": 2,
+              "debug": false,
+              "settings": {
+                "enabled": true,
+                "defaultMode": "auto",
+                "look": "gray",
+                "brightness": 100,
+                "contrast": 100,
+                "warmth": 0,
+                "dimImages": false,
+                "schedule": {
+                  "type": "always",
+                  "from": "19:00",
+                  "to": "07:00"
+                }
+              },
+              "sites": {
+                "docs.google.com": {
+                  "mode": "on",
+                  "engine": "filter"
+                },
+                "example.com": {
+                  "mode": "auto",
+                  "engine": "filter"
+                }
+              }
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "storage.local.get",
+          "args": [
+            null,
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-refresh"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-status"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "api": "storage.local.set",
+          "items": {
+            "schema": 2,
+            "debug": false,
+            "settings": {
+              "enabled": true,
+              "defaultMode": "auto",
+              "look": "gray",
+              "brightness": 100,
+              "contrast": 100,
+              "warmth": 0,
+              "dimImages": false,
+              "schedule": {
+                "type": "always",
+                "from": "19:00",
+                "to": "07:00"
+              }
+            },
+            "sites": {
+              "docs.google.com": {
+                "mode": "on",
+                "engine": "filter"
+              },
+              "example.com": {
+                "mode": "auto",
+                "engine": "filter"
+              }
+            }
+          }
+        }
+      ],
+      "ui": {
+        "status": "Darkened by Darkrai",
+        "enabledText": "On",
+        "host": "example.com",
+        "siteHelp": "Auto leaves a site alone when it already has a dark theme.",
+        "pickHelp": "Click an element, then choose how to fix it.",
+        "resetSite": "Reset this site",
+        "lookSummary": "Look: Dark gray · Brightness 100",
+        "shortcut": "Alt+Shift+D",
+        "enabled": true,
+        "siteMode": "auto",
+        "engine": "filter",
+        "look": "gray",
+        "brightness": "100",
+        "contrast": "100",
+        "warmth": "0",
+        "dimImages": false,
+        "schedule": "always",
+        "from": "19:00",
+        "to": "07:00",
+        "dot": "on"
+      }
+    },
+    {
+      "name": "mode: Smart (from Simple)",
+      "blocked": [],
+      "calls": [
+        {
+          "api": "storage.local.set",
+          "args": [
+            {
+              "schema": 2,
+              "debug": false,
+              "settings": {
+                "enabled": true,
+                "defaultMode": "auto",
+                "look": "gray",
+                "brightness": 100,
+                "contrast": 100,
+                "warmth": 0,
+                "dimImages": false,
+                "schedule": {
+                  "type": "always",
+                  "from": "19:00",
+                  "to": "07:00"
+                }
+              },
+              "sites": {
+                "docs.google.com": {
+                  "mode": "on",
+                  "engine": "filter"
+                },
+                "example.com": {
+                  "mode": "auto",
+                  "engine": "smart"
+                }
+              }
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "storage.local.get",
+          "args": [
+            null,
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-refresh"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-status"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "api": "storage.local.set",
+          "items": {
+            "schema": 2,
+            "debug": false,
+            "settings": {
+              "enabled": true,
+              "defaultMode": "auto",
+              "look": "gray",
+              "brightness": 100,
+              "contrast": 100,
+              "warmth": 0,
+              "dimImages": false,
+              "schedule": {
+                "type": "always",
+                "from": "19:00",
+                "to": "07:00"
+              }
+            },
+            "sites": {
+              "docs.google.com": {
+                "mode": "on",
+                "engine": "filter"
+              },
+              "example.com": {
+                "mode": "auto",
+                "engine": "smart"
+              }
+            }
+          }
+        }
+      ],
+      "ui": {
+        "status": "Darkened by Darkrai",
+        "enabledText": "On",
+        "host": "example.com",
+        "siteHelp": "Auto leaves a site alone when it already has a dark theme.",
+        "pickHelp": "Click an element, then choose how to fix it.",
+        "resetSite": "Reset this site",
+        "lookSummary": "Look: Dark gray · Brightness 100",
+        "shortcut": "Alt+Shift+D",
+        "enabled": true,
+        "siteMode": "auto",
+        "engine": "smart",
+        "look": "gray",
+        "brightness": "100",
+        "contrast": "100",
+        "warmth": "0",
+        "dimImages": false,
+        "schedule": "always",
+        "from": "19:00",
+        "to": "07:00",
+        "dot": "on"
+      }
+    },
+    {
+      "name": "look: open the panel",
+      "blocked": [],
+      "calls": [],
+      "writes": [],
+      "ui": {
+        "status": "Darkened by Darkrai",
+        "enabledText": "On",
+        "host": "example.com",
+        "siteHelp": "Auto leaves a site alone when it already has a dark theme.",
+        "pickHelp": "Click an element, then choose how to fix it.",
+        "resetSite": "Reset this site",
+        "lookSummary": "Look: Dark gray · Brightness 100",
+        "shortcut": "Alt+Shift+D",
+        "enabled": true,
+        "siteMode": "auto",
+        "engine": "smart",
+        "look": "gray",
+        "brightness": "100",
+        "contrast": "100",
+        "warmth": "0",
+        "dimImages": false,
+        "schedule": "always",
+        "from": "19:00",
+        "to": "07:00",
+        "dot": "on"
+      }
+    },
+    {
+      "name": "look: True black",
+      "blocked": [],
+      "calls": [
+        {
+          "api": "storage.local.set",
+          "args": [
+            {
+              "schema": 2,
+              "debug": false,
+              "settings": {
+                "enabled": true,
+                "defaultMode": "auto",
+                "look": "black",
+                "brightness": 100,
+                "contrast": 100,
+                "warmth": 0,
+                "dimImages": false,
+                "schedule": {
+                  "type": "always",
+                  "from": "19:00",
+                  "to": "07:00"
+                }
+              },
+              "sites": {
+                "docs.google.com": {
+                  "mode": "on",
+                  "engine": "filter"
+                }
+              }
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "storage.local.get",
+          "args": [
+            null,
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-refresh"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-status"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "api": "storage.local.set",
+          "items": {
+            "schema": 2,
+            "debug": false,
+            "settings": {
+              "enabled": true,
+              "defaultMode": "auto",
+              "look": "black",
+              "brightness": 100,
+              "contrast": 100,
+              "warmth": 0,
+              "dimImages": false,
+              "schedule": {
+                "type": "always",
+                "from": "19:00",
+                "to": "07:00"
+              }
+            },
+            "sites": {
+              "docs.google.com": {
+                "mode": "on",
+                "engine": "filter"
+              }
+            }
+          }
+        }
+      ],
+      "ui": {
+        "status": "Darkened by Darkrai",
+        "enabledText": "On",
+        "host": "example.com",
+        "siteHelp": "Auto leaves a site alone when it already has a dark theme.",
+        "pickHelp": "Click an element, then choose how to fix it.",
+        "resetSite": "Reset this site",
+        "lookSummary": "Look: True black · Brightness 100",
+        "shortcut": "Alt+Shift+D",
+        "enabled": true,
+        "siteMode": "auto",
+        "engine": "smart",
+        "look": "black",
+        "brightness": "100",
+        "contrast": "100",
+        "warmth": "0",
+        "dimImages": false,
+        "schedule": "always",
+        "from": "19:00",
+        "to": "07:00",
+        "dot": "on"
+      }
+    },
+    {
+      "name": "look: Soft",
+      "blocked": [],
+      "calls": [
+        {
+          "api": "storage.local.set",
+          "args": [
+            {
+              "schema": 2,
+              "debug": false,
+              "settings": {
+                "enabled": true,
+                "defaultMode": "auto",
+                "look": "soft",
+                "brightness": 100,
+                "contrast": 100,
+                "warmth": 0,
+                "dimImages": false,
+                "schedule": {
+                  "type": "always",
+                  "from": "19:00",
+                  "to": "07:00"
+                }
+              },
+              "sites": {
+                "docs.google.com": {
+                  "mode": "on",
+                  "engine": "filter"
+                }
+              }
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "storage.local.get",
+          "args": [
+            null,
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-refresh"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-status"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "api": "storage.local.set",
+          "items": {
+            "schema": 2,
+            "debug": false,
+            "settings": {
+              "enabled": true,
+              "defaultMode": "auto",
+              "look": "soft",
+              "brightness": 100,
+              "contrast": 100,
+              "warmth": 0,
+              "dimImages": false,
+              "schedule": {
+                "type": "always",
+                "from": "19:00",
+                "to": "07:00"
+              }
+            },
+            "sites": {
+              "docs.google.com": {
+                "mode": "on",
+                "engine": "filter"
+              }
+            }
+          }
+        }
+      ],
+      "ui": {
+        "status": "Darkened by Darkrai",
+        "enabledText": "On",
+        "host": "example.com",
+        "siteHelp": "Auto leaves a site alone when it already has a dark theme.",
+        "pickHelp": "Click an element, then choose how to fix it.",
+        "resetSite": "Reset this site",
+        "lookSummary": "Look: Soft · Brightness 100",
+        "shortcut": "Alt+Shift+D",
+        "enabled": true,
+        "siteMode": "auto",
+        "engine": "smart",
+        "look": "soft",
+        "brightness": "100",
+        "contrast": "100",
+        "warmth": "0",
+        "dimImages": false,
+        "schedule": "always",
+        "from": "19:00",
+        "to": "07:00",
+        "dot": "on"
+      }
+    },
+    {
+      "name": "look: Dark gray (from Soft)",
+      "blocked": [],
+      "calls": [
+        {
+          "api": "storage.local.set",
+          "args": [
+            {
+              "schema": 2,
+              "debug": false,
+              "settings": {
+                "enabled": true,
+                "defaultMode": "auto",
+                "look": "gray",
+                "brightness": 100,
+                "contrast": 100,
+                "warmth": 0,
+                "dimImages": false,
+                "schedule": {
+                  "type": "always",
+                  "from": "19:00",
+                  "to": "07:00"
+                }
+              },
+              "sites": {
+                "docs.google.com": {
+                  "mode": "on",
+                  "engine": "filter"
+                }
+              }
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "storage.local.get",
+          "args": [
+            null,
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-refresh"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-status"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "api": "storage.local.set",
+          "items": {
+            "schema": 2,
+            "debug": false,
+            "settings": {
+              "enabled": true,
+              "defaultMode": "auto",
+              "look": "gray",
+              "brightness": 100,
+              "contrast": 100,
+              "warmth": 0,
+              "dimImages": false,
+              "schedule": {
+                "type": "always",
+                "from": "19:00",
+                "to": "07:00"
+              }
+            },
+            "sites": {
+              "docs.google.com": {
+                "mode": "on",
+                "engine": "filter"
+              }
+            }
+          }
+        }
+      ],
+      "ui": {
+        "status": "Darkened by Darkrai",
+        "enabledText": "On",
+        "host": "example.com",
+        "siteHelp": "Auto leaves a site alone when it already has a dark theme.",
+        "pickHelp": "Click an element, then choose how to fix it.",
+        "resetSite": "Reset this site",
+        "lookSummary": "Look: Dark gray · Brightness 100",
+        "shortcut": "Alt+Shift+D",
+        "enabled": true,
+        "siteMode": "auto",
+        "engine": "smart",
+        "look": "gray",
+        "brightness": "100",
+        "contrast": "100",
+        "warmth": "0",
+        "dimImages": false,
+        "schedule": "always",
+        "from": "19:00",
+        "to": "07:00",
+        "dot": "on"
+      }
+    },
+    {
+      "name": "look: brightness 120",
+      "blocked": [],
+      "calls": [
+        {
+          "api": "storage.local.set",
+          "args": [
+            {
+              "schema": 2,
+              "debug": false,
+              "settings": {
+                "enabled": true,
+                "defaultMode": "auto",
+                "look": "gray",
+                "brightness": 120,
+                "contrast": 100,
+                "warmth": 0,
+                "dimImages": false,
+                "schedule": {
+                  "type": "always",
+                  "from": "19:00",
+                  "to": "07:00"
+                }
+              },
+              "sites": {
+                "docs.google.com": {
+                  "mode": "on",
+                  "engine": "filter"
+                }
+              }
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "storage.local.get",
+          "args": [
+            null,
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-refresh"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-status"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "api": "storage.local.set",
+          "items": {
+            "schema": 2,
+            "debug": false,
+            "settings": {
+              "enabled": true,
+              "defaultMode": "auto",
+              "look": "gray",
+              "brightness": 120,
+              "contrast": 100,
+              "warmth": 0,
+              "dimImages": false,
+              "schedule": {
+                "type": "always",
+                "from": "19:00",
+                "to": "07:00"
+              }
+            },
+            "sites": {
+              "docs.google.com": {
+                "mode": "on",
+                "engine": "filter"
+              }
+            }
+          }
+        }
+      ],
+      "ui": {
+        "status": "Darkened by Darkrai",
+        "enabledText": "On",
+        "host": "example.com",
+        "siteHelp": "Auto leaves a site alone when it already has a dark theme.",
+        "pickHelp": "Click an element, then choose how to fix it.",
+        "resetSite": "Reset this site",
+        "lookSummary": "Look: Dark gray · Brightness 120",
+        "shortcut": "Alt+Shift+D",
+        "enabled": true,
+        "siteMode": "auto",
+        "engine": "smart",
+        "look": "gray",
+        "brightness": "120",
+        "contrast": "100",
+        "warmth": "0",
+        "dimImages": false,
+        "schedule": "always",
+        "from": "19:00",
+        "to": "07:00",
+        "dot": "on"
+      }
+    },
+    {
+      "name": "look: contrast 80",
+      "blocked": [],
+      "calls": [
+        {
+          "api": "storage.local.set",
+          "args": [
+            {
+              "schema": 2,
+              "debug": false,
+              "settings": {
+                "enabled": true,
+                "defaultMode": "auto",
+                "look": "gray",
+                "brightness": 100,
+                "contrast": 80,
+                "warmth": 0,
+                "dimImages": false,
+                "schedule": {
+                  "type": "always",
+                  "from": "19:00",
+                  "to": "07:00"
+                }
+              },
+              "sites": {
+                "docs.google.com": {
+                  "mode": "on",
+                  "engine": "filter"
+                }
+              }
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "storage.local.get",
+          "args": [
+            null,
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-refresh"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-status"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "api": "storage.local.set",
+          "items": {
+            "schema": 2,
+            "debug": false,
+            "settings": {
+              "enabled": true,
+              "defaultMode": "auto",
+              "look": "gray",
+              "brightness": 100,
+              "contrast": 80,
+              "warmth": 0,
+              "dimImages": false,
+              "schedule": {
+                "type": "always",
+                "from": "19:00",
+                "to": "07:00"
+              }
+            },
+            "sites": {
+              "docs.google.com": {
+                "mode": "on",
+                "engine": "filter"
+              }
+            }
+          }
+        }
+      ],
+      "ui": {
+        "status": "Darkened by Darkrai",
+        "enabledText": "On",
+        "host": "example.com",
+        "siteHelp": "Auto leaves a site alone when it already has a dark theme.",
+        "pickHelp": "Click an element, then choose how to fix it.",
+        "resetSite": "Reset this site",
+        "lookSummary": "Look: Dark gray · Brightness 100",
+        "shortcut": "Alt+Shift+D",
+        "enabled": true,
+        "siteMode": "auto",
+        "engine": "smart",
+        "look": "gray",
+        "brightness": "100",
+        "contrast": "80",
+        "warmth": "0",
+        "dimImages": false,
+        "schedule": "always",
+        "from": "19:00",
+        "to": "07:00",
+        "dot": "on"
+      }
+    },
+    {
+      "name": "look: warmth 30",
+      "blocked": [],
+      "calls": [
+        {
+          "api": "storage.local.set",
+          "args": [
+            {
+              "schema": 2,
+              "debug": false,
+              "settings": {
+                "enabled": true,
+                "defaultMode": "auto",
+                "look": "gray",
+                "brightness": 100,
+                "contrast": 100,
+                "warmth": 30,
+                "dimImages": false,
+                "schedule": {
+                  "type": "always",
+                  "from": "19:00",
+                  "to": "07:00"
+                }
+              },
+              "sites": {
+                "docs.google.com": {
+                  "mode": "on",
+                  "engine": "filter"
+                }
+              }
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "storage.local.get",
+          "args": [
+            null,
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-refresh"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-status"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "api": "storage.local.set",
+          "items": {
+            "schema": 2,
+            "debug": false,
+            "settings": {
+              "enabled": true,
+              "defaultMode": "auto",
+              "look": "gray",
+              "brightness": 100,
+              "contrast": 100,
+              "warmth": 30,
+              "dimImages": false,
+              "schedule": {
+                "type": "always",
+                "from": "19:00",
+                "to": "07:00"
+              }
+            },
+            "sites": {
+              "docs.google.com": {
+                "mode": "on",
+                "engine": "filter"
+              }
+            }
+          }
+        }
+      ],
+      "ui": {
+        "status": "Darkened by Darkrai",
+        "enabledText": "On",
+        "host": "example.com",
+        "siteHelp": "Auto leaves a site alone when it already has a dark theme.",
+        "pickHelp": "Click an element, then choose how to fix it.",
+        "resetSite": "Reset this site",
+        "lookSummary": "Look: Dark gray · Brightness 100",
+        "shortcut": "Alt+Shift+D",
+        "enabled": true,
+        "siteMode": "auto",
+        "engine": "smart",
+        "look": "gray",
+        "brightness": "100",
+        "contrast": "100",
+        "warmth": "30",
+        "dimImages": false,
+        "schedule": "always",
+        "from": "19:00",
+        "to": "07:00",
+        "dot": "on"
+      }
+    },
+    {
+      "name": "look: dim images",
+      "blocked": [],
+      "calls": [
+        {
+          "api": "storage.local.set",
+          "args": [
+            {
+              "schema": 2,
+              "debug": false,
+              "settings": {
+                "enabled": true,
+                "defaultMode": "auto",
+                "look": "gray",
+                "brightness": 100,
+                "contrast": 100,
+                "warmth": 0,
+                "dimImages": true,
+                "schedule": {
+                  "type": "always",
+                  "from": "19:00",
+                  "to": "07:00"
+                }
+              },
+              "sites": {
+                "docs.google.com": {
+                  "mode": "on",
+                  "engine": "filter"
+                }
+              }
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "storage.local.get",
+          "args": [
+            null,
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-refresh"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-status"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "api": "storage.local.set",
+          "items": {
+            "schema": 2,
+            "debug": false,
+            "settings": {
+              "enabled": true,
+              "defaultMode": "auto",
+              "look": "gray",
+              "brightness": 100,
+              "contrast": 100,
+              "warmth": 0,
+              "dimImages": true,
+              "schedule": {
+                "type": "always",
+                "from": "19:00",
+                "to": "07:00"
+              }
+            },
+            "sites": {
+              "docs.google.com": {
+                "mode": "on",
+                "engine": "filter"
+              }
+            }
+          }
+        }
+      ],
+      "ui": {
+        "status": "Darkened by Darkrai",
+        "enabledText": "On",
+        "host": "example.com",
+        "siteHelp": "Auto leaves a site alone when it already has a dark theme.",
+        "pickHelp": "Click an element, then choose how to fix it.",
+        "resetSite": "Reset this site",
+        "lookSummary": "Look: Dark gray · Brightness 100",
+        "shortcut": "Alt+Shift+D",
+        "enabled": true,
+        "siteMode": "auto",
+        "engine": "smart",
+        "look": "gray",
+        "brightness": "100",
+        "contrast": "100",
+        "warmth": "0",
+        "dimImages": true,
+        "schedule": "always",
+        "from": "19:00",
+        "to": "07:00",
+        "dot": "on"
+      }
+    },
+    {
+      "name": "fix something unreadable",
+      "blocked": [],
+      "calls": [
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-pick"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "window.close",
+          "args": []
+        }
+      ],
+      "writes": [],
+      "ui": {
+        "status": "Darkened by Darkrai",
+        "enabledText": "On",
+        "host": "example.com",
+        "siteHelp": "Auto leaves a site alone when it already has a dark theme.",
+        "pickHelp": "Starting the picker…",
+        "resetSite": "Reset this site",
+        "lookSummary": "Look: Dark gray · Brightness 100",
+        "shortcut": "Alt+Shift+D",
+        "enabled": true,
+        "siteMode": "auto",
+        "engine": "smart",
+        "look": "gray",
+        "brightness": "100",
+        "contrast": "100",
+        "warmth": "0",
+        "dimImages": false,
+        "schedule": "always",
+        "from": "19:00",
+        "to": "07:00",
+        "dot": "on"
+      }
+    },
+    {
+      "name": "schedule: Follow system",
+      "blocked": [],
+      "calls": [
+        {
+          "api": "storage.local.set",
+          "args": [
+            {
+              "schema": 2,
+              "debug": false,
+              "settings": {
+                "enabled": true,
+                "defaultMode": "auto",
+                "look": "gray",
+                "brightness": 100,
+                "contrast": 100,
+                "warmth": 0,
+                "dimImages": false,
+                "schedule": {
+                  "type": "system",
+                  "from": "19:00",
+                  "to": "07:00"
+                }
+              },
+              "sites": {
+                "docs.google.com": {
+                  "mode": "on",
+                  "engine": "filter"
+                }
+              }
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "storage.local.get",
+          "args": [
+            null,
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-refresh"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-status"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "api": "storage.local.set",
+          "items": {
+            "schema": 2,
+            "debug": false,
+            "settings": {
+              "enabled": true,
+              "defaultMode": "auto",
+              "look": "gray",
+              "brightness": 100,
+              "contrast": 100,
+              "warmth": 0,
+              "dimImages": false,
+              "schedule": {
+                "type": "system",
+                "from": "19:00",
+                "to": "07:00"
+              }
+            },
+            "sites": {
+              "docs.google.com": {
+                "mode": "on",
+                "engine": "filter"
+              }
+            }
+          }
+        }
+      ],
+      "ui": {
+        "status": "Outside your schedule, so nothing is darkened right now.",
+        "enabledText": "On",
+        "host": "example.com",
+        "siteHelp": "Auto leaves a site alone when it already has a dark theme.",
+        "pickHelp": "Click an element, then choose how to fix it.",
+        "resetSite": "Reset this site",
+        "lookSummary": "Look: Dark gray · Brightness 100",
+        "shortcut": "Alt+Shift+D",
+        "enabled": true,
+        "siteMode": "auto",
+        "engine": "smart",
+        "look": "gray",
+        "brightness": "100",
+        "contrast": "100",
+        "warmth": "0",
+        "dimImages": false,
+        "schedule": "system",
+        "from": "19:00",
+        "to": "07:00",
+        "dot": "off"
+      }
+    },
+    {
+      "name": "schedule: Custom hours",
+      "blocked": [],
+      "calls": [
+        {
+          "api": "storage.local.set",
+          "args": [
+            {
+              "schema": 2,
+              "debug": false,
+              "settings": {
+                "enabled": true,
+                "defaultMode": "auto",
+                "look": "gray",
+                "brightness": 100,
+                "contrast": 100,
+                "warmth": 0,
+                "dimImages": false,
+                "schedule": {
+                  "type": "hours",
+                  "from": "19:00",
+                  "to": "07:00"
+                }
+              },
+              "sites": {
+                "docs.google.com": {
+                  "mode": "on",
+                  "engine": "filter"
+                }
+              }
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "storage.local.get",
+          "args": [
+            null,
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-refresh"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-status"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "api": "storage.local.set",
+          "items": {
+            "schema": 2,
+            "debug": false,
+            "settings": {
+              "enabled": true,
+              "defaultMode": "auto",
+              "look": "gray",
+              "brightness": 100,
+              "contrast": 100,
+              "warmth": 0,
+              "dimImages": false,
+              "schedule": {
+                "type": "hours",
+                "from": "19:00",
+                "to": "07:00"
+              }
+            },
+            "sites": {
+              "docs.google.com": {
+                "mode": "on",
+                "engine": "filter"
+              }
+            }
+          }
+        }
+      ],
+      "ui": {
+        "status": "Darkened by Darkrai",
+        "enabledText": "On",
+        "host": "example.com",
+        "siteHelp": "Auto leaves a site alone when it already has a dark theme.",
+        "pickHelp": "Click an element, then choose how to fix it.",
+        "resetSite": "Reset this site",
+        "lookSummary": "Look: Dark gray · Brightness 100",
+        "shortcut": "Alt+Shift+D",
+        "enabled": true,
+        "siteMode": "auto",
+        "engine": "smart",
+        "look": "gray",
+        "brightness": "100",
+        "contrast": "100",
+        "warmth": "0",
+        "dimImages": false,
+        "schedule": "hours",
+        "from": "19:00",
+        "to": "07:00",
+        "dot": "on"
+      }
+    },
+    {
+      "name": "schedule: Always (from Custom hours)",
+      "blocked": [],
+      "calls": [
+        {
+          "api": "storage.local.set",
+          "args": [
+            {
+              "schema": 2,
+              "debug": false,
+              "settings": {
+                "enabled": true,
+                "defaultMode": "auto",
+                "look": "gray",
+                "brightness": 100,
+                "contrast": 100,
+                "warmth": 0,
+                "dimImages": false,
+                "schedule": {
+                  "type": "always",
+                  "from": "19:00",
+                  "to": "07:00"
+                }
+              },
+              "sites": {
+                "docs.google.com": {
+                  "mode": "on",
+                  "engine": "filter"
+                }
+              }
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "storage.local.get",
+          "args": [
+            null,
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-refresh"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-status"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "api": "storage.local.set",
+          "items": {
+            "schema": 2,
+            "debug": false,
+            "settings": {
+              "enabled": true,
+              "defaultMode": "auto",
+              "look": "gray",
+              "brightness": 100,
+              "contrast": 100,
+              "warmth": 0,
+              "dimImages": false,
+              "schedule": {
+                "type": "always",
+                "from": "19:00",
+                "to": "07:00"
+              }
+            },
+            "sites": {
+              "docs.google.com": {
+                "mode": "on",
+                "engine": "filter"
+              }
+            }
+          }
+        }
+      ],
+      "ui": {
+        "status": "Darkened by Darkrai",
+        "enabledText": "On",
+        "host": "example.com",
+        "siteHelp": "Auto leaves a site alone when it already has a dark theme.",
+        "pickHelp": "Click an element, then choose how to fix it.",
+        "resetSite": "Reset this site",
+        "lookSummary": "Look: Dark gray · Brightness 100",
+        "shortcut": "Alt+Shift+D",
+        "enabled": true,
+        "siteMode": "auto",
+        "engine": "smart",
+        "look": "gray",
+        "brightness": "100",
+        "contrast": "100",
+        "warmth": "0",
+        "dimImages": false,
+        "schedule": "always",
+        "from": "19:00",
+        "to": "07:00",
+        "dot": "on"
+      }
+    },
+    {
+      "name": "schedule: From 20:30",
+      "blocked": [],
+      "calls": [
+        {
+          "api": "storage.local.set",
+          "args": [
+            {
+              "schema": 2,
+              "debug": false,
+              "settings": {
+                "enabled": true,
+                "defaultMode": "auto",
+                "look": "gray",
+                "brightness": 100,
+                "contrast": 100,
+                "warmth": 0,
+                "dimImages": false,
+                "schedule": {
+                  "type": "hours",
+                  "from": "20:30",
+                  "to": "07:00"
+                }
+              },
+              "sites": {
+                "docs.google.com": {
+                  "mode": "on",
+                  "engine": "filter"
+                }
+              }
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "storage.local.get",
+          "args": [
+            null,
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-refresh"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-status"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "api": "storage.local.set",
+          "items": {
+            "schema": 2,
+            "debug": false,
+            "settings": {
+              "enabled": true,
+              "defaultMode": "auto",
+              "look": "gray",
+              "brightness": 100,
+              "contrast": 100,
+              "warmth": 0,
+              "dimImages": false,
+              "schedule": {
+                "type": "hours",
+                "from": "20:30",
+                "to": "07:00"
+              }
+            },
+            "sites": {
+              "docs.google.com": {
+                "mode": "on",
+                "engine": "filter"
+              }
+            }
+          }
+        }
+      ],
+      "ui": {
+        "status": "Darkened by Darkrai",
+        "enabledText": "On",
+        "host": "example.com",
+        "siteHelp": "Auto leaves a site alone when it already has a dark theme.",
+        "pickHelp": "Click an element, then choose how to fix it.",
+        "resetSite": "Reset this site",
+        "lookSummary": "Look: Dark gray · Brightness 100",
+        "shortcut": "Alt+Shift+D",
+        "enabled": true,
+        "siteMode": "auto",
+        "engine": "smart",
+        "look": "gray",
+        "brightness": "100",
+        "contrast": "100",
+        "warmth": "0",
+        "dimImages": false,
+        "schedule": "hours",
+        "from": "20:30",
+        "to": "07:00",
+        "dot": "on"
+      }
+    },
+    {
+      "name": "schedule: To 06:15",
+      "blocked": [],
+      "calls": [
+        {
+          "api": "storage.local.set",
+          "args": [
+            {
+              "schema": 2,
+              "debug": false,
+              "settings": {
+                "enabled": true,
+                "defaultMode": "auto",
+                "look": "gray",
+                "brightness": 100,
+                "contrast": 100,
+                "warmth": 0,
+                "dimImages": false,
+                "schedule": {
+                  "type": "hours",
+                  "from": "19:00",
+                  "to": "06:15"
+                }
+              },
+              "sites": {
+                "docs.google.com": {
+                  "mode": "on",
+                  "engine": "filter"
+                }
+              }
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "storage.local.get",
+          "args": [
+            null,
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-refresh"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-status"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "api": "storage.local.set",
+          "items": {
+            "schema": 2,
+            "debug": false,
+            "settings": {
+              "enabled": true,
+              "defaultMode": "auto",
+              "look": "gray",
+              "brightness": 100,
+              "contrast": 100,
+              "warmth": 0,
+              "dimImages": false,
+              "schedule": {
+                "type": "hours",
+                "from": "19:00",
+                "to": "06:15"
+              }
+            },
+            "sites": {
+              "docs.google.com": {
+                "mode": "on",
+                "engine": "filter"
+              }
+            }
+          }
+        }
+      ],
+      "ui": {
+        "status": "Darkened by Darkrai",
+        "enabledText": "On",
+        "host": "example.com",
+        "siteHelp": "Auto leaves a site alone when it already has a dark theme.",
+        "pickHelp": "Click an element, then choose how to fix it.",
+        "resetSite": "Reset this site",
+        "lookSummary": "Look: Dark gray · Brightness 100",
+        "shortcut": "Alt+Shift+D",
+        "enabled": true,
+        "siteMode": "auto",
+        "engine": "smart",
+        "look": "gray",
+        "brightness": "100",
+        "contrast": "100",
+        "warmth": "0",
+        "dimImages": false,
+        "schedule": "hours",
+        "from": "19:00",
+        "to": "06:15",
+        "dot": "on"
+      }
+    },
+    {
+      "name": "reload this tab",
+      "blocked": [],
+      "calls": [
+        {
+          "api": "tabs.reload",
+          "args": [
+            1,
+            {},
+            "[function]"
+          ]
+        },
+        {
+          "api": "window.close",
+          "args": []
+        }
+      ],
+      "writes": [],
+      "ui": {
+        "status": "Darkened by Darkrai",
+        "enabledText": "On",
+        "host": "example.com",
+        "siteHelp": "Auto leaves a site alone when it already has a dark theme.",
+        "pickHelp": "Click an element, then choose how to fix it.",
+        "resetSite": "Reset this site",
+        "lookSummary": "Look: Dark gray · Brightness 100",
+        "shortcut": "Alt+Shift+D",
+        "enabled": true,
+        "siteMode": "auto",
+        "engine": "smart",
+        "look": "gray",
+        "brightness": "100",
+        "contrast": "100",
+        "warmth": "0",
+        "dimImages": false,
+        "schedule": "always",
+        "from": "19:00",
+        "to": "07:00",
+        "dot": "on"
+      }
+    },
+    {
+      "name": "options",
+      "blocked": [],
+      "calls": [
+        {
+          "api": "runtime.openOptionsPage",
+          "args": [
+            "[function]"
+          ]
+        },
+        {
+          "api": "window.close",
+          "args": []
+        }
+      ],
+      "writes": [],
+      "ui": {
+        "status": "Darkened by Darkrai",
+        "enabledText": "On",
+        "host": "example.com",
+        "siteHelp": "Auto leaves a site alone when it already has a dark theme.",
+        "pickHelp": "Click an element, then choose how to fix it.",
+        "resetSite": "Reset this site",
+        "lookSummary": "Look: Dark gray · Brightness 100",
+        "shortcut": "Alt+Shift+D",
+        "enabled": true,
+        "siteMode": "auto",
+        "engine": "smart",
+        "look": "gray",
+        "brightness": "100",
+        "contrast": "100",
+        "warmth": "0",
+        "dimImages": false,
+        "schedule": "always",
+        "from": "19:00",
+        "to": "07:00",
+        "dot": "on"
+      }
+    },
+    {
+      "name": "reset this site: arm, then Esc",
+      "blocked": [],
+      "calls": [],
+      "writes": [],
+      "ui": {
+        "status": "Darkened by Darkrai",
+        "enabledText": "On",
+        "host": "example.com",
+        "siteHelp": "Auto leaves a site alone when it already has a dark theme.",
+        "pickHelp": "Click an element, then choose how to fix it.",
+        "resetSite": "Reset this site",
+        "lookSummary": "Look: Dark gray · Brightness 100",
+        "shortcut": "Alt+Shift+D",
+        "enabled": true,
+        "siteMode": "on",
+        "engine": "smart",
+        "look": "gray",
+        "brightness": "100",
+        "contrast": "100",
+        "warmth": "0",
+        "dimImages": false,
+        "schedule": "always",
+        "from": "19:00",
+        "to": "07:00",
+        "dot": "on"
+      }
+    },
+    {
+      "name": "reset this site: arm, then confirm",
+      "blocked": [],
+      "calls": [
+        {
+          "api": "storage.local.set",
+          "args": [
+            {
+              "schema": 2,
+              "debug": false,
+              "settings": {
+                "enabled": true,
+                "defaultMode": "auto",
+                "look": "gray",
+                "brightness": 100,
+                "contrast": 100,
+                "warmth": 0,
+                "dimImages": false,
+                "schedule": {
+                  "type": "always",
+                  "from": "19:00",
+                  "to": "07:00"
+                }
+              },
+              "sites": {
+                "docs.google.com": {
+                  "mode": "on",
+                  "engine": "filter"
+                }
+              }
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "storage.local.get",
+          "args": [
+            null,
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-refresh"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        },
+        {
+          "api": "tabs.sendMessage",
+          "args": [
+            1,
+            {
+              "type": "dr-status"
+            },
+            {
+              "frameId": 0
+            },
+            "[function]"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "api": "storage.local.set",
+          "items": {
+            "schema": 2,
+            "debug": false,
+            "settings": {
+              "enabled": true,
+              "defaultMode": "auto",
+              "look": "gray",
+              "brightness": 100,
+              "contrast": 100,
+              "warmth": 0,
+              "dimImages": false,
+              "schedule": {
+                "type": "always",
+                "from": "19:00",
+                "to": "07:00"
+              }
+            },
+            "sites": {
+              "docs.google.com": {
+                "mode": "on",
+                "engine": "filter"
+              }
+            }
+          }
+        }
+      ],
+      "ui": {
+        "status": "example.com is forgotten: it follows the global default again. No other entry changed.",
+        "enabledText": "On",
+        "host": "example.com",
+        "siteHelp": "Auto leaves a site alone when it already has a dark theme.",
+        "pickHelp": "Click an element, then choose how to fix it.",
+        "resetSite": "Reset this site",
+        "lookSummary": "Look: Dark gray · Brightness 100",
+        "shortcut": "Alt+Shift+D",
+        "enabled": true,
+        "siteMode": "auto",
+        "engine": "smart",
+        "look": "gray",
+        "brightness": "100",
+        "contrast": "100",
+        "warmth": "0",
+        "dimImages": false,
+        "schedule": "always",
+        "from": "19:00",
+        "to": "07:00",
+        "dot": "on"
+      }
+    },
+    {
+      "name": "hard reset",
+      "blocked": [],
+      "calls": [
+        {
+          "api": "runtime.getURL",
+          "args": [
+            "options/options.html#danger"
+          ]
+        },
+        {
+          "api": "tabs.create",
+          "args": [
+            {
+              "url": "<origin>/extension/options/options.html#danger"
+            }
+          ]
+        },
+        {
+          "api": "window.close",
+          "args": []
+        }
+      ],
+      "writes": [],
+      "ui": {
+        "status": "Darkened by Darkrai",
+        "enabledText": "On",
+        "host": "example.com",
+        "siteHelp": "Auto leaves a site alone when it already has a dark theme.",
+        "pickHelp": "Click an element, then choose how to fix it.",
+        "resetSite": "Reset this site",
+        "lookSummary": "Look: Dark gray · Brightness 100",
+        "shortcut": "Alt+Shift+D",
+        "enabled": true,
+        "siteMode": "auto",
+        "engine": "smart",
+        "look": "gray",
+        "brightness": "100",
+        "contrast": "100",
+        "warmth": "0",
+        "dimImages": false,
+        "schedule": "always",
+        "from": "19:00",
+        "to": "07:00",
+        "dot": "on"
+      }
+    }
+  ]
+}

@@ -1,0 +1,247 @@
+/* Darkrai - the open list of every <select>, popup and options alike.
+ *
+ * A classic <select> opens a list Chrome draws outside the page, which CSS
+ * can only colour. Chrome 135+ has the customizable select
+ * (appearance: base-select): the same element, ids, options, values, events,
+ * focus and screen-reader semantics, but the list renders in the page's top
+ * layer and takes the Pokedex surface below. Older Chrome (the manifest
+ * allows 120) keeps today's classic list, with themed option colours.
+ *
+ * Loaded after handheld.css and before each page's own sheet, so a page's
+ * rules for the CLOSED select still win: the closed pill must not change.
+ * The popup defines --dr-surface-hi / --dr-screen / --dr-silver / --dr-text;
+ * the options page has none of those, so every token has a fallback.
+ */
+
+select {
+  --dr-sel-hi: var(--dr-surface-hi, oklch(0.32 0.012 260));
+  --dr-sel-lo: var(--dr-surface, oklch(0.26 0.012 260));
+  --dr-sel-deep: var(--dr-screen, oklch(0.2 0.012 260));
+  --dr-sel-fg: var(--dr-text, var(--dr-fg, #f2f2f2));
+  --dr-sel-silver: var(--dr-silver, var(--dr-pick, #dadce1));
+  --dr-sel-ink: var(--dr-screen, oklch(0.2 0.012 260));
+  --dr-sel-line: var(--dr-line, #3b3d44);
+}
+
+/* Classic list (no base-select): colours are all Chrome honours there. */
+@supports not (appearance: base-select) {
+  select option {
+    background-color: var(--dr-sel-deep);
+    color: var(--dr-sel-fg);
+  }
+}
+
+@supports (appearance: base-select) {
+  select,
+  ::picker(select) {
+    appearance: base-select;
+  }
+
+  /* The closed select: undo the base-select UA box so each page's own rules
+     draw exactly what they drew before. */
+  select {
+    min-block-size: auto;
+    min-inline-size: auto;
+  }
+
+  /* The popup's pill already draws a chevron: no second one. It turns while
+     the list is open (transform only). */
+  .select-pill select::picker-icon {
+    display: none;
+  }
+
+  .select-pill .ic-trail {
+    transition: transform 150ms ease-out;
+  }
+
+  .select-pill:has(select:open) .ic-trail {
+    transform: rotate(180deg);
+  }
+
+  /* The options page's bare selects: the picker icon stands in for the
+     classic arrow. */
+  select:not(.select-pill select) {
+    gap: 4px;
+  }
+
+  select:not(.select-pill select)::picker-icon {
+    content: "";
+    align-self: center;
+    inline-size: 16px;
+    block-size: 16px;
+    background-color: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / contain no-repeat;
+    transition: transform 150ms ease-out;
+  }
+
+  select:not(.select-pill select):open::picker-icon {
+    transform: rotate(180deg);
+  }
+
+  /* The list lines up with the VISIBLE pill, not the inset select inside it. */
+  .select-pill {
+    anchor-name: --dr-pill;
+    anchor-scope: --dr-pill;
+  }
+
+  .select-pill select::picker(select) {
+    position-anchor: --dr-pill;
+  }
+
+  /* The open list: the dark Pokedex surface. */
+  ::picker(select) {
+    box-sizing: border-box;
+    min-inline-size: anchor-size(width);
+    margin: 6px 0 0;
+    padding: 4px;
+    border: 1px solid var(--dr-sel-line);
+    border-radius: 14px;
+    background: linear-gradient(180deg, var(--dr-sel-lo), var(--dr-sel-deep));
+    color: var(--dr-sel-fg);
+    box-shadow: inset 0 1px 0 color-mix(in oklab, white 10%, transparent),
+      0 12px 28px -8px rgb(0 0 0 / 0.65), 0 2px 6px rgb(0 0 0 / 0.4);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--dr-sel-line) transparent;
+    /* Below the pill, above it when there is no room, and if neither side
+       holds the whole list, the side that holds a usable part, scrolling.
+       Chrome's UA sheet gives the picker max-block-size: stretch, which
+       shrinks the list to whatever is left below the pill: that position
+       then always "fits", so flip-block was never tried and a pill at the
+       bottom of the scrolled #panel opened a 51 px sliver past the window.
+       The list keeps its full height here; only the --dr-fit-* fallbacks
+       cap it. */
+    max-block-size: none;
+    position-area: block-end span-inline-end;
+    position-try-order: normal;
+    position-try-fallbacks: flip-block, --dr-fit-below, --dr-fit-above,
+      flip-inline, flip-block flip-inline;
+    opacity: 1;
+    transform: none;
+    transition: opacity 150ms ease-out, transform 150ms ease-out;
+  }
+
+  @starting-style {
+    select:open::picker(select) {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+  }
+
+  select option {
+    box-sizing: border-box;
+    min-block-size: 30px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--dr-sel-fg);
+    gap: 8px;
+  }
+
+  select option:hover,
+  select option:focus-visible {
+    background: var(--dr-sel-hi);
+    color: var(--dr-sel-fg);
+  }
+
+  select option:focus-visible {
+    outline: 2px solid var(--dr-ring, #ffd24a);
+    outline-offset: -2px;
+  }
+
+  /* Selected: the same silver as the selected Auto/Always/Never segment. */
+  select option:checked {
+    font-weight: 800;
+    color: var(--dr-sel-ink);
+    background: linear-gradient(180deg, white, var(--dr-sel-silver));
+    box-shadow: inset 0 -2px 0 color-mix(in oklab, black 15%, transparent);
+  }
+
+  select option:checked:focus-visible {
+    outline-color: var(--dr-sel-ink);
+  }
+
+  /* A dark tick at the inline end, so selection is never colour alone. */
+  select option::checkmark {
+    order: 1;
+    margin-inline-start: auto;
+    content: "";
+    inline-size: 14px;
+    block-size: 14px;
+    background-color: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
+
+  select option:not(:checked)::checkmark {
+    visibility: hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    ::picker(select),
+    select::picker-icon,
+    .select-pill .ic-trail {
+      transition: none;
+    }
+  }
+
+  @media (prefers-contrast: more) {
+    ::picker(select) {
+      background: var(--dr-sel-deep);
+      border-color: var(--dr-sel-fg);
+      box-shadow: 0 12px 28px -8px rgb(0 0 0 / 0.65);
+    }
+  }
+
+  @media (forced-colors: active) {
+    ::picker(select) {
+      forced-color-adjust: none;
+      background: Canvas;
+      color: CanvasText;
+      border-color: CanvasText;
+      box-shadow: none;
+    }
+
+    select option,
+    select option:hover,
+    select option:focus-visible {
+      forced-color-adjust: none;
+      background: Canvas;
+      color: CanvasText;
+      box-shadow: none;
+    }
+
+    select option:focus-visible,
+    select option:hover {
+      outline: 2px solid Highlight;
+      outline-offset: -2px;
+    }
+
+    select option:checked {
+      background: Highlight;
+      color: HighlightText;
+    }
+
+    select option:checked:focus-visible {
+      outline-color: CanvasText;
+    }
+  }
+}
+
+/* Neither side holds the whole list: keep a usable part and scroll. */
+@position-try --dr-fit-below {
+  position-area: block-end span-inline-end;
+  margin: 6px 0 0;
+  min-block-size: 96px;
+  max-block-size: calc(100% - 10px);
+}
+
+@position-try --dr-fit-above {
+  position-area: block-start span-inline-end;
+  margin: 0 0 6px;
+  min-block-size: 96px;
+  max-block-size: calc(100% - 10px);
+}

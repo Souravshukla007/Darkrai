@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Darkrai fixtures</title>
+  <style>
+    body {
+      margin: 0 auto;
+      padding: 28px;
+      max-width: 720px;
+      background: #ffffff;
+      color: #1b1b1f;
+      font: 15px/1.6 system-ui, sans-serif;
+    }
+
+    li {
+      margin-bottom: 6px;
+    }
+
+    code {
+      background: #f1f1f3;
+      padding: 1px 4px;
+      border-radius: 3px;
+    }
+
+    .note {
+      padding: 10px 12px;
+      border-left: 3px solid #6d4aff;
+      background: #f6f5ff;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Darkrai fixtures</h1>
+  <p class="note">Each page loads the real content scripts with a fake
+    <code>chrome.*</code> API from <code>tests/shim</code>, then checks itself and
+    shows the result in the bottom right corner. Serve this folder over http
+    (<code>node browser/run-fixtures.js</code> does that for you) so that the
+    per-site settings and the framed document work.
+  </p>
+
+  <h2>Expected to be darkened</h2>
+  <ul>
+    <li><a href="light.html">light</a> - a plain light page</li>
+    <li><a href="css-variables.html">css-variables</a> - colours only in custom properties</li>
+    <li><a href="inline.html">inline</a> - inline styles, <code>!important</code> and legacy attributes</li>
+    <li><a href="low-contrast.html">low-contrast</a> - the readability guard has to step in</li>
+    <li><a href="shadow-dom.html">shadow-dom</a> - open shadow roots, including a late one</li>
+    <li><a href="iframe.html">iframe</a> - a framed document and a srcdoc frame</li>
+    <li><a href="small-icons.html">small-icons</a> - dark icons, and a photo that must not invert</li>
+  </ul>
+
+  <h2>Expected to be left alone</h2>
+  <ul>
+    <li><a href="native-dark.html">native-dark</a> - a site with its own dark theme</li>
+    <li><a href="meta-dark.html">meta-dark</a> - only a <code>color-scheme</code> meta element</li>
+    <li><a href="runtime-theme-switch.html">runtime-theme-switch</a> - the site turns its own dark theme
+      on after a moment</li>
+  </ul>
+
+  <h2>Expected to use Simple mode</h2>
+  <ul>
+    <li><a href="canvas-app.html">canvas-app</a> - text drawn on a canvas</li>
+  </ul>
+</body>
+
+</html>

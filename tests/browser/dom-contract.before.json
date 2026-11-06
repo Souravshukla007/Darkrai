@@ -1,0 +1,1364 @@
+{
+  "html": {
+    "popup/popup.html": [
+      {
+        "key": "link{\"href\":\"../shared/handheld.css\"}",
+        "tag": "link",
+        "attrs": {
+          "href": "../shared/handheld.css"
+        }
+      },
+      {
+        "key": "link{\"href\":\"popup.css\"}",
+        "tag": "link",
+        "attrs": {
+          "href": "popup.css"
+        }
+      },
+      {
+        "key": "#device",
+        "tag": "div",
+        "attrs": {
+          "id": "device",
+          "data-state": "unknown"
+        }
+      },
+      {
+        "key": "div{\"aria-hidden\":\"true\"}",
+        "tag": "div",
+        "attrs": {
+          "aria-hidden": "true"
+        }
+      },
+      {
+        "key": "#led",
+        "tag": "span",
+        "attrs": {
+          "id": "led"
+        }
+      },
+      {
+        "key": "#lcd",
+        "tag": "div",
+        "attrs": {
+          "id": "lcd"
+        }
+      },
+      {
+        "key": "#lcd-art",
+        "tag": "img",
+        "attrs": {
+          "id": "lcd-art",
+          "src": "screen-art.png"
+        }
+      },
+      {
+        "key": "#panel",
+        "tag": "div",
+        "attrs": {
+          "id": "panel",
+          "tabindex": "0",
+          "role": "region",
+          "aria-label": "Darkrai controls"
+        }
+      },
+      {
+        "key": "div{\"aria-hidden\":\"true\"}",
+        "tag": "div",
+        "attrs": {
+          "aria-hidden": "true"
+        }
+      },
+      {
+        "key": "#host",
+        "tag": "p",
+        "attrs": {
+          "id": "host"
+        }
+      },
+      {
+        "key": "label[for=enabled]",
+        "tag": "label",
+        "attrs": {
+          "for": "enabled"
+        }
+      },
+      {
+        "key": "#enabled-text",
+        "tag": "span",
+        "attrs": {
+          "id": "enabled-text"
+        }
+      },
+      {
+        "key": "#enabled",
+        "tag": "input",
+        "attrs": {
+          "type": "checkbox",
+          "id": "enabled",
+          "checked": ""
+        }
+      },
+      {
+        "key": "span{\"aria-hidden\":\"true\"}",
+        "tag": "span",
+        "attrs": {
+          "aria-hidden": "true"
+        }
+      },
+      {
+        "key": "#status",
+        "tag": "p",
+        "attrs": {
+          "id": "status",
+          "role": "status"
+        }
+      },
+      {
+        "key": "#dot",
+        "tag": "span",
+        "attrs": {
+          "id": "dot",
+          "data-state": "unknown",
+          "aria-hidden": "true"
+        }
+      },
+      {
+        "key": "#status-text",
+        "tag": "span",
+        "attrs": {
+          "id": "status-text"
+        }
+      },
+      {
+        "key": "#notice",
+        "tag": "p",
+        "attrs": {
+          "id": "notice",
+          "hidden": ""
+        }
+      },
+      {
+        "key": "#site-fieldset",
+        "tag": "fieldset",
+        "attrs": {
+          "id": "site-fieldset"
+        }
+      },
+      {
+        "key": "span{\"aria-hidden\":\"true\"}",
+        "tag": "span",
+        "attrs": {
+          "aria-hidden": "true"
+        }
+      },
+      {
+        "key": "#mode-auto",
+        "tag": "input",
+        "attrs": {
+          "type": "radio",
+          "name": "site-mode",
+          "id": "mode-auto",
+          "value": "auto",
+          "checked": ""
+        }
+      },
+      {
+        "key": "label[for=mode-auto]",
+        "tag": "label",
+        "attrs": {
+          "for": "mode-auto"
+        }
+      },
+      {
+        "key": "#mode-on",
+        "tag": "input",
+        "attrs": {
+          "type": "radio",
+          "name": "site-mode",
+          "id": "mode-on",
+          "value": "on"
+        }
+      },
+      {
+        "key": "label[for=mode-on]",
+        "tag": "label",
+        "attrs": {
+          "for": "mode-on"
+        }
+      },
+      {
+        "key": "#mode-off",
+        "tag": "input",
+        "attrs": {
+          "type": "radio",
+          "name": "site-mode",
+          "id": "mode-off",
+          "value": "off"
+        }
+      },
+      {
+        "key": "label[for=mode-off]",
+        "tag": "label",
+        "attrs": {
+          "for": "mode-off"
+        }
+      },
+      {
+        "key": "#site-help",
+        "tag": "p",
+        "attrs": {
+          "id": "site-help"
+        }
+      },
+      {
+        "key": "#engine-fieldset",
+        "tag": "fieldset",
+        "attrs": {
+          "id": "engine-fieldset"
+        }
+      },
+      {
+        "key": "span{\"aria-hidden\":\"true\"}",
+        "tag": "span",
+        "attrs": {
+          "aria-hidden": "true"
+        }
+      },
+      {
+        "key": "#engine-smart",
+        "tag": "input",
+        "attrs": {
+          "type": "radio",
+          "name": "engine",
+          "id": "engine-smart",
+          "value": "smart",
+          "checked": ""
+        }
+      },
+      {
+        "key": "label[for=engine-smart]",
+        "tag": "label",
+        "attrs": {
+          "for": "engine-smart"
+        }
+      },
+      {
+        "key": "#engine-filter",
+        "tag": "input",
+        "attrs": {
+          "type": "radio",
+          "name": "engine",
+          "id": "engine-filter",
+          "value": "filter"
+        }
+      },
+      {
+        "key": "label[for=engine-filter]",
+        "tag": "label",
+        "attrs": {
+          "for": "engine-filter"
+        }
+      },
+      {
+        "key": "#look-details",
+        "tag": "details",
+        "attrs": {
+          "id": "look-details"
+        }
+      },
+      {
+        "key": "#look-summary",
+        "tag": "summary",
+        "attrs": {
+          "id": "look-summary"
+        }
+      },
+      {
+        "key": "#look-fieldset",
+        "tag": "fieldset",
+        "attrs": {
+          "id": "look-fieldset"
+        }
+      },
+      {
+        "key": "label[for=look]",
+        "tag": "label",
+        "attrs": {
+          "for": "look"
+        }
+      },
+      {
+        "key": "#look",
+        "tag": "select",
+        "attrs": {
+          "id": "look"
+        }
+      },
+      {
+        "key": "option[value=gray]@#look",
+        "tag": "option",
+        "attrs": {
+          "value": "gray"
+        }
+      },
+      {
+        "key": "option[value=black]@#look",
+        "tag": "option",
+        "attrs": {
+          "value": "black"
+        }
+      },
+      {
+        "key": "option[value=soft]@#look",
+        "tag": "option",
+        "attrs": {
+          "value": "soft"
+        }
+      },
+      {
+        "key": "label[for=brightness]",
+        "tag": "label",
+        "attrs": {
+          "for": "brightness"
+        }
+      },
+      {
+        "key": "#brightness",
+        "tag": "input",
+        "attrs": {
+          "type": "range",
+          "id": "brightness",
+          "min": "50",
+          "max": "150",
+          "step": "5",
+          "value": "100",
+          "aria-describedby": "brightness-value"
+        }
+      },
+      {
+        "key": "#brightness-value",
+        "tag": "output",
+        "attrs": {
+          "id": "brightness-value",
+          "for": "brightness"
+        }
+      },
+      {
+        "key": "label[for=contrast]",
+        "tag": "label",
+        "attrs": {
+          "for": "contrast"
+        }
+      },
+      {
+        "key": "#contrast",
+        "tag": "input",
+        "attrs": {
+          "type": "range",
+          "id": "contrast",
+          "min": "50",
+          "max": "150",
+          "step": "5",
+          "value": "100",
+          "aria-describedby": "contrast-value"
+        }
+      },
+      {
+        "key": "#contrast-value",
+        "tag": "output",
+        "attrs": {
+          "id": "contrast-value",
+          "for": "contrast"
+        }
+      },
+      {
+        "key": "label[for=warmth]",
+        "tag": "label",
+        "attrs": {
+          "for": "warmth"
+        }
+      },
+      {
+        "key": "#warmth",
+        "tag": "input",
+        "attrs": {
+          "type": "range",
+          "id": "warmth",
+          "min": "0",
+          "max": "100",
+          "step": "5",
+          "value": "0",
+          "aria-describedby": "warmth-value"
+        }
+      },
+      {
+        "key": "#warmth-value",
+        "tag": "output",
+        "attrs": {
+          "id": "warmth-value",
+          "for": "warmth"
+        }
+      },
+      {
+        "key": "label[for=dim-images]",
+        "tag": "label",
+        "attrs": {
+          "for": "dim-images"
+        }
+      },
+      {
+        "key": "#dim-images",
+        "tag": "input",
+        "attrs": {
+          "type": "checkbox",
+          "id": "dim-images"
+        }
+      },
+      {
+        "key": "#pick",
+        "tag": "button",
+        "attrs": {
+          "type": "button",
+          "id": "pick"
+        }
+      },
+      {
+        "key": "#pick-help",
+        "tag": "p",
+        "attrs": {
+          "id": "pick-help",
+          "role": "status"
+        }
+      },
+      {
+        "key": "#schedule-fieldset",
+        "tag": "fieldset",
+        "attrs": {
+          "id": "schedule-fieldset"
+        }
+      },
+      {
+        "key": "label[for=schedule]",
+        "tag": "label",
+        "attrs": {
+          "for": "schedule"
+        }
+      },
+      {
+        "key": "#schedule",
+        "tag": "select",
+        "attrs": {
+          "id": "schedule"
+        }
+      },
+      {
+        "key": "option[value=always]@#schedule",
+        "tag": "option",
+        "attrs": {
+          "value": "always"
+        }
+      },
+      {
+        "key": "option[value=system]@#schedule",
+        "tag": "option",
+        "attrs": {
+          "value": "system"
+        }
+      },
+      {
+        "key": "option[value=hours]@#schedule",
+        "tag": "option",
+        "attrs": {
+          "value": "hours"
+        }
+      },
+      {
+        "key": "#hours",
+        "tag": "div",
+        "attrs": {
+          "id": "hours",
+          "hidden": ""
+        }
+      },
+      {
+        "key": "label[for=from]",
+        "tag": "label",
+        "attrs": {
+          "for": "from"
+        }
+      },
+      {
+        "key": "#from",
+        "tag": "input",
+        "attrs": {
+          "type": "time",
+          "id": "from",
+          "value": "19:00"
+        }
+      },
+      {
+        "key": "label[for=to]",
+        "tag": "label",
+        "attrs": {
+          "for": "to"
+        }
+      },
+      {
+        "key": "#to",
+        "tag": "input",
+        "attrs": {
+          "type": "time",
+          "id": "to",
+          "value": "07:00"
+        }
+      },
+      {
+        "key": "#reload",
+        "tag": "button",
+        "attrs": {
+          "type": "button",
+          "id": "reload"
+        }
+      },
+      {
+        "key": "#options",
+        "tag": "button",
+        "attrs": {
+          "type": "button",
+          "id": "options"
+        }
+      },
+      {
+        "key": "#danger-row",
+        "tag": "div",
+        "attrs": {
+          "id": "danger-row"
+        }
+      },
+      {
+        "key": "#reset-site",
+        "tag": "button",
+        "attrs": {
+          "type": "button",
+          "id": "reset-site"
+        }
+      },
+      {
+        "key": "#reset-site-text",
+        "tag": "span",
+        "attrs": {
+          "id": "reset-site-text"
+        }
+      },
+      {
+        "key": "#hard-reset",
+        "tag": "button",
+        "attrs": {
+          "type": "button",
+          "id": "hard-reset"
+        }
+      },
+      {
+        "key": "#shortcut",
+        "tag": "span",
+        "attrs": {
+          "id": "shortcut"
+        }
+      },
+      {
+        "key": "div{\"aria-hidden\":\"true\"}",
+        "tag": "div",
+        "attrs": {
+          "aria-hidden": "true"
+        }
+      },
+      {
+        "key": "script{\"src\":\"../shared/color.js\"}",
+        "tag": "script",
+        "attrs": {
+          "src": "../shared/color.js"
+        }
+      },
+      {
+        "key": "script{\"src\":\"../shared/settings.js\"}",
+        "tag": "script",
+        "attrs": {
+          "src": "../shared/settings.js"
+        }
+      },
+      {
+        "key": "script{\"src\":\"../shared/restricted.js\"}",
+        "tag": "script",
+        "attrs": {
+          "src": "../shared/restricted.js"
+        }
+      },
+      {
+        "key": "script{\"src\":\"../shared/motion.js\"}",
+        "tag": "script",
+        "attrs": {
+          "src": "../shared/motion.js"
+        }
+      },
+      {
+        "key": "script{\"src\":\"popup.js\"}",
+        "tag": "script",
+        "attrs": {
+          "src": "popup.js"
+        }
+      }
+    ],
+    "options/options.html": [
+      {
+        "key": "meta[name=viewport][value=]",
+        "tag": "meta",
+        "attrs": {
+          "name": "viewport"
+        }
+      },
+      {
+        "key": "link{\"href\":\"../shared/handheld.css\"}",
+        "tag": "link",
+        "attrs": {
+          "href": "../shared/handheld.css"
+        }
+      },
+      {
+        "key": "link{\"href\":\"options.css\"}",
+        "tag": "link",
+        "attrs": {
+          "href": "options.css"
+        }
+      },
+      {
+        "key": "#band",
+        "tag": "header",
+        "attrs": {
+          "id": "band",
+          "data-state": "on"
+        }
+      },
+      {
+        "key": "span{\"aria-hidden\":\"true\"}",
+        "tag": "span",
+        "attrs": {
+          "aria-hidden": "true"
+        }
+      },
+      {
+        "key": "div{\"aria-hidden\":\"true\"}",
+        "tag": "div",
+        "attrs": {
+          "aria-hidden": "true"
+        }
+      },
+      {
+        "key": "label[for=enabled]",
+        "tag": "label",
+        "attrs": {
+          "for": "enabled"
+        }
+      },
+      {
+        "key": "#enabled",
+        "tag": "input",
+        "attrs": {
+          "type": "checkbox",
+          "id": "enabled",
+          "checked": ""
+        }
+      },
+      {
+        "key": "#saved",
+        "tag": "p",
+        "attrs": {
+          "id": "saved",
+          "role": "status"
+        }
+      },
+      {
+        "key": "section{\"aria-labelledby\":\"look-title\"}",
+        "tag": "section",
+        "attrs": {
+          "aria-labelledby": "look-title"
+        }
+      },
+      {
+        "key": "#look-title",
+        "tag": "h2",
+        "attrs": {
+          "id": "look-title"
+        }
+      },
+      {
+        "key": "label[for=look]",
+        "tag": "label",
+        "attrs": {
+          "for": "look"
+        }
+      },
+      {
+        "key": "#look",
+        "tag": "select",
+        "attrs": {
+          "id": "look"
+        }
+      },
+      {
+        "key": "option[value=gray]@#look",
+        "tag": "option",
+        "attrs": {
+          "value": "gray"
+        }
+      },
+      {
+        "key": "option[value=black]@#look",
+        "tag": "option",
+        "attrs": {
+          "value": "black"
+        }
+      },
+      {
+        "key": "option[value=soft]@#look",
+        "tag": "option",
+        "attrs": {
+          "value": "soft"
+        }
+      },
+      {
+        "key": "label[for=brightness]",
+        "tag": "label",
+        "attrs": {
+          "for": "brightness"
+        }
+      },
+      {
+        "key": "#brightness",
+        "tag": "input",
+        "attrs": {
+          "type": "range",
+          "id": "brightness",
+          "min": "50",
+          "max": "150",
+          "step": "5",
+          "value": "100",
+          "aria-describedby": "brightness-value"
+        }
+      },
+      {
+        "key": "#brightness-value",
+        "tag": "output",
+        "attrs": {
+          "id": "brightness-value",
+          "for": "brightness"
+        }
+      },
+      {
+        "key": "label[for=contrast]",
+        "tag": "label",
+        "attrs": {
+          "for": "contrast"
+        }
+      },
+      {
+        "key": "#contrast",
+        "tag": "input",
+        "attrs": {
+          "type": "range",
+          "id": "contrast",
+          "min": "50",
+          "max": "150",
+          "step": "5",
+          "value": "100",
+          "aria-describedby": "contrast-value"
+        }
+      },
+      {
+        "key": "#contrast-value",
+        "tag": "output",
+        "attrs": {
+          "id": "contrast-value",
+          "for": "contrast"
+        }
+      },
+      {
+        "key": "label[for=warmth]",
+        "tag": "label",
+        "attrs": {
+          "for": "warmth"
+        }
+      },
+      {
+        "key": "#warmth",
+        "tag": "input",
+        "attrs": {
+          "type": "range",
+          "id": "warmth",
+          "min": "0",
+          "max": "100",
+          "step": "5",
+          "value": "0",
+          "aria-describedby": "warmth-value"
+        }
+      },
+      {
+        "key": "#warmth-value",
+        "tag": "output",
+        "attrs": {
+          "id": "warmth-value",
+          "for": "warmth"
+        }
+      },
+      {
+        "key": "label[for=default-mode]",
+        "tag": "label",
+        "attrs": {
+          "for": "default-mode"
+        }
+      },
+      {
+        "key": "#default-mode",
+        "tag": "select",
+        "attrs": {
+          "id": "default-mode"
+        }
+      },
+      {
+        "key": "option[value=auto]@#default-mode",
+        "tag": "option",
+        "attrs": {
+          "value": "auto"
+        }
+      },
+      {
+        "key": "option[value=on]@#default-mode",
+        "tag": "option",
+        "attrs": {
+          "value": "on"
+        }
+      },
+      {
+        "key": "option[value=off]@#default-mode",
+        "tag": "option",
+        "attrs": {
+          "value": "off"
+        }
+      },
+      {
+        "key": "label[for=dim-images]",
+        "tag": "label",
+        "attrs": {
+          "for": "dim-images"
+        }
+      },
+      {
+        "key": "#dim-images",
+        "tag": "input",
+        "attrs": {
+          "type": "checkbox",
+          "id": "dim-images"
+        }
+      },
+      {
+        "key": "section{\"aria-labelledby\":\"schedule-title\"}",
+        "tag": "section",
+        "attrs": {
+          "aria-labelledby": "schedule-title"
+        }
+      },
+      {
+        "key": "#schedule-title",
+        "tag": "h2",
+        "attrs": {
+          "id": "schedule-title"
+        }
+      },
+      {
+        "key": "label[for=schedule]",
+        "tag": "label",
+        "attrs": {
+          "for": "schedule"
+        }
+      },
+      {
+        "key": "#schedule",
+        "tag": "select",
+        "attrs": {
+          "id": "schedule"
+        }
+      },
+      {
+        "key": "option[value=always]@#schedule",
+        "tag": "option",
+        "attrs": {
+          "value": "always"
+        }
+      },
+      {
+        "key": "option[value=system]@#schedule",
+        "tag": "option",
+        "attrs": {
+          "value": "system"
+        }
+      },
+      {
+        "key": "option[value=hours]@#schedule",
+        "tag": "option",
+        "attrs": {
+          "value": "hours"
+        }
+      },
+      {
+        "key": "#hours",
+        "tag": "div",
+        "attrs": {
+          "id": "hours",
+          "hidden": ""
+        }
+      },
+      {
+        "key": "label[for=from]",
+        "tag": "label",
+        "attrs": {
+          "for": "from"
+        }
+      },
+      {
+        "key": "#from",
+        "tag": "input",
+        "attrs": {
+          "type": "time",
+          "id": "from",
+          "value": "19:00"
+        }
+      },
+      {
+        "key": "label[for=to]",
+        "tag": "label",
+        "attrs": {
+          "for": "to"
+        }
+      },
+      {
+        "key": "#to",
+        "tag": "input",
+        "attrs": {
+          "type": "time",
+          "id": "to",
+          "value": "07:00"
+        }
+      },
+      {
+        "key": "#schedule-help",
+        "tag": "p",
+        "attrs": {
+          "id": "schedule-help"
+        }
+      },
+      {
+        "key": "section{\"aria-labelledby\":\"sites-title\"}",
+        "tag": "section",
+        "attrs": {
+          "aria-labelledby": "sites-title"
+        }
+      },
+      {
+        "key": "#sites-title",
+        "tag": "h2",
+        "attrs": {
+          "id": "sites-title"
+        }
+      },
+      {
+        "key": "label[for=search]",
+        "tag": "label",
+        "attrs": {
+          "for": "search"
+        }
+      },
+      {
+        "key": "#search",
+        "tag": "input",
+        "attrs": {
+          "type": "search",
+          "id": "search"
+        }
+      },
+      {
+        "key": "#count",
+        "tag": "span",
+        "attrs": {
+          "id": "count"
+        }
+      },
+      {
+        "key": "#sites",
+        "tag": "table",
+        "attrs": {
+          "id": "sites"
+        }
+      },
+      {
+        "key": "#rows",
+        "tag": "tbody",
+        "attrs": {
+          "id": "rows"
+        }
+      },
+      {
+        "key": "#empty",
+        "tag": "p",
+        "attrs": {
+          "id": "empty",
+          "hidden": ""
+        }
+      },
+      {
+        "key": "#danger",
+        "tag": "section",
+        "attrs": {
+          "id": "danger",
+          "tabindex": "-1",
+          "aria-labelledby": "danger-title"
+        }
+      },
+      {
+        "key": "#danger-title",
+        "tag": "h2",
+        "attrs": {
+          "id": "danger-title"
+        }
+      },
+      {
+        "key": "label[for=reset-host]",
+        "tag": "label",
+        "attrs": {
+          "for": "reset-host"
+        }
+      },
+      {
+        "key": "#reset-host",
+        "tag": "select",
+        "attrs": {
+          "id": "reset-host",
+          "aria-describedby": "reset-site-status"
+        }
+      },
+      {
+        "key": "option[value=]@#reset-host",
+        "tag": "option",
+        "attrs": {
+          "value": ""
+        }
+      },
+      {
+        "key": "#reset-site",
+        "tag": "button",
+        "attrs": {
+          "type": "button",
+          "id": "reset-site"
+        }
+      },
+      {
+        "key": "#reset-site-status",
+        "tag": "p",
+        "attrs": {
+          "id": "reset-site-status",
+          "role": "status"
+        }
+      },
+      {
+        "key": "#reset",
+        "tag": "button",
+        "attrs": {
+          "type": "button",
+          "id": "reset"
+        }
+      },
+      {
+        "key": "#reset-status",
+        "tag": "p",
+        "attrs": {
+          "id": "reset-status",
+          "role": "status"
+        }
+      },
+      {
+        "key": "#reset-modal",
+        "tag": "div",
+        "attrs": {
+          "id": "reset-modal",
+          "hidden": ""
+        }
+      },
+      {
+        "key": "#reset-dialog",
+        "tag": "div",
+        "attrs": {
+          "id": "reset-dialog",
+          "role": "dialog",
+          "aria-modal": "true",
+          "tabindex": "-1",
+          "aria-labelledby": "reset-dialog-title",
+          "aria-describedby": "reset-dialog-body"
+        }
+      },
+      {
+        "key": "#reset-dialog-title",
+        "tag": "h2",
+        "attrs": {
+          "id": "reset-dialog-title"
+        }
+      },
+      {
+        "key": "#reset-dialog-body",
+        "tag": "div",
+        "attrs": {
+          "id": "reset-dialog-body"
+        }
+      },
+      {
+        "key": "#reset-dialog-lead",
+        "tag": "p",
+        "attrs": {
+          "id": "reset-dialog-lead"
+        }
+      },
+      {
+        "key": "#reset-dialog-warning",
+        "tag": "p",
+        "attrs": {
+          "id": "reset-dialog-warning"
+        }
+      },
+      {
+        "key": "#reset-cancel",
+        "tag": "button",
+        "attrs": {
+          "type": "button",
+          "id": "reset-cancel"
+        }
+      },
+      {
+        "key": "#reset-go",
+        "tag": "button",
+        "attrs": {
+          "type": "button",
+          "id": "reset-go"
+        }
+      },
+      {
+        "key": "#reset-dialog-report",
+        "tag": "div",
+        "attrs": {
+          "id": "reset-dialog-report",
+          "role": "status",
+          "aria-live": "polite"
+        }
+      },
+      {
+        "key": "#reset-dialog-status",
+        "tag": "p",
+        "attrs": {
+          "id": "reset-dialog-status"
+        }
+      },
+      {
+        "key": "#reset-dialog-result",
+        "tag": "ul",
+        "attrs": {
+          "id": "reset-dialog-result",
+          "hidden": ""
+        }
+      },
+      {
+        "key": "script{\"src\":\"../shared/settings.js\"}",
+        "tag": "script",
+        "attrs": {
+          "src": "../shared/settings.js"
+        }
+      },
+      {
+        "key": "script{\"src\":\"../shared/restricted.js\"}",
+        "tag": "script",
+        "attrs": {
+          "src": "../shared/restricted.js"
+        }
+      },
+      {
+        "key": "script{\"src\":\"../shared/preload-reg.js\"}",
+        "tag": "script",
+        "attrs": {
+          "src": "../shared/preload-reg.js"
+        }
+      },
+      {
+        "key": "script{\"src\":\"../shared/motion.js\"}",
+        "tag": "script",
+        "attrs": {
+          "src": "../shared/motion.js"
+        }
+      },
+      {
+        "key": "script{\"src\":\"../shared/reset.js\"}",
+        "tag": "script",
+        "attrs": {
+          "src": "../shared/reset.js"
+        }
+      },
+      {
+        "key": "script{\"src\":\"options.js\"}",
+        "tag": "script",
+        "attrs": {
+          "src": "options.js"
+        }
+      }
+    ]
+  },
+  "js": {
+    "popup/popup.js": {
+      "ids": [
+        "brightness",
+        "brightness-value",
+        "contrast",
+        "contrast-value",
+        "device",
+        "dim-images",
+        "dot",
+        "enabled",
+        "enabled-text",
+        "engine-fieldset",
+        "from",
+        "hard-reset",
+        "host",
+        "hours",
+        "look",
+        "look-fieldset",
+        "look-summary",
+        "notice",
+        "options",
+        "pick",
+        "pick-help",
+        "reload",
+        "reset-site",
+        "reset-site-text",
+        "schedule",
+        "shortcut",
+        "site-fieldset",
+        "site-help",
+        "status-text",
+        "to",
+        "warmth",
+        "warmth-value"
+      ],
+      "names": [
+        "engine",
+        "site-mode"
+      ],
+      "selectors": [
+        ".dr-rise, .dr-lift",
+        ".seg",
+        ".seg-pill",
+        "input,select,button",
+        "input:checked"
+      ],
+      "bindings": [
+        "document -> animationcancel",
+        "document -> animationend",
+        "document -> animationstart",
+        "document -> change",
+        "document -> keydown",
+        "document -> transitioncancel",
+        "document -> transitionend",
+        "document -> transitionrun",
+        "document -> visibilitychange",
+        "el.dimImages -> change",
+        "el.enabled -> change",
+        "el.hardReset -> click",
+        "el.look -> change",
+        "el.options -> click",
+        "el.pick -> click",
+        "el.reload -> click",
+        "el.resetSite -> click",
+        "el.schedule -> change",
+        "engineInputs[j] -> change",
+        "input -> change",
+        "input -> input",
+        "siteInputs[i] -> change"
+      ]
+    },
+    "options/options.js": {
+      "ids": [
+        "band",
+        "brightness",
+        "brightness-value",
+        "contrast",
+        "contrast-value",
+        "count",
+        "danger",
+        "default-mode",
+        "dim-images",
+        "empty",
+        "enabled",
+        "from",
+        "hours",
+        "look",
+        "reset",
+        "reset-cancel",
+        "reset-dialog",
+        "reset-dialog-lead",
+        "reset-dialog-result",
+        "reset-dialog-status",
+        "reset-dialog-title",
+        "reset-go",
+        "reset-host",
+        "reset-modal",
+        "reset-site",
+        "reset-site-status",
+        "reset-status",
+        "rows",
+        "saved",
+        "schedule",
+        "schedule-help",
+        "search",
+        "to",
+        "warmth",
+        "warmth-value"
+      ],
+      "names": [],
+      "selectors": [
+        ".dr-rise, .dr-lift",
+        "button,select,input,textarea,a[href],[tabindex]",
+        "main"
+      ],
+      "bindings": [
+        "button -> click",
+        "clear -> click",
+        "document -> animationcancel",
+        "document -> animationend",
+        "document -> animationstart",
+        "document -> keydown",
+        "document -> transitioncancel",
+        "document -> transitionend",
+        "document -> transitionrun",
+        "document -> visibilitychange",
+        "el.defaultMode -> change",
+        "el.dialogCancel -> click",
+        "el.dialogGo -> click",
+        "el.dimImages -> change",
+        "el.enabled -> change",
+        "el.look -> change",
+        "el.modal -> mousedown",
+        "el.reset -> click",
+        "el.resetSite -> click",
+        "el.schedule -> change",
+        "el.search -> input",
+        "input -> change",
+        "input -> input",
+        "select -> change",
+        "window -> hashchange"
+      ]
+    }
+  }
+}

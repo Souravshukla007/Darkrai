@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Darkrai fixture: twenty quick flicks of the master switch</title>
+  <script>
+    // Long tasks from the very start, so the toggles below can be judged.
+    window.__drLong = [];
+    window.__drLongSupported = false;
+    try {
+      new PerformanceObserver(function (list) {
+        list.getEntries().forEach(function (e) { window.__drLong.push([e.startTime, e.duration]); });
+      }).observe({ type: 'longtask' });
+      window.__drLongSupported = true;
+    } catch (e) { }
+
+    // A page with some weight to it, the way a long article has: a few hundred
+    // rules in three sheets and a few thousand elements, some with inline colours.
+    (function () {
+      for (var s = 0; s < 3; s++) {
+        var css = '';
+        for (var i = 0; i < 300; i++) {
+          var n = s * 300 + i;
+          var shade = (200 + (n % 50)).toString(16);
+          css += '.c' + n + '{color:#2' + (n % 10) + '2' + (n % 10) + '2' + (n % 10) + ';background-color:#' +
+            shade + shade + shade + ';border:1px solid #d' + (n % 10) + 'd' + (n % 10) + 'd' + (n % 10) + ';}\n';
+        }
+        var el = document.createElement('style');
+        el.textContent = css;
+        document.head.appendChild(el);
+      }
+    })();
+  </script>
+  <style>
+    body {
+      margin: 0;
+      padding: 16px;
+      background: #ffffff;
+      color: #202122;
+      font: 14px/1.5 system-ui, sans-serif;
+    }
+
+    .row {
+      padding: 2px 6px;
+      margin: 1px 0;
+    }
+  </style>
+  <script>window.__DR_SHIM__ = {};</script>
+  <script src="../shim/chrome-shim.js"></script>
+</head>
+
+<body>
+  <h1>Twenty quick flicks of the master switch</h1>
+  <p>After the switch has been flicked twenty times, about 20 ms apart, the page must
+    end up exactly as a fresh load leaves it, and the page must not freeze on the way.</p>
+  <div id="rows"></div>
+  <script>
+    (function () {
+      var host = document.getElementById('rows');
+      var html = '';
+      for (var i = 0; i < 3000; i++) {
+        var inline = i % 3 === 0 ? ' style="background-color:#fafafa;color:#333333"' : '';
+        html += '<div class="row c' + (i % 900) + '"' + inline + '>Row ' + i +
+          ' of a long article, <a href="#r' + i + '">a link</a> and <b>some bold text</b>.</div>';
+      }
+      host.innerHTML = html;
+    })();
+  </script>
+
+  <script>
+    // The content scripts, in manifest order. ?ext=<relative folder> loads
+    // another copy of extension/ (how this fixture was run against the code
+    // from before the fix); anything but a plain relative path is ignored.
+    (function () {
+      var ext = new URLSearchParams(location.search).get('ext') || '';
+      if (!/^\.{0,2}\/?[\w\-./]+\/$/.test(ext) || /:/.test(ext)) ext = '../../extension/';
+      ['shared/timing.js', 'shared/color.js', 'shared/settings.js', 'shared/restricted.js',
+        'content/detect.js', 'content/engine-smart.js', 'content/engine-simple.js',
+        'content/readability.js', 'content/icons.js', 'content/picker.js', 'content/main.js'
+      ].forEach(function (f) { document.write('<script src="' + ext + f + '"><\/script>'); });
+    })();
+  </script>
+  <script>
+    (function () {
+      'use strict';
+      var results = [];
+      function add(name, pass, detail) { results.push({ name: name, pass: !!pass, detail: detail || '' }); }
+      function finish() { window.__DR_RESULTS__ = results; window.__DR_RESULTS_DONE__ = true; }
+
+      /** Darkrai's style set: its <style> nodes by kind, its adopted sheets, the marker. */
+      function styleSet() {
+        var g = {};
+        var nodes = document.querySelectorAll('style[data-darkrai]');
+        for (var i = 0; i < nodes.length; i++) {
+          var k = nodes[i].getAttribute('data-darkrai') || '';
+          g[k] = (g[k] || 0) + 1;
+        }
+        var adopted = 0;
+        var list = document.adoptedStyleSheets || [];
+        for (var j = 0; j < list.length; j++) if (list[j] && list[j].__darkrai) adopted++;
+        return Object.keys(g).sort().map(function (k) { return k + ':' + g[k]; }).join(',') +
+          ' | adopted:' + adopted + ' | data-darkrai=' + document.documentElement.getAttribute('data-darkrai');
+      }
+
+      function duplicates() {
+        var seen = {}, dup = 0;
+        var nodes = document.querySelectorAll('style[data-darkrai]');
+        for (var i = 0; i < nodes.length; i++) {
+          var key = nodes[i].getAttribute('data-darkrai') + '\u0000' + nodes[i].textContent;
+          if (nodes[i].textContent && seen[key]) dup++; else seen[key] = true;
+        }
+        return dup;
+      }
+
+      /** The style set once it has held still for a second. */
+      function settled(done) {
+        var last = null, stable = 0, tries = 0;
+        (function poll() {
+          var now = styleSet();
+          stable = now === last ? stable + 1 : 0;
+          last = now;
+          if (stable >= 5 || tries++ > 75) { done(now, stable >= 5); return; }
+          setTimeout(poll, 200);
+        })();
+      }
+
+      function flickTwenty(then) {
+        var i = 0;
+        (function flick() {
+          var store = window.__darkraiShim.store();
+          store.settings.enabled = !store.settings.enabled;
+          chrome.storage.local.set({ settings: store.settings });
+          if (++i < 20) setTimeout(flick, 20);
+          else then();
+        })();
+      }
+
+      window.addEventListener('load', function () {
+        setTimeout(function () {
+          settled(function (fresh, freshStill) {
+            var t0 = performance.now();
+            flickTwenty(function () {
+              setTimeout(function () {
+                settled(function (final, finalStill) {
+                  var during = window.__drLong.filter(function (x) { return x[0] >= t0; });
+                  var longest = during.reduce(function (a, x) { return Math.max(a, x[1]); }, 0);
+                  var tbt = during.reduce(function (a, x) { return a + Math.max(0, x[1] - 50); }, 0);
+                  add('the switch ends where it started: on', window.__darkraiShim.store().settings.enabled === true, '');
+                  add('the page is darkened again', document.documentElement.getAttribute('data-darkrai') === 'on',
+                    'data-darkrai="' + document.documentElement.getAttribute('data-darkrai') + '"');
+                  add("the style set after twenty toggles equals the fresh load's", final === fresh && freshStill && finalStill,
+                    'fresh load: ' + fresh + (freshStill ? '' : ' (never held still)') +
+                    '; after the toggles: ' + final + (finalStill ? '' : ' (never held still)'));
+                  add('no duplicate Darkrai style nodes', duplicates() === 0, duplicates() + ' duplicate(s)');
+                  if (window.__drLongSupported) {
+                    add('no task of 200 ms or more during and after the toggles', longest < 200,
+                      during.length + ' long task(s), longest ' + Math.round(longest) + ' ms, total blocking ' +
+                      Math.round(tbt) + ' ms');
+                  } else {
+                    results.push({ name: 'no task of 200 ms or more', pass: true, skipped: true,
+                      detail: 'this browser has no longtask PerformanceObserver' });
+                  }
+                  finish();
+                });
+              }, 300);
+            });
+          });
+        }, 300);
+      });
+    })();
+  </script>
+</body>
+
+</html>

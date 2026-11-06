@@ -1,0 +1,551 @@
+/*
+ * Darkrai - options/options.css
+ *
+ * The Handheld settings page: a dark charcoal page under a red device-style
+ * header band (LED, a small LCD with the screen art, the title and the master
+ * switch), charcoal panels, the popup's pill controls and a red danger area.
+ * Tokens, the LED / LCD pieces and the shared fallbacks live in
+ * ../shared/handheld.css, linked first. Only transform and opacity animate.
+ */
+
+/* The tokens the popup's Minimal Pokedex refined, kept in step here so the
+   two surfaces show the same LED colours and move the same way. */
+:root {
+  --dr-page: #101116;
+  --dr-led-on: #3ee26b;
+  --dr-led-native: #5cc8f5;
+  --dr-led-off: #f5d33a;
+  --dr-t-fast: 120ms;
+  --dr-t-mid: 180ms;
+  --dr-t-slow: 220ms;
+  --dr-press: cubic-bezier(0.3, 1.2, 0.5, 1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 24px 16px 48px;
+  background: var(--dr-page);
+  color: var(--dr-fg);
+  font: 14px/1.5 system-ui, "Segoe UI", Roboto, sans-serif;
+}
+
+main {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+/* ------------------------------------------------------- the device band */
+
+.dr-band {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 14px 18px;
+  border: 1px solid var(--dr-red-line);
+  border-radius: 22px;
+  background: linear-gradient(180deg, var(--dr-red-hi) 0%, var(--dr-red) 35%, var(--dr-red) 80%, #b81d21 100%);
+  box-shadow: inset 2px 2px 0 rgb(255 255 255 / 0.22), inset -2px -3px 0 rgb(0 0 0 / 0.28),
+    0 4px 14px rgb(0 0 0 / 0.6);
+}
+
+.band-lcd {
+  width: 64px;
+  height: 46px;
+  padding: 5px;
+}
+
+/* The popup's 24px pixel sprite, at 1x: whole-number scaling only. */
+.band-lcd .dr-art {
+  width: 24px;
+  height: 24px;
+}
+
+h1 {
+  flex: 1 1 auto;
+  margin: 0;
+  color: #ffffff;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.dr-band .switch {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+h2 {
+  margin: 0 0 10px;
+  color: var(--dr-label);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+section {
+  margin-top: 22px;
+  padding: 16px;
+}
+
+section:nth-of-type(1) { animation-delay: 30ms; }
+section:nth-of-type(2) { animation-delay: 60ms; }
+section:nth-of-type(3) { animation-delay: 90ms; }
+section:nth-of-type(4) { animation-delay: 120ms; }
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.row > label {
+  flex: 0 0 150px;
+}
+
+.row input[type="range"] {
+  flex: 1 1 200px;
+  max-width: 280px;
+}
+
+.row output {
+  min-width: 36px;
+  color: var(--dr-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.hours > label {
+  flex: 0 0 auto;
+}
+
+/* display:flex would otherwise beat [hidden]: From/To are for custom hours only. */
+.row[hidden] {
+  display: none;
+}
+
+/* ------------------------------------------------------------ form controls */
+
+select,
+input[type="search"],
+input[type="time"],
+button,
+code {
+  border: 1px solid var(--dr-pill-line);
+  background: var(--dr-pill);
+  color: var(--dr-fg);
+  font: inherit;
+}
+
+select,
+input[type="search"],
+input[type="time"] {
+  min-height: 34px;
+  padding: 0 10px;
+  border-radius: var(--dr-radius-sm);
+}
+
+select:hover,
+input[type="search"]:hover,
+input[type="time"]:hover,
+button:hover {
+  border-color: rgb(255 255 255 / 0.45);
+}
+
+input[type="search"] {
+  flex: 1 1 200px;
+  max-width: 280px;
+}
+
+input[type="search"]::placeholder {
+  color: #9da1aa;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 18px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
+  border: 1px solid var(--dr-pill-line);
+  border-radius: 999px;
+  background: #34363d;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  margin-top: -6px;
+  border: 1px solid #111111;
+  border-radius: 50%;
+  background: var(--dr-pick);
+  transition: transform var(--dr-t-fast) var(--dr-press);
+}
+
+input[type="range"]:active::-webkit-slider-thumb {
+  transform: scale(1.2);
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 10px;
+  cursor: pointer;
+}
+
+.check input,
+.switch input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--dr-pick);
+}
+
+.switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.saved {
+  min-height: 18px;
+  margin: 10px 0 0;
+  color: var(--dr-muted);
+  font-size: 12px;
+}
+
+.help {
+  margin: 8px 0 0;
+  color: var(--dr-soft);
+  font-size: 12.5px;
+}
+
+.count {
+  color: var(--dr-muted);
+  font-size: 12.5px;
+}
+
+/* ------------------------------------------------------------- the site list */
+
+table {
+  width: 100%;
+  margin-top: 6px;
+  border-collapse: collapse;
+}
+
+caption {
+  text-align: left;
+}
+
+th,
+td {
+  padding: 7px 8px;
+  border-bottom: 1px solid var(--dr-panel-line);
+  text-align: left;
+  vertical-align: middle;
+}
+
+th {
+  color: var(--dr-muted);
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+tbody tr {
+  background: transparent;
+}
+
+tbody tr:hover {
+  background: #1f2126;
+}
+
+td.site {
+  word-break: break-all;
+}
+
+td select {
+  width: 100%;
+  max-width: 160px;
+}
+
+/* A customizable select (shared/select.css) sizes itself to the SELECTED
+   label, a classic one to its widest option. These are the classic widths,
+   kept as minimums so the closed selects do not change size. */
+@supports (appearance: base-select) {
+  #look { min-inline-size: 158px; }
+  #default-mode { min-inline-size: 128px; }
+  #schedule { min-inline-size: 172px; }
+  #reset-host { min-inline-size: 148px; }
+}
+
+.empty {
+  margin: 10px 0 0;
+  color: var(--dr-muted);
+  font-size: 13px;
+}
+
+/* ------------------------------------------------------------------ buttons */
+
+button {
+  min-height: 34px;
+  padding: 0 14px;
+  border-radius: var(--dr-radius);
+  cursor: pointer;
+  transition: transform var(--dr-t-fast) var(--dr-press);
+}
+
+button:active {
+  transform: scale(0.96);
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+button:disabled:active {
+  transform: none;
+}
+
+.btn-danger {
+  border-color: var(--dr-danger);
+  background: var(--dr-danger);
+  color: var(--dr-danger-fg);
+  font-weight: 700;
+}
+
+.btn-danger:hover {
+  border-color: #ff8a8a;
+  background: var(--dr-danger-hover);
+}
+
+/* ------------------------------------------------------------ danger area */
+
+.danger {
+  border-top: 4px solid var(--dr-danger);
+}
+
+.danger h3 {
+  margin: 0 0 4px;
+  color: var(--dr-fg);
+  font-size: 13.5px;
+  font-weight: 700;
+}
+
+.danger-mild,
+.danger-hard {
+  padding: 12px;
+  border-radius: var(--dr-radius-sm);
+}
+
+.danger-mild {
+  border: 1px solid var(--dr-pill-line);
+  background: var(--dr-seg);
+}
+
+.danger-hard {
+  margin-top: 14px;
+  border: 1px solid var(--dr-danger-line);
+  border-left-width: 4px;
+  background: #241315;
+}
+
+.danger-hard > p {
+  margin: 8px 0 4px;
+  font-size: 13px;
+}
+
+.danger-list {
+  margin: 0 0 8px;
+  padding-left: 20px;
+  font-size: 13px;
+}
+
+.danger-list li {
+  margin: 2px 0;
+}
+
+.danger-warning {
+  margin: 8px 0 12px;
+  font-size: 13px;
+}
+
+.danger-result {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  font-size: 12.5px;
+}
+
+.danger-result li {
+  margin: 3px 0;
+}
+
+.danger-result .bad {
+  font-weight: 700;
+}
+
+/* -------------------------------------------------- the confirmation dialog */
+
+/* [hidden] alone cannot hide a flex container. */
+.dr-modal {
+  position: fixed;
+  z-index: 10;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgb(0 0 0 / 0.7);
+}
+
+.dr-modal[hidden] {
+  display: none;
+}
+
+/* A dark panel with a red top edge. */
+.dr-dialog {
+  width: 100%;
+  max-width: 420px;
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+  padding: 18px;
+  border-top: 5px solid var(--dr-red);
+}
+
+.dr-dialog h2 {
+  margin: 0 0 10px;
+  color: var(--dr-fg);
+  font-size: 16px;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.dr-dialog p {
+  margin: 8px 0;
+  font-size: 13px;
+}
+
+.dr-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--dr-ring);
+  outline-offset: 2px;
+}
+
+code {
+  padding: 1px 5px;
+  border-radius: 5px;
+  font-size: 12.5px;
+}
+
+footer {
+  margin-top: 22px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --------------------------------------------------------------- fallbacks */
+
+@media (prefers-reduced-motion: reduce) {
+  button,
+  input[type="range"]::-webkit-slider-thumb {
+    transition: none;
+  }
+
+  button:active,
+  input[type="range"]:active::-webkit-slider-thumb {
+    transform: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .dr-band {
+    background: Canvas;
+    border-color: CanvasText;
+    box-shadow: none;
+  }
+
+  h1,
+  .dr-band .switch {
+    color: CanvasText;
+  }
+
+  select,
+  input[type="search"],
+  input[type="time"],
+  button,
+  code,
+  .btn-danger {
+    background-color: ButtonFace;
+    border-color: ButtonText;
+    color: ButtonText;
+  }
+
+  .danger-mild,
+  .danger-hard,
+  tbody tr,
+  tbody tr:hover,
+  .dr-modal {
+    background-color: Canvas;
+    border-color: CanvasText;
+  }
+
+  th,
+  td {
+    border-bottom-color: CanvasText;
+  }
+
+  input[type="range"]::-webkit-slider-runnable-track {
+    background-color: ButtonFace;
+    border-color: ButtonText;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    background-color: Highlight;
+    border-color: ButtonText;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .danger-hard {
+    background: #000000;
+  }
+
+  .dr-modal {
+    background-color: rgb(0 0 0 / 0.85);
+  }
+
+  th,
+  td {
+    border-bottom-color: var(--dr-panel-line);
+  }
+}

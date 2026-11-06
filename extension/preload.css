@@ -1,0 +1,19 @@
+/*
+ * Darkrai - preload.css
+ * The early dark background (PLAN section 6.8), registered at document_start so
+ * a page never flashes white before the page script has decided what to do.
+ *
+ * The page script sets data-darkrai on <html> the moment it decides, which
+ * switches every rule below off. It is registered only while Darkrai is on and
+ * the schedule allows it, and never for a site set to Never.
+ */
+@media screen {
+  html:not([data-darkrai]) {
+    color-scheme: dark !important;
+    background-color: #242424 !important;
+  }
+
+  html:not([data-darkrai]) body {
+    background-color: transparent !important;
+  }
+}

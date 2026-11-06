@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" data-dr-expect="native" data-dr-settle="900">
+
+<head>
+  <meta charset="utf-8">
+  <title>Darkrai fixture: a site with its own dark theme (YouTube-like)</title>
+  <style>
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background: #0f0f0f;
+      color: #f1f1f1;
+      font: 15px/1.6 system-ui, sans-serif;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      padding: 12px 18px;
+      background: #212121;
+      color: #ffffff;
+    }
+
+    .layout {
+      display: flex;
+      min-height: 90vh;
+    }
+
+    nav {
+      flex: 0 0 180px;
+      padding: 14px;
+      background: #181818;
+      color: #aaaaaa;
+    }
+
+    main {
+      flex: 1 1 auto;
+      padding: 18px;
+      background: #0f0f0f;
+    }
+
+    .tile {
+      margin-bottom: 14px;
+      padding: 14px;
+      border: 1px solid #303030;
+      border-radius: 10px;
+      background: #1c1c1c;
+      color: #f1f1f1;
+    }
+
+    .tile p {
+      color: #aaaaaa;
+    }
+
+    a {
+      color: #3ea6ff;
+    }
+  </style>
+  <script>window.__DR_SHIM__ = {};</script>
+  <script src="../shim/chrome-shim.js"></script>
+</head>
+
+<body>
+  <header>This site already has a dark theme</header>
+  <div class="layout">
+    <nav>
+      <p>Home</p>
+      <p>Subscriptions</p>
+      <p>Library</p>
+    </nav>
+    <main>
+      <div class="tile">
+        <h2>Leave me alone</h2>
+        <p>Darkrai must not touch a page that is already dark with light text.</p>
+        <p><a href="#nowhere">A link in the site's own accent colour</a></p>
+      </div>
+      <div class="tile">
+        <h2>A second tile</h2>
+        <p>Nine sample points should all land on a dark, opaque background.</p>
+      </div>
+    </main>
+  </div>
+
+  <script src="../../extension/shared/timing.js"></script>
+  <script src="../../extension/shared/color.js"></script>
+  <script src="../../extension/shared/settings.js"></script>
+  <script src="../../extension/shared/restricted.js"></script>
+  <script src="../../extension/content/detect.js"></script>
+  <script src="../../extension/content/engine-smart.js"></script>
+  <script src="../../extension/content/engine-simple.js"></script>
+  <script src="../../extension/content/readability.js"></script>
+  <script src="../../extension/content/icons.js"></script>
+  <script src="../../extension/content/picker.js"></script>
+  <script src="../../extension/content/main.js"></script>
+  <script src="./assert.js"></script>
+</body>
+
+</html>

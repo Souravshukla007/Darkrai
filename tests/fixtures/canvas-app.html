@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" data-dr-expect="simple" data-dr-settle="1200">
+
+<head>
+  <meta charset="utf-8">
+  <title>Darkrai fixture: an app that draws its text on a canvas</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 24px;
+      background: #ffffff;
+      color: #222222;
+      font: 15px/1.6 system-ui, sans-serif;
+    }
+
+    canvas {
+      border: 1px solid #cccccc;
+    }
+  </style>
+  <script>
+    // Simple mode is a per-site choice, so the entry is keyed on the live host.
+    // Serve this folder over http for the setting to apply (file:// has no host).
+    window.__DR_SHIM__ = { site: { mode: 'on', engine: 'filter' } };
+  </script>
+  <script src="../shim/chrome-shim.js"></script>
+</head>
+
+<body>
+  <h1>A document drawn on a canvas</h1>
+  <p>Recolouring cannot reach pixels, so this site uses Simple mode, like Google
+    Docs, Sheets and Slides do by default.</p>
+  <canvas id="page" width="520" height="180"></canvas>
+
+  <script>
+    var ctx = document.getElementById('page').getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, 520, 180);
+    ctx.fillStyle = '#1a1a1a';
+    ctx.font = '16px system-ui, sans-serif';
+    ctx.fillText('Text painted onto a canvas, invisible to CSS.', 16, 40);
+    ctx.fillText('Only a whole-page filter can darken this.', 16, 70);
+    ctx.strokeStyle = '#999999';
+    ctx.strokeRect(12, 90, 300, 60);
+  </script>
+
+  <script src="../../extension/shared/timing.js"></script>
+  <script src="../../extension/shared/color.js"></script>
+  <script src="../../extension/shared/settings.js"></script>
+  <script src="../../extension/shared/restricted.js"></script>
+  <script src="../../extension/content/detect.js"></script>
+  <script src="../../extension/content/engine-smart.js"></script>
+  <script src="../../extension/content/engine-simple.js"></script>
+  <script src="../../extension/content/readability.js"></script>
+  <script src="../../extension/content/icons.js"></script>
+  <script src="../../extension/content/picker.js"></script>
+  <script src="../../extension/content/main.js"></script>
+  <script>
+    window.__DR_EXTRA_CHECKS__ = function (api) {
+      var canvas = document.getElementById('page');
+      var filter = getComputedStyle(canvas).filter;
+      if (location.protocol === 'file:') {
+        api.skip('the canvas keeps its own pixels in Simple mode',
+          'needs an http origin for the per-site setting');
+        return;
+      }
+      // The Docs preset leaves the canvas alone; every other site re-inverts it
+      // so that charts and photos drawn on a canvas still look right.
+      api.add('the canvas is re-inverted outside the Docs preset',
+        filter !== 'none' && filter !== '',
+        'canvas filter = ' + filter);
+    };
+  </script>
+  <script src="./assert.js"></script>
+</body>
+
+</html>

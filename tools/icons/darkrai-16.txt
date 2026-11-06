@@ -1,0 +1,38 @@
+# Darkrai - tools/icons/darkrai-16.txt
+#
+# The header avatar: a simplified 16x16 of darkrai-24.txt, shown at x2
+# (32px) in the popup's light-green avatar tile, image-rendering: pixelated.
+# Same features, fewer pixels: the plume up and to the right, one eye, the
+# red collar's four spikes, a ragged cloak, thin arms.
+#
+# Edit the grid, then rebuild the PNG (nothing else is touched):
+#   node tools\icons\build-icons.js --sprites-only
+# Output: extension\popup\avatar-art.png
+# A full run (no flag) also rebuilds the 16 and 32 px toolbar icons from it.
+#
+# palette (one character per pixel)
+#   .  transparent
+#   K  #121216  body black, outline, pupil
+#   k  #2E2F36  body shade
+#   W  #F4F4F4  plume
+#   w  #BFC4CC  plume shade
+#   R  #D7262B  collar red
+#   r  #8C1418  collar shade
+#   B  #57C7F2  eye
+#
+.............KK.
+...........KKWWK
+.........KKWKWWK
+........KWWWWWWK
+.......KwWWWWWWK
+......KwWWWWwwK.
+......KwWWwwKK..
+....KKKKwwKK....
+...KKKKKKK......
+...KBBKK........
+.RRRKKKRRR......
+RRrrrrrrrRR.....
+R..RKKkR..R.....
+..K.KKk.K.......
+.K.KKKKk.K......
+...K.K.k........

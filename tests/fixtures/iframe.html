@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" data-dr-expect="dark" data-dr-settle="1500">
+
+<head>
+  <meta charset="utf-8">
+  <title>Darkrai fixture: frames</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 24px;
+      background: #ffffff;
+      color: #222222;
+      font: 15px/1.6 system-ui, sans-serif;
+    }
+
+    iframe {
+      width: 100%;
+      max-width: 560px;
+      height: 140px;
+      margin-top: 12px;
+      border: 1px solid #cccccc;
+    }
+  </style>
+  <script>window.__DR_SHIM__ = {};</script>
+  <script src="../shim/chrome-shim.js"></script>
+</head>
+
+<body>
+  <h1>A page with frames</h1>
+  <p>Each frame runs the page script itself and follows the top page's site setting.</p>
+
+  <iframe id="file-frame" src="./iframe-child.html" title="A framed document"></iframe>
+  <iframe id="srcdoc-frame" title="A srcdoc frame" srcdoc="<!DOCTYPE html><html><body style='background:#ffffff;color:#333333;font:14px system-ui;margin:0;padding:12px'><p>A srcdoc frame, with no URL of its own.</p></body></html>"></iframe>
+
+  <script src="../../extension/shared/timing.js"></script>
+  <script src="../../extension/shared/color.js"></script>
+  <script src="../../extension/shared/settings.js"></script>
+  <script src="../../extension/shared/restricted.js"></script>
+  <script src="../../extension/content/detect.js"></script>
+  <script src="../../extension/content/engine-smart.js"></script>
+  <script src="../../extension/content/engine-simple.js"></script>
+  <script src="../../extension/content/readability.js"></script>
+  <script src="../../extension/content/icons.js"></script>
+  <script src="../../extension/content/picker.js"></script>
+  <script src="../../extension/content/main.js"></script>
+  <script>
+    window.__DR_EXTRA_CHECKS__ = function (api) {
+      var frame = document.getElementById('file-frame');
+      var doc = null;
+      try { doc = frame.contentDocument; } catch (e) { doc = null; }
+      if (!doc || !doc.documentElement) {
+        api.skip('the framed document is darkened too',
+          'the frame is a separate origin here; serve the folder over http to check it');
+        return;
+      }
+      var state = doc.documentElement.getAttribute('data-darkrai');
+      var l = api.lightnessOf(getComputedStyle(doc.documentElement).backgroundColor);
+      api.add('the framed document is darkened too',
+        state === 'on' && l != null && l < 0.45,
+        'frame data-darkrai="' + state + '", background L=' + (l == null ? 'n/a' : l.toFixed(3)));
+    };
+  </script>
+  <script src="./assert.js"></script>
+</body>
+
+</html>

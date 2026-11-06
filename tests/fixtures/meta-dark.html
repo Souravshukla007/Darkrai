@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" data-dr-expect="native" data-dr-settle="900">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="color-scheme" content="dark">
+  <title>Darkrai fixture: the page declares a dark colour scheme</title>
+  <style>
+    /* No colours on purpose: Chrome paints its own dark canvas and light text
+       because of the meta above. Darkrai must take that as the site's choice. */
+    body {
+      margin: 0;
+      padding: 24px;
+      font: 15px/1.6 system-ui, sans-serif;
+    }
+
+    .box {
+      max-width: 520px;
+      margin-top: 16px;
+      padding: 14px;
+      border: 1px solid;
+    }
+  </style>
+  <script>window.__DR_SHIM__ = {};</script>
+  <script src="../shim/chrome-shim.js"></script>
+</head>
+
+<body>
+  <h1>Declared dark, nothing else</h1>
+  <p>The only dark-mode signal here is the color-scheme meta element.</p>
+  <div class="box">
+    <p>Form controls and the canvas come from Chrome's dark scheme.</p>
+    <label for="a">A field</label>
+    <input id="a" type="text" value="typed text">
+    <button type="button">A button</button>
+  </div>
+
+  <script src="../../extension/shared/timing.js"></script>
+  <script src="../../extension/shared/color.js"></script>
+  <script src="../../extension/shared/settings.js"></script>
+  <script src="../../extension/shared/restricted.js"></script>
+  <script src="../../extension/content/detect.js"></script>
+  <script src="../../extension/content/engine-smart.js"></script>
+  <script src="../../extension/content/engine-simple.js"></script>
+  <script src="../../extension/content/readability.js"></script>
+  <script src="../../extension/content/icons.js"></script>
+  <script src="../../extension/content/picker.js"></script>
+  <script src="../../extension/content/main.js"></script>
+  <script src="./assert.js"></script>
+</body>
+
+</html>

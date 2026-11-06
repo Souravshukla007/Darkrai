@@ -1,0 +1,16 @@
+/*
+ * Darkrai - preload-system.css
+ * The same early dark background as preload.css, but only while the system or
+ * Chrome theme is dark. Registered instead of preload.css when the schedule is
+ * set to "Follow system" (PLAN section 6.8).
+ */
+@media screen and (prefers-color-scheme: dark) {
+  html:not([data-darkrai]) {
+    color-scheme: dark !important;
+    background-color: #242424 !important;
+  }
+
+  html:not([data-darkrai]) body {
+    background-color: transparent !important;
+  }
+}

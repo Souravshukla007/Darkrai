@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" data-dr-expect="dark" data-dr-settle="1400">
+
+<head>
+  <meta charset="utf-8">
+  <title>Darkrai fixture: colours inside an open shadow root</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 24px;
+      background: #ffffff;
+      color: #222222;
+      font: 15px/1.6 system-ui, sans-serif;
+    }
+  </style>
+  <script>window.__DR_SHIM__ = {};</script>
+  <script src="../shim/chrome-shim.js"></script>
+</head>
+
+<body>
+  <h1>A self-contained component</h1>
+  <p>The card below keeps its styles inside an open shadow root.</p>
+
+  <dr-card id="early"></dr-card>
+  <dr-card id="late"></dr-card>
+
+  <script>
+    class DrCard extends HTMLElement {
+      connectedCallback() {
+        if (this.shadowRoot) return;
+        const root = this.attachShadow({ mode: 'open' });
+        root.innerHTML = `
+          <style>
+            .card {
+              margin: 12px 0;
+              padding: 14px;
+              border: 1px solid #dddddd;
+              border-radius: 8px;
+              background: #fafafa;
+              color: #333333;
+              font: 15px/1.6 system-ui, sans-serif;
+            }
+            .card h2 { color: #111111; margin: 0 0 6px; font-size: 18px; }
+            .card .note { color: #777777; }
+            .card button {
+              padding: 6px 12px; border: 1px solid #1565c0;
+              background: #1565c0; color: #ffffff; font: inherit;
+            }
+          </style>
+          <div class="card">
+            <h2>Inside the shadow root</h2>
+            <p>These colours are invisible to the page's own stylesheets.</p>
+            <p class="note">A quieter line.</p>
+            <button type="button">A button</button>
+          </div>`;
+      }
+    }
+    customElements.define('dr-card', DrCard);
+
+    // Custom elements often attach their root late, so check that path too.
+    setTimeout(function () {
+      const host = document.createElement('dr-card');
+      host.id = 'later-still';
+      document.body.appendChild(host);
+    }, 400);
+  </script>
+
+  <script src="../../extension/shared/timing.js"></script>
+  <script src="../../extension/shared/color.js"></script>
+  <script src="../../extension/shared/settings.js"></script>
+  <script src="../../extension/shared/restricted.js"></script>
+  <script src="../../extension/content/detect.js"></script>
+  <script src="../../extension/content/engine-smart.js"></script>
+  <script src="../../extension/content/engine-simple.js"></script>
+  <script src="../../extension/content/readability.js"></script>
+  <script src="../../extension/content/icons.js"></script>
+  <script src="../../extension/content/picker.js"></script>
+  <script src="../../extension/content/main.js"></script>
+  <script>
+    // The sweep in assert.js only walks the light DOM, so check the shadow
+    // roots here.
+    window.__DR_EXTRA_CHECKS__ = function (api) {
+      var hosts = document.querySelectorAll('dr-card');
+      var checked = 0, failures = [];
+      for (var i = 0; i < hosts.length; i++) {
+        var root = hosts[i].shadowRoot;
+        if (!root) { failures.push(hosts[i].id + ': no shadow root'); continue; }
+        var card = root.querySelector('.card');
+        if (!card) { failures.push(hosts[i].id + ': no card'); continue; }
+        var l = api.lightnessOf(getComputedStyle(card).backgroundColor);
+        checked++;
+        if (l == null || l >= 0.45) failures.push(hosts[i].id + ' card L=' + (l == null ? 'n/a' : l.toFixed(3)));
+      }
+      api.add('shadow root backgrounds are darkened', failures.length === 0 && checked > 0,
+        checked + ' roots checked' + (failures.length ? '; FAILED: ' + failures.join(' | ') : ''));
+    };
+  </script>
+  <script src="./assert.js"></script>
+</body>
+
+</html>

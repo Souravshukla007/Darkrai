@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" data-dr-expect="dark" data-dr-settle="900">
+
+<head>
+  <meta charset="utf-8">
+  <title>Darkrai fixture: a plain light page</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 24px;
+      background: #ffffff;
+      color: #222222;
+      font: 15px/1.6 system-ui, sans-serif;
+    }
+
+    h1 {
+      color: #111111;
+      font-size: 26px;
+    }
+
+    a {
+      color: #1a0dab;
+    }
+
+    .card {
+      max-width: 520px;
+      margin: 18px 0;
+      padding: 16px;
+      border: 1px solid #dddddd;
+      border-radius: 8px;
+      background: #f7f7f8;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    }
+
+    .muted {
+      color: #666666;
+    }
+
+    button {
+      padding: 8px 14px;
+      border: 1px solid #c62828;
+      border-radius: 6px;
+      background: #c62828;
+      color: #ffffff;
+      font: inherit;
+    }
+
+    table {
+      border-collapse: collapse;
+      margin-top: 16px;
+    }
+
+    th,
+    td {
+      padding: 6px 12px;
+      border: 1px solid #cccccc;
+    }
+
+    th {
+      background: #eeeeee;
+      color: #333333;
+    }
+
+    .banner {
+      padding: 10px 14px;
+      background: linear-gradient(to right, #ffffff, #e3f2fd);
+      color: #0d47a1;
+    }
+  </style>
+  <script>window.__DR_SHIM__ = {};</script>
+  <script src="../shim/chrome-shim.js"></script>
+</head>
+
+<body>
+  <h1>A perfectly ordinary light page</h1>
+  <p>This page has no dark theme of its own, so Darkrai should darken it and keep every word readable.</p>
+  <p class="muted">Quieter supporting text, in grey.</p>
+  <p><a href="#nowhere">A link that goes nowhere</a></p>
+
+  <div class="card">
+    <h2>A card</h2>
+    <p>Borders, a tinted background and a shadow.</p>
+    <button type="button">Primary action</button>
+  </div>
+
+  <div class="banner">A gradient banner, which should stay a gradient.</div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Column</th>
+        <th>Another</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Value</td>
+        <td>Value</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <script src="../../extension/shared/timing.js"></script>
+  <script src="../../extension/shared/color.js"></script>
+  <script src="../../extension/shared/settings.js"></script>
+  <script src="../../extension/shared/restricted.js"></script>
+  <script src="../../extension/content/detect.js"></script>
+  <script src="../../extension/content/engine-smart.js"></script>
+  <script src="../../extension/content/engine-simple.js"></script>
+  <script src="../../extension/content/readability.js"></script>
+  <script src="../../extension/content/icons.js"></script>
+  <script src="../../extension/content/picker.js"></script>
+  <script src="../../extension/content/main.js"></script>
+  <script src="./assert.js"></script>
+</body>
+
+</html>

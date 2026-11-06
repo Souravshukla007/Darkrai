@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" data-dr-expect="dark" data-dr-settle="1100">
+
+<head>
+  <meta charset="utf-8">
+  <title>Darkrai fixture: colours hidden in CSS variables</title>
+  <style>
+    :root {
+      --page-bg: #ffffff;
+      --page-fg: #1b1b1b;
+      --surface: var(--page-bg);
+      --line: #d8d8d8;
+      --brand: #0b5fff;
+      --brand-text: #ffffff;
+      /* Used as a background in one place and as text in another, so it needs
+         two role variants. */
+      --dual: #2e7d32;
+    }
+
+    body {
+      margin: 0;
+      padding: 24px;
+      background: var(--page-bg);
+      color: var(--page-fg);
+      font: 15px/1.6 system-ui, sans-serif;
+    }
+
+    .panel {
+      max-width: 520px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+    }
+
+    .cta {
+      padding: 8px 14px;
+      border: 1px solid var(--brand);
+      background: var(--brand);
+      color: var(--brand-text);
+      font: inherit;
+    }
+
+    .dual-bg {
+      margin-top: 12px;
+      padding: 8px;
+      background: var(--dual);
+      color: #ffffff;
+    }
+
+    .dual-fg {
+      margin-top: 12px;
+      color: var(--dual);
+    }
+
+    .fallback {
+      color: var(--missing, #8a4b00);
+    }
+  </style>
+  <script>window.__DR_SHIM__ = {};</script>
+  <script src="../shim/chrome-shim.js"></script>
+</head>
+
+<body>
+  <h1>Every colour here comes from a variable</h1>
+  <div class="panel">
+    <p>The panel background is a variable that points at another variable.</p>
+    <button class="cta" type="button">Call to action</button>
+    <div class="dual-bg">The same variable, used as a background</div>
+    <div class="dual-fg">The same variable, used as text</div>
+    <p class="fallback">This one relies on a var() fallback.</p>
+  </div>
+
+  <script src="../../extension/shared/timing.js"></script>
+  <script src="../../extension/shared/color.js"></script>
+  <script src="../../extension/shared/settings.js"></script>
+  <script src="../../extension/shared/restricted.js"></script>
+  <script src="../../extension/content/detect.js"></script>
+  <script src="../../extension/content/engine-smart.js"></script>
+  <script src="../../extension/content/engine-simple.js"></script>
+  <script src="../../extension/content/readability.js"></script>
+  <script src="../../extension/content/icons.js"></script>
+  <script src="../../extension/content/picker.js"></script>
+  <script src="../../extension/content/main.js"></script>
+  <script src="./assert.js"></script>
+</body>
+
+</html>

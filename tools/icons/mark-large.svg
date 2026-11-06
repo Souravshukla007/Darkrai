@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Darkrai toolbar mark - "nightfall crescent", the 48 and 128 px drawing.
+
+  Original artwork, authored for this extension. It is not the Pokemon
+  character, is not traced from it, and is not any other existing character or
+  logo. Nothing here is fetched from the internet.
+
+  128x128 viewBox, artwork inside a 112x112 safe box (8 px of padding on every
+  side) so Chrome's own icon padding never clips it. No background rect: the
+  silhouette is what reads, on a light toolbar and on a dark one.
+
+  Palette is picked so the ink clears 3:1 against #FFFFFF and against #1B1B1B:
+    #8E6CFF crescent body   3.66:1 on white, 4.71:1 on near-black
+    #E5484D warm spark      3.91:1 on white, 4.40:1 on near-black
+    #3A2470 inner edge      decorative only, never the silhouette
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <clipPath id="dr-outer">
+      <circle cx="60" cy="62" r="44"/>
+    </clipPath>
+  </defs>
+
+  <!-- wisp: two tapered strokes trailing from the crescent's lower limb -->
+  <path d="M46 94 Q32 106 18 108" fill="none" stroke="#8E6CFF" stroke-width="9"
+        stroke-linecap="round" opacity="0.55"/>
+  <path d="M54 102 Q42 112 28 114" fill="none" stroke="#8E6CFF" stroke-width="6"
+        stroke-linecap="round" opacity="0.35"/>
+
+  <!-- crescent: disc r=44 at (60,62) minus disc r=36 at (78,50) -->
+  <path fill="#8E6CFF" fill-rule="evenodd"
+        d="M16 62 A44 44 0 1 1 104 62 A44 44 0 1 1 16 62 Z
+           M42 50 A36 36 0 1 1 114 50 A36 36 0 1 1 42 50 Z"/>
+
+  <!-- inner edge: a thin arc hugging the concave side -->
+  <g clip-path="url(#dr-outer)">
+    <circle cx="78" cy="50" r="36" fill="none" stroke="#3A2470" stroke-width="2"/>
+  </g>
+
+  <!-- spark: the one warm accent, sitting in the crescent's open side -->
+  <circle cx="86" cy="40" r="7" fill="#E5484D"/>
+</svg>

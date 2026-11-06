@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Darkrai fixture: framed document</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 14px;
+      background: #ffffff;
+      color: #333333;
+      font: 14px/1.5 system-ui, sans-serif;
+    }
+
+    .inner {
+      padding: 10px;
+      border: 1px solid #dddddd;
+      background: #f6f6f6;
+      color: #444444;
+    }
+  </style>
+  <script>window.__DR_SHIM__ = {};</script>
+  <script src="../shim/chrome-shim.js"></script>
+</head>
+
+<body>
+  <h2>Inside the frame</h2>
+  <div class="inner">A frame runs the page script on its own and follows the top page's setting.</div>
+
+  <script src="../../extension/shared/timing.js"></script>
+  <script src="../../extension/shared/color.js"></script>
+  <script src="../../extension/shared/settings.js"></script>
+  <script src="../../extension/shared/restricted.js"></script>
+  <script src="../../extension/content/detect.js"></script>
+  <script src="../../extension/content/engine-smart.js"></script>
+  <script src="../../extension/content/engine-simple.js"></script>
+  <script src="../../extension/content/readability.js"></script>
+  <script src="../../extension/content/icons.js"></script>
+  <script src="../../extension/content/picker.js"></script>
+  <script src="../../extension/content/main.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "darkrai-tests",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Unit and fixture tests for the Darkrai extension. No dependencies: node --test only.",
+  "type": "commonjs",
+  "scripts": {
+    "test": "node --test",
+    "test:fixtures": "node browser/run-fixtures.js",
+    "test:ui": "node browser/run-ui-checks.js",
+    "test:perf": "node browser/run-perf.js",
+    "test:manifest": "node browser/check-manifest.js"
+  }
+}

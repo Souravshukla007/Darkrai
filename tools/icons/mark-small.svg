@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Darkrai toolbar mark - "nightfall crescent", the 16 and 32 px drawing.
+
+  Original artwork, authored for this extension. It is not the Pokemon
+  character, is not traced from it, and is not any other existing character or
+  logo. Nothing here is fetched from the internet.
+
+  This is a deliberately simpler drawing, not the large one shrunk. The wisp and
+  the thin inner edge are gone, because at 16 px a 9 px stroke is one pixel and
+  a 2 px arc is a quarter of one. The inner disc moves out to (82,46) so the
+  crescent's limb thickens from 29.6 to 35.2 px in the 128 viewBox - about 4.4
+  px of ink once rasterised to 16 - and the spark grows to r=9 so it survives.
+
+  128x128 viewBox, artwork inside a 114x114 safe box (7 px of padding).
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <!-- crescent: disc r=44 at (60,62) minus disc r=36 at (82,46) -->
+  <path fill="#8E6CFF" fill-rule="evenodd"
+        d="M16 62 A44 44 0 1 1 104 62 A44 44 0 1 1 16 62 Z
+           M46 46 A36 36 0 1 1 118 46 A36 36 0 1 1 46 46 Z"/>
+
+  <!-- spark: the one warm accent, sitting in the crescent's open side -->
+  <circle cx="86" cy="40" r="9" fill="#E5484D"/>
+</svg>

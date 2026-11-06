@@ -719,7 +719,7 @@ async function popupControls(ctx) {
     };
   });
 
-  // The height decision (README, "The popup's Lovable design"): the design is
+  // The height decision (docs/GUIDE.md, "The popup's Lovable design"): the design is
   // taller than the 600px Chrome gives a popup, so the casing and both
   // hardware strips stay whole and only the dark screen (#panel) scrolls.
   await check('P4-fit', 'P4', 'default state in the real popup: 360px wide, the page does not scroll, only the screen panel does, no clipped text', async () => {

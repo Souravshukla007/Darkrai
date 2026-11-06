@@ -1,331 +1,598 @@
-# Darkrai
+# 🌑 Darkrai: Smart Dark Mode for Chrome
 
-Darkrai is a Chrome extension (Manifest V3) that darkens websites which have no dark theme of their own and leaves the ones that do alone. Every site starts on **Auto**: Darkrai looks at the page's declared colour scheme and samples the real colours on screen, so YouTube, GitHub and anything else with its own dark design keeps it. When Darkrai does darken a page it recolours by role in OKLCH instead of inverting, so hue survives and photos, video and canvas are never touched, then it measures the contrast of the visible text and icons and nudges anything that falls short of WCAG. Clicking the toolbar icon always opens the popup, because the popup reads your settings straight from storage and never waits on the background worker, and switching Darkrai on or off applies live with no page reload.
+[![Manifest V3](https://img.shields.io/badge/Manifest-V3-4285F4?style=flat-square&logo=googlechrome&logoColor=white)](extension/manifest.json)
+[![Chrome 120+](https://img.shields.io/badge/Chrome-120%2B-4285F4?style=flat-square&logo=googlechrome&logoColor=white)](extension/manifest.json)
+[![Verified on Chrome 157](https://img.shields.io/badge/verified_on-Chrome_157-34A853?style=flat-square&logo=googlechrome&logoColor=white)](docs/VERIFICATION.md)
+[![JavaScript](https://img.shields.io/badge/JavaScript-vanilla%2C_no_build_step-F7DF1E?style=flat-square&logo=javascript&logoColor=black)](extension/manifest.json)
+[![Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen?style=flat-square)](tests/package.json)
+[![Unit tests](https://img.shields.io/badge/unit_tests-171_passing-brightgreen?style=flat-square&logo=nodedotjs&logoColor=white)](docs/VERIFICATION.md)
+[![Contrast guard](https://img.shields.io/badge/contrast_guard-WCAG_4.5%3A1-8E6CFF?style=flat-square)](extension/content/readability.js)
 
-## Install (Load unpacked, Windows Chrome)
+A Manifest V3 Chrome extension that **darkens the sites that have no dark theme of their own and leaves the ones that do alone**. Every site starts on Auto: Darkrai reads the page's declared colour scheme and samples the colours actually on screen, so YouTube in its dark theme, or MDN after it switches its own theme, keeps its own design. When Darkrai does darken a page, its default Smart mode **recolours every colour by its role in OKLCH instead of inverting**, so hue survives and photos, video and canvas are never touched. Then it **measures the contrast of the visible text and icons** and nudges anything that falls short of WCAG. Plain JavaScript, no build step, no dependencies, no analytics.
 
-1. Open Chrome and go to `chrome://extensions`.
-2. Switch on **Developer mode** (top right).
-3. Click **Load unpacked** (top left).
-4. Choose the `extension` folder of this repository (in a clone, `<where you cloned it>\extension`).
+> 📖 **Full guide:** [docs/GUIDE.md](docs/GUIDE.md): installing, every control, the resets, the manual checklist, the test suites and the measured performance.
+>
+> 🧾 **Release evidence:** [docs/VERIFICATION.md](docs/VERIFICATION.md): every suite and real-Chrome run behind the numbers on this page, misses included.
 
-   Pick the `extension` folder itself, not the repository root and not a zip. Chrome warns that Darkrai can "read and change all your data on all websites" — that is what any dark-mode extension needs in order to restyle pages. Darkrai sends nothing anywhere.
-5. Darkrai appears in the list. After editing any file, come back to `chrome://extensions` and press the **Reload** (circular arrow) button on the Darkrai card.
+---
 
-### Pin it to the toolbar
+## ⚡ Recruiter Fast-Track (30-Second Summary)
 
-Click the **Extensions** puzzle-piece icon to the right of the address bar, find **Darkrai**, and click the pin next to it. The icon stays visible and shows the state of the current tab. It is one mark — a crescent of night with a trailing wisp and a single warm spark — in three treatments:
+If you are a recruiter, hiring manager or SDE interviewer checking the technical depth of this repository, these are the four things to look at first:
 
-- **in colour, solid** — Darkrai is darkening this tab. Violet crescent, crimson spark.
-- **ghosted** — the site's own dark theme is in use, left alone. The same coloured mark, its outline opaque and its interior dropped to 45% so the site's own theme reads as showing through. It still has hue, so it is never mistaken for off.
-- **colourless** — off for this tab: the master switch is off, the site is set to Never, you are outside the schedule, or Chrome blocks extensions on this page. Every pixel is converted to true greyscale by Rec. 709 luma and dimmed slightly. No hue anywhere.
+*   **Native Dark-Theme Detection**: Before touching a page, Darkrai reads its declared `color-scheme` and samples the real background on a 3 × 3 grid with `elementsFromPoint`, plus the colour of the visible text. When at least 6 of 9 samples are dark (OKLCH L < 0.45) and the text is lighter, the site already has a dark theme and Darkrai leaves it alone. A watcher re-measures when the site flips its own theme, so no reload is needed. In real Chrome, YouTube's dark theme ended with 0 Darkrai style nodes and 0 adopted sheets.
+*   **Role-Based OKLCH Recolouring**: Every colour declaration is mapped by role (background, text, border) in OKLCH, so hue and alpha survive and out-of-gamut results lose chroma rather than hue. CSS custom properties get per-role variants (`--dr-bg--x`), `var()` is followed into shorthands and fallbacks, and open shadow roots and `adoptedStyleSheets` get their own overrides. Stylesheets from other origins are fetched by the worker and parsed with `CSSStyleSheet.replaceSync`.
+*   **Reliability Against the MV3 Lifecycle**: The popup reads `chrome.storage.local` itself and never waits on the service worker. Every `chrome.*` call has a timeout and a fallback, a tab that does not answer is re-injected on the spot, and any older copy of the page script removes itself. The hard reset runs from the page that owns the button, without the worker, in seven independent steps with their own timeouts.
+*   **Tested Up to a Real Browser**: 171 unit tests on Node's built-in runner, 13 self-checking fixture pages, 11 headless UI check families (contrast read from screen pixels, focus rings, a 27-action behaviour replay against a recorded baseline), and a real-Chrome harness that loads the unpacked extension over `--remote-debugging-pipe` with CDP `Extensions.loadUnpacked`, then checks YouTube, Wikipedia, MDN, BBC News and more. Passes and misses are published side by side.
 
-Colour versus no colour is the difference you see first, at 16 px, on a light toolbar and on a dark one. The 16 and 32 px art is a deliberately simpler drawing than the 48 and 128 px art rather than the same drawing shrunk, so the small sizes stay legible.
+---
 
-The release pass tried building the twelve icons from the Lovable design's Darkrai tile instead. The ghosted (native) 16 px icon then kept only 1.5% of its ink at 3:1 on a white toolbar, 29.1% with a one-pixel rim added, against the 30% gate `check-manifest.js` holds it to, so the icons above stayed. The tile's ghosted interior washes out on white; using it would need a different ghosting for that artwork.
+## 📂 Direct Code Navigation (Key Implementation Anchors)
 
-The toolbar mark and the Options page's pixel-art crescent are original to this extension. The popup is not: it follows a design made in Lovable and carries its red Pokedex casing, Poke Ball and Darkrai art, which are fan art of trademarked characters (see [The popup's Lovable design](#the-popups-lovable-design) for the attribution note and how to swap the art out).
+Skip the folder tree and go straight to the code behind each feature:
 
-### Keyboard shortcut
+| Feature | Key Logic File | Role / Purpose |
+| :--- | :--- | :--- |
+| **🔍 Dark-Theme Detection** | [`extension/content/detect.js`](extension/content/detect.js) | The pure `decide()` over nine screen samples, and `createWatcher()`, which re-measures when a site switches its own theme. |
+| **🎨 OKLCH Colour Maths** | [`extension/shared/color.js`](extension/shared/color.js) | Colour parsing, `roleForProperty()`, `transformOklch()`, gamut mapping, WCAG contrast and `fixForContrast()`. Dependency-free and shared by the page, the worker, the popup and Node. |
+| **🧩 Recolouring Engine** | [`extension/content/engine-smart.js`](extension/content/engine-smart.js) | An override sheet per page stylesheet, `var()` role variants, lost longhands, inline styles, open shadow roots and adopted sheets, all inside `@media screen`. |
+| **👁️ Readability Guard** | [`extension/content/readability.js`](extension/content/readability.js) | Measures visible text and icons against the stack actually behind them, in 8 ms slices, and nudges lightness until 4.5:1 (3:1 for large text and icons) is met. |
+| **🔄 Page Lifecycle** | [`extension/content/main.js`](extension/content/main.js) | Decides, applies and removes live, coalesces bursts of setting changes (80 ms settle, 2 s cap) and takes down older copies of itself. |
+| **⚙️ Service Worker** | [`extension/background.js`](extension/background.js) | Keeps no state: re-injection, the Alt+Shift+D command, the early dark background, schedule alarms, the per-tab icon and cross-origin fetches. |
+| **🪟 Storage-First Popup** | [`extension/popup/popup.js`](extension/popup/popup.js) | Reads settings straight from storage, puts a timeout on every `chrome.*` call and re-injects a tab that does not answer. |
+| **🧯 Hard Reset** | [`extension/shared/reset.js`](extension/shared/reset.js) | Seven independent, individually timed steps that call `chrome.*` directly, never through the worker, with an itemised result. |
+| **🗃️ Storage Schema** | [`extension/shared/settings.js`](extension/shared/settings.js) | Schema 2 defaults, an `upgrade()` that never throws, subdomain matching and the schedule maths. |
+| **🧪 Real-Chrome Harness** | [`tests/real-chrome/run-real-chrome.js`](tests/real-chrome/run-real-chrome.js) | Installed Chrome on a throwaway profile, CDP over `--remote-debugging-pipe`, `Extensions.loadUnpacked` and real public sites. |
 
-**Alt+Shift+D** turns Darkrai on or off for the site in the current tab. To change it, open `chrome://extensions/shortcuts` and set a new combination next to "Turn Darkrai on or off for this site". Chrome also lists the shortcut there if another extension has already claimed it.
+---
 
-## How it decides: Auto, Always, Never
+## 📌 Problem Statement
 
-The popup's **This site** choice is remembered per site, and subdomains follow the main site unless you set them separately (`music.youtube.com` follows `youtube.com`).
+Dark-mode extensions promise one switch for the whole web. Darkrai started from three frustrations with the ones already out there:
 
-- **Auto** (the default for every site) — Darkrai checks the page first. It reads `<meta name="color-scheme">` and the computed root `color-scheme`, then samples the background at nine points on screen and the colour of the visible text (the body's colour, or, when an app sets its text colour deeper in the page as YouTube does, up to 24 visible text runs against the background behind each). If most of the page is already dark with light text, it leaves the site alone and the popup says "This site's own dark theme, left alone". Otherwise it darkens the page. It keeps watching, so flipping YouTube's Appearance setting or GitHub's theme switch is picked up without a reload.
-- **Always** — darken this site no matter what it looks like. Use it for a site whose own dark theme you dislike.
-- **Never** — never touch this site. The early dark background is skipped here too, so there is no flash.
+1. **The icon stopped responding**: clicking the pinned, enabled icon sometimes did nothing. A popup that waits on a background worker Chrome has put to sleep stays blank, and after an update, open tabs keep a disconnected copy of the old page script.
+2. **Dark mode everywhere, wanted or not**: it forced its own dark mode on every tab and overrode sites that already had one, such as YouTube.
+3. **A look that didn't fit the site**: icons and text became invisible or unreadable. Logos and photos got inverted, dark text landed on dark backgrounds, colours hidden in CSS variables, inline styles and shadow DOM were never reached, and nothing checked the result.
 
-Two more switches sit alongside:
+**Darkrai** answers each one directly:
 
-- **Mode: Smart or Simple.** Smart recolours the page. Simple inverts the whole page for apps that draw their text on a canvas; Google Docs, Sheets and Slides use it by default.
-- **Enabled / Schedule.** The master switch in the popup header turns Darkrai off everywhere. The schedule can be **Always**, **Follow system** (dark only while Chrome or Windows is in dark mode), or **Custom hours** (for example 19:00 to 07:00, which is handled across midnight by a `chrome.alarms` timer).
+1. **A popup that never waits**: plain HTML and JavaScript that reads `chrome.storage.local` itself, puts a short timeout on every `chrome.*` call and re-injects the page script into a tab that does not answer. On pages Chrome blocks (`chrome://` pages, the Web Store, the PDF viewer) it explains why instead of failing silently.
+2. **Auto by default**: every page is checked first, and a site with its own dark theme is left alone. A per-site Auto / Always / Never choice, inherited by subdomains, covers the rest.
+3. **Recolour by role, then measure**: backgrounds go dark, text goes light and borders sit between, with hue kept so a site still looks like itself. Then the readability guard measures every visible text run and icon and fixes the ones below WCAG. The picker and a per-site Simple mode are the backstops.
 
-The **Look** section holds the three presets (Dark gray, True black, Soft) and the brightness, contrast and warmth sliders. These feed the colour maths directly — Smart mode uses no CSS filters — so images stay untouched and there is no GPU cost. "Dim images a little" is the one optional exception, for night use.
+It also covers the usual complaints about dark-mode extensions:
 
-**Fix something unreadable** starts the picker: hover or tab to the element, click it (or press Enter), then choose **Make readable** or **Invert this**. The fix is remembered for that site and can be cleared from the Options page. Esc cancels.
+*   **White flash while loading**: a small dark background, `extension/preload.css`, is registered to run at `document_start` while Darkrai is on and the schedule allows it, and never for a site set to Never.
+*   **Inverted photos**: Smart mode never inverts images, video or canvas. Only small dark icons on transparent backgrounds are inverted, one at a time.
+*   **Needing a reload**: switching on or off, changing a site's mode and changing the look all apply live, through `chrome.storage.onChanged`.
+*   **Printing**: every stylesheet Darkrai generates is wrapped in `@media screen`, so none of it applies when the page is printed.
 
-The **Options** page (`chrome://extensions` > Darkrai > Details > Extension options, or the Options button in the popup) holds the same look and schedule controls plus your whole site list, with search, per-site editing, per-site fix clearing and removal, and a clearly separated danger area with the two resets.
+---
 
-## The look: the Lovable Pokedex, and when it gives way
+## ✨ Key Features
 
-The popup is a red Pokedex, 360 × 600 px, matched to the Lovable design described below: a chamfered red casing with four screws, a raised LCD module showing Darkrai, three vent slots, a Poke Ball module top left with the status LED under it, and a bottom strip with speaker dots, a centred Poke Ball and a vent slot. Inside sits the dark screen with the controls and Lucide line icons. The Options page keeps the earlier red header band (LED, small LCD with the pixel-art crescent, title) above the same dark panels. The styles live in `extension/shared/handheld.css` (shared tokens, loaded by both pages), `popup/popup.css` and `options/options.css`.
+### 🔍 Smart Detection
+*   **Auto by Default**: Darkrai reads `<meta name="color-scheme">` and the computed root `color-scheme`, samples nine points on screen and compares the text colour with what is behind it.
+*   **Live Re-Checks**: theme attributes on `<html>` and `<body>`, `<meta>` changes, `prefers-color-scheme` and in-app navigation re-run the decision, throttled to once per 500 ms. An unclear result is measured again 1.5 s later.
+*   **No Flicker While Measuring**: when Darkrai is already active, it disables its own sheets, reads the page's colours and re-enables them in one synchronous task, so nothing paints in between.
+*   **Per-Site Choice**: Auto, Always or Never per site. `music.youtube.com` follows `youtube.com` unless it has an entry of its own.
 
-The device shows the state of the current tab, in three ways at once so no one depends on colour alone:
+### 🎨 The Recolouring Engine
+*   **Role Mapping in OKLCH**: backgrounds, text and borders each follow their own lightness curve with hue kept, so a red button stays red.
+*   **Everywhere Colours Hide**: every stylesheet (recursing into `@media`, `@supports`, `@layer`, `@container` and `@import`), cross-origin sheets, CSS variables, `var()` inside shorthands and fallbacks, inline styles, SVG `fill` and `stroke`, legacy `bgcolor`, open shadow roots, constructed sheets and every frame.
+*   **Mask-Painted Icons**: in a rule that also sets a CSS mask, `background-color` is the icon's glyph (the way Wikimedia Codex draws icons), so it takes the text role and turns light.
+*   **Media Stays Untouched**: photos, video and canvas are never inverted. Icon rescue samples small images at 32 × 32 and inverts only dark, nearly colourless icons on transparent backgrounds.
+*   **Simple Mode**: a whole-page `invert(0.9) hue-rotate(180deg)` with media re-inverted, for apps that draw their text on a canvas. Google Docs, Sheets and Slides (`docs.google.com`) are preset to it.
 
-- **On** (Darkrai is darkening this tab): green LED and status dot with a soft glow, a faint glow behind the LCD art.
-- **Native** (the site's own dark theme, left alone): ice-blue LED and dot, the LCD art faded to 60 %.
-- **Off**: the half-lit amber LED of the design, a neutral grey dot, the LCD art at full strength.
+### 👁️ Readability Guard & Picker
+*   **Measured on Screen**: visible text, form controls, single-colour SVG icons, icon-font glyphs and CSS-mask icons are measured against the composited stack behind them, visible area first.
+*   **WCAG Targets**: 4.5:1 for normal text, 3:1 for large text and icons. Anything below gets a binary-searched lightness with its hue kept, and only that element changes.
+*   **Budgeted Work**: up to 300 elements per idle slice of 8 ms, stopping when less than 2 ms is left.
+*   **Fix Something Unreadable**: point at an element with the mouse or the keyboard, choose **Make readable** or **Invert this**, and the fix is saved for that site.
 
-The status sentence under the header says the same thing in words ("Darkened by Darkrai", "This site's own dark theme, left alone", "Darkrai is off everywhere."). Header, status, This site and Mode are visible without scrolling; the rest of the controls scroll inside the dark screen only, and the casing never scrolls. Presses and the switch knob animate `transform` and `opacity` only, so no frame costs a layout.
+### 🎮 The Pokédex Popup
+*   **A Plain-CSS Port of a Lovable Design**: a 360 × 600 red Pokédex casing with screws and vents, a raised LCD showing Darkrai, two Poké Ball modules and a status LED. Only the dark screen scrolls; the casing never does.
+*   **State Shown Three Ways**: a green LED for darkening, ice-blue with the LCD art at 60 % for a site's own dark theme and amber when off, each with a matching status sentence, so colour is never the only signal.
+*   **Themed Dropdowns**: Chrome's customizable select (`appearance: base-select`, Chrome 135 and later) draws the open lists in the screen's style and opens them above the pill when there is no room below. Older Chrome keeps its default list.
+*   **Presentation Only**: the redesign kept the popup's behaviour. A replay of 27 popup actions still makes the same 92 `chrome.*` calls and 20 storage writes as the recorded baseline.
 
-Three things outrank the look, and the look gives way to each of them:
+### 🌙 Looks & Schedule
+*   **Three Looks**: Dark gray (default), True black and Soft, with brightness, contrast and warmth sliders that feed the colour maths directly. Smart mode uses no CSS filters; the optional "Dim images a little" is the one exception.
+*   **Schedule**: Always, Follow system (dark only while Chrome or the OS is dark), or Custom hours such as 19:00 to 07:00, handled across midnight by a `chrome.alarms` timer.
 
-- **You asked for less motion.** With `prefers-reduced-motion: reduce`, transitions become instant (the end state is identical, so nothing shifts).
-- **Your OS took the palette over.** With `forced-colors: active`, the chassis colours give way to system `Canvas` / `CanvasText` surfaces with real borders. The LED keeps its meaning through the status sentence, and the red hard-reset button becomes a normal system button — its label is what says destructive, not its colour.
-- **You asked for more contrast.** `prefers-contrast: more` switches to Darkrai's high-contrast tokens and darkens the ink.
+### 🧯 Resets
+*   **Reset This Site**: forgets one stored entry (its mode, engine and fixes) after one inline confirmation, and leaves every other site byte-identical.
+*   **Hard Reset Everything**: a two-step in-page dialog with Cancel as the default and focus kept inside. It erases every setting, the site list, every fix, the schedule and its alarm, and cleans open tabs without a reload.
+*   **Honest Results**: seven independent steps, each with its own timeout. A step that failed or timed out is reported as such, with the reason, never as success.
 
-**The dropdowns.** The Look, Schedule, default-mode and Reset this site lists use Chrome's customizable select (`appearance: base-select`, in `extension/shared/select.css`, linked by both pages). On Chrome 135 and later the open list is themed too: a dark screen-coloured panel with a thin border, 30 px rows, the chosen row in the segment silver with a check mark, a dark hover row, a 150 ms fade-in (none under reduced motion), and system colours under forced colours. It opens under the pill, or above it when there is no room, and stays inside the popup. Older Chrome keeps its default list; the closed pills look the same either way. The elements are the same `<select>`s with the same ids, options and events, so keyboard use is Chrome's own: ArrowDown on a closed select still steps the value, Enter opens the list, the arrows move, Enter picks. Esc closes the list only: Chrome would otherwise close the whole popup on that key, so `popup.js` consumes an Esc pressed while a list is open and closes the list itself (value unchanged; measured in real Chrome 157). The From / To time fields keep Chrome's own time picker: Chrome has no CSS hook for that popup beyond `color-scheme` (already dark), so it was left as it is.
+### 🔒 Privacy
+*   **No Analytics, No Remote Code**: settings never leave `chrome.storage.local`, and nothing about you is sent anywhere.
+*   **The Only Network Requests**: stylesheets and icon images the page itself already uses, fetched by the worker without cookies, http(s) only, with a 5 MB cap and a 10 s timeout. For an icon, the worker answers only yes or no.
+*   **Three Permissions**: `storage`, `scripting` and `alarms`, plus access to http and https pages, which any extension that restyles pages needs. No `tabs`, history, downloads or cookies permission.
 
-Contrast is not assumed. Every text run and icon on both surfaces is measured from real screen pixels — a screenshot, plus a second one with every glyph forced transparent, which gives the true backdrop behind each glyph. The worst reading on this build is 7.3:1 in the popup (the host line under the title) and 4.99:1 on the Options page (the red Hard reset button), against the 4.5:1 that WCAG asks for (3:1 for large text and icons). Full WCAG conformance also needs manual testing with assistive technology and expert review; this is the automated part of it.
+### ♿ Accessibility
+*   **Reduced Motion**: with `prefers-reduced-motion: reduce`, transitions become instant and the end state is the same.
+*   **Forced Colours**: under `forced-colors: active`, the casing gives way to system `Canvas` and `CanvasText` surfaces with real borders.
+*   **More Contrast**: `prefers-contrast: more` switches to high-contrast tokens.
+*   **Keyboard and Focus**: every control works from the keyboard with a visible focus ring (UI check family (d)), the picker works with Tab and Enter and Esc cancels it, and only `transform` and `opacity` ever animate (family (c)).
 
-### The popup's Lovable design
+The automated checks cover contrast, focus rings and layout shifts. Full WCAG conformance also needs manual testing with assistive technology and an expert review.
 
-The popup is a plain-CSS port of the `DarkraiPopup` design made in Lovable: a chamfered red Pokedex casing with screws, vents, a raised 200 × 104 LCD module, a Poke Ball module top left with the status LED beside it, and a bottom strip with speaker dots, a centred Poke Ball and a vent slot. Unlike the design, which floats the device on a near-black page, the device fills the popup edge to edge, because Chrome always draws a toolbar popup as an opaque rectangle and cannot give it see-through corners: the dark-red outer casing runs to all four window edges and the bright red shell's cut corners show that dark red as corner guards. It is presentation only: every id, name, label, role, ARIA attribute and event binding of the earlier popup is still there, and the same 27 clicks produce the same 92 `chrome.*` calls and 20 storage writes as before (UI check family (j)). States: amber half-lit LED when off, green LED and status dot with a soft glow when darkening, ice-blue LED and dot with the LCD art at 60 % when the site's own dark theme is left alone.
+---
 
-The design is 833 px tall at its natural size and Chrome caps a toolbar popup at 600 px. The casing, the 118 px top hardware and the 52 px bottom hardware stay whole and identical to the design; only the dark screen (`#panel`, 420 px of client height) scrolls, with a thin scrollbar kept in its right padding so the content keeps the design's 304 px width. In the default state the screen holds about 653 px of content, with Custom hours about 673 px and with Look open about 843 px. The design's spacing was kept rather than squeezed: removing every vertical gap would still leave more than 420 px of content.
+## 🏗️ System Architecture
 
-Its art lives in `extension/popup/art/` (`lcd-darkrai.png`, `avatar-darkrai.png`, `pokeball.png`): the design's images, pre-scaled to twice their display size so the popup still paints inside its 100 ms budget (the 4× originals missed it). The originals are kept in `tools/lovable-assets/` for regeneration. `extension/popup/screen-art.png` (the 24 px sprite built from `tools/icons/darkrai-24.txt`) is still the art in the Options page header. The toolbar icons were not changed by the port.
+Darkrai is built around one store. The popup and the Options page write `chrome.storage.local`, the page script in every tab and frame reads it and listens for changes, and a service worker that keeps no state does the jobs only a worker can do:
 
-**Attribution.** Pokémon, Poké Ball and Darkrai are trademarks of Nintendo, Creatures Inc. and GAME FREAK. This popup art is fan art for personal use. Publishing Darkrai on the Chrome Web Store with this art would likely be rejected or taken down; replace the three files in `extension/popup/art/` with your own drawings first (below).
+```mermaid
+graph TD
+    User(["You: toolbar click or Alt+Shift+D"]) -->|"opens"| Popup
 
-Third-party pieces bundled with it:
+    subgraph Pages ["Extension pages"]
+        Popup["Popup: popup/popup.js"]
+        Options["Options page: options/options.js"]
+    end
 
-- **Icons**: [Lucide](https://lucide.dev) (lucide-static 0.575.0), inlined as one SVG sprite in `popup.html`. ISC License, © Lucide Contributors; portions MIT, © Cole Bemis (Feather). Full text in `licenses/lucide-LICENSE.txt`.
-- **Font**: Nunito Sans (variable, latin subset), `extension/popup/fonts/nunito-sans-latin.woff2`. SIL Open Font License 1.1, © The Nunito Sans Project Authors. Full text in `extension/popup/fonts/OFL.txt`.
+    subgraph Store ["Persistence"]
+        Storage[("chrome.storage.local, schema 2")]
+    end
 
-### Replacing the art
+    subgraph Worker ["Service worker: background.js, keeps no state"]
+        Reinject["Re-inject open tabs after install or update"]
+        Command["toggle-site command, Alt+Shift+D"]
+        Preload["Register the early dark background"]
+        Alarms["Custom-hours alarms"]
+        IconState["Per-tab toolbar icon"]
+        SheetFetch["Fetch cross-origin stylesheets and icons"]
+    end
 
-The popup uses three PNGs in `extension/popup/art/`. Replace any of them with a PNG of the same name, then press Reload on the Darkrai card at `chrome://extensions`. Keep them at about twice their display size; larger files cost paint time against the popup's 100 ms budget, which the 4× originals missed.
+    subgraph Tabs ["Content scripts, every tab and frame"]
+        Main["main.js: decide, apply, remove"]
+        Detect["detect.js: already dark?"]
+        Engine["engine-smart.js: OKLCH recolouring"]
+        Guard["readability.js: contrast guard"]
+    end
 
-| File | Shown as | Shipped size |
-|---|---|---|
-| `lcd-darkrai.png` | the LCD picture, fitted (`object-fit: contain`) into a 178 × 82 box, pixelated | 282 × 164 |
-| `avatar-darkrai.png` | the header avatar, fitted into a 40 × 40 box, pixelated | 78 × 80 |
-| `pokeball.png` | both balls, cropped to circles (`object-fit: cover`) at 52 px and 44 px | 116 × 105 |
+    subgraph Web ["The web page"]
+        Page["DOM, stylesheets, shadow roots, frames"]
+    end
 
-To regenerate the shipped files from the design's originals in `tools/lovable-assets/` (`darkrai_landscape_4x.png`, `darkrai_icon_4x.png`, `pokeball_4x.png`), downscale each to the size in the table with a high-quality resampler, halving the size step by step and finishing with one resample to the exact size. Only the file names matter to the popup; the CSS fits whatever proportions you supply into the same boxes.
+    Popup -->|"saves choices"| Storage
+    Options -->|"saves choices, hard reset without the worker"| Storage
+    Popup -->|"asks the tab, re-injects if silent"| Main
+    Storage -->|"read and onChanged"| Main
+    Storage -->|"onChanged"| Preload
+    Command -->|"writes the site mode"| Storage
+    Alarms -->|"start and end times"| Preload
+    Reinject -->|"executeScript"| Main
+    Preload -->|"preload.css at document_start"| Page
+    Main --> Detect
+    Detect -->|"no dark theme of its own"| Engine
+    Engine --> Guard
+    Engine -->|"override sheets"| Page
+    Guard -->|"lightness fixes"| Page
+    Engine -->|"cross-origin sheet URL"| SheetFetch
+    SheetFetch -->|"CSS text"| Engine
+    Main -->|"state: on, native or off"| IconState
 
-The Options page header uses `extension/popup/screen-art.png` (drawn with `image-rendering: pixelated`), built with the toolbar icons from `tools/icons/darkrai-24.txt` by `node tools\icons\build-icons.js` (`--sprites-only` rebuilds just the sprites). Whatever image you supply is your own responsibility: third-party character art, logos and other people's drawings should not be redistributed in an extension.
+    classDef ui fill:#D7262B,stroke:#8C1418,stroke-width:2px,color:#fff;
+    classDef store fill:#2ECC71,stroke:#27ae60,stroke-width:2px,color:#fff;
+    classDef worker fill:#4A90E2,stroke:#2980b9,stroke-width:2px,color:#fff;
+    classDef content fill:#8E6CFF,stroke:#3A2470,stroke-width:2px,color:#fff;
+    classDef page fill:#555B66,stroke:#2E2F36,stroke-width:2px,color:#fff;
 
-## Resets: one site, or everything
+    class User,Popup,Options ui;
+    class Storage store;
+    class Reinject,Command,Preload,Alarms,IconState,SheetFetch worker;
+    class Main,Detect,Engine,Guard content;
+    class Page page;
+```
 
-Both live in the **danger area** at the bottom of the Options page, and both are reachable from the popup's bottom row.
+---
 
-**Reset this site** is the small, ordinary one. It forgets a single stored entry — its Auto / Always / Never setting, its Smart / Simple mode and every fix you saved there — so that site follows the global default again. No other entry is touched. In the popup it acts on the current site, with one inline confirmation (Esc keeps it); on the Options page you pick the site from the list.
+## 💻 Tech Stack
 
-One thing to know, because subdomains inherit: if the site you are on has no entry of its own, the button forgets the entry it was following, and it names that entry before you confirm. On `music.youtube.com` it forgets `youtube.com`, so every other subdomain under `youtube.com` goes back to the global default too. The popup says so after the fact rather than claiming nothing else moved.
+| Technology | Category | Usage / Context |
+| :--- | :--- | :--- |
+| **Chrome Extensions, Manifest V3** | Platform | `chrome.storage` (the single store), `chrome.scripting` (re-injection and `registerContentScripts`), `chrome.alarms` (custom hours), `chrome.commands` (Alt+Shift+D), `chrome.action` (per-tab icon and title) |
+| **JavaScript (vanilla)** | Language | No build step and no bundler. Content scripts are wrapped IIFEs on one `window.Darkrai` namespace, since MV3 content scripts cannot be ES modules; shared modules are UMD, so the page, the worker, the popup and Node load the same file |
+| **CSS** | Styling | Custom properties for the Pokédex tokens, the customizable select (`appearance: base-select`, `::picker(select)`) placed with anchor positioning (`position-area`, `position-try-fallbacks`), and `@media screen` around every generated sheet |
+| **OKLCH colour maths** | Colour engine | Hand-written sRGB ↔ OKLab ↔ OKLCH conversion, role transforms, gamut mapping by chroma reduction, WCAG luminance and contrast, LRU caches |
+| **Lucide (lucide-static 0.575.0)** | Icons | The popup's line icons, inlined as one SVG sprite in `popup.html`; ISC License |
+| **Nunito Sans** | Typeface | Bundled variable latin subset, `nunito-sans-latin.woff2`; SIL Open Font License 1.1 |
+| **Node.js built-in test runner** | Unit tests | `node:test` and `node:assert`, 171 tests, no packages; run on Node v24.12.0 |
+| **chrome-headless-shell + CDP** | Browser tests | Fixtures, UI checks and performance runs over the DevTools protocol with Node's built-in WebSocket client; uses a shell already on the machine and never downloads one |
+| **Google Chrome over `--remote-debugging-pipe`** | End-to-end tests | Installed Chrome 157 on a throwaway profile, with the extension loaded by `Extensions.loadUnpacked` |
 
-**Hard reset everything** is the safety net for when something has gone wrong. It is behind a two-step in-page confirmation (never a browser `confirm` box), with **Cancel** as the default answer, focus trapped inside the dialog — before, during and after the reset, including the seconds while it runs and both buttons are disabled — Esc to cancel, and the whole list of what is about to go spelled out before you confirm. The summary and all seven steps are announced together, so a screen reader hears which steps failed and why, not only that some did. It erases:
+---
 
-- every setting — the master switch, the look and its three sliders, image dimming, and what new sites start as;
-- your whole site list, with every Auto / Always / Never and Smart / Simple choice in it;
-- every fix you saved with the picker, on every site;
-- the schedule, and the `chrome.alarms` timer behind it;
-- all per-tab state — open tabs are cleaned and put back on the defaults, with no reload.
+## 🗃️ Storage Design
 
-**A hard reset cannot be undone.** Nothing is kept, there is no copy to go back to, and the only step beyond it is removing Darkrai at `chrome://extensions` and installing it again.
-
-It is built to work when the rest of the extension is misbehaving, which is the only time anybody reaches for it. It runs from the page that owns the button and calls `chrome.storage`, `chrome.scripting`, `chrome.alarms` and `chrome.tabs` directly, never through the background worker — the worker is one of the things that might be asleep or wedged. It has seven independent steps, each with its own short timeout, so one failure cannot stop the other six, and it reports back an itemised list of what it did. **Partial success is reported as partial success**: a step that failed or timed out is listed as such, with the reason, and never as success. The list also says how many open tabs were cleaned, how many came back on the defaults, and how many could not be put back.
-
-From the toolbar it is two clicks: the icon, then **Hard reset…**, which opens the Options page at the danger area with focus already there.
-
-## Manual test checklist
-
-Run through this in real Chrome after loading the extension (PLAN section 11). The real-Chrome suite covers part of it, but three items can only be checked by hand: **the keyboard shortcut** (Chrome's shortcuts cannot be pressed through the debugging protocol), **reloading the extension and then using an old tab** (a test copy of the extension stays disabled after a scripted reload, crbug.com/402532200), and **a real click on the toolbar icon**. GitHub's own dark theme and a Google results page also need a manual look: GitHub did not render dark under the emulated scheme, and Google served its bot check to the throwaway profile.
-
-- [ ] **YouTube in its dark theme** — the icon is the ghosted mark and the popup says the site's own dark theme is left alone. Nothing is recoloured.
-- [ ] **YouTube in its light theme** (Appearance > Light) — Darkrai darkens it, and switching the YouTube setting back and forth is followed without a page reload.
-- [ ] **GitHub** — readable in both of its own themes; switching GitHub's theme is picked up.
-- [ ] **Wikipedia** — a plain article page: body text, links, infoboxes and thumbnails all readable, photos not inverted.
-- [ ] **Google Docs** — opens in Simple mode by default and the document is legible.
-- [ ] **Reddit** — feed, sidebar, vote arrows and avatars readable; no dark-on-dark text.
-- [ ] **A PDF** — open any `.pdf` link. The popup explains that Chrome does not allow extensions in the built-in PDF viewer instead of failing silently.
-- [ ] **`chrome://extensions`** — the icon still opens the popup, and the popup shows the same clear "Chrome doesn't allow extensions on this page" message.
-- [ ] **Press the physical Alt+Shift+D on a darkened page** — on a light site Darkrai is darkening, press the real keys (not a script). The page goes undarkened without a reload and the toolbar icon turns colourless; press them again and both come back. The automated suite only checks the binding and calls the handler directly.
-- [ ] **The popup's look** — click the toolbar icon: the red Pokedex casing, both Poke Balls and the LCD art are whole, the casing does not scroll, and only the dark screen scrolls to reach Reset this site, Hard reset… and Options.
-- [ ] **Toggle 20 times quickly** — click the header switch (or press Alt+Shift+D) twenty times in a row on a normal page. The popup keeps opening, the page keeps following, and nothing is left half-styled.
-- [ ] **Reset this site** — on a site you have set to Always, press **Reset this site** in the popup and confirm. The site goes back to Auto, the page follows at once, and every other site in the Options list is exactly as it was.
-- [ ] **Hard reset** — with a few sites and at least one saved picker fix, open **Hard reset…** from the popup. The Options page opens at the danger area, the dialog names what will go, Esc and Cancel both leave everything alone, and confirming twice puts every setting back and leaves the open tabs darkened on the defaults without a reload. Anything it could not do is listed with its reason.
-- [ ] **Reload the extension at `chrome://extensions`, then use a tab that was already open** — with a page already open, press Reload on the Darkrai card at `chrome://extensions`, go back to that tab without refreshing it, open the popup and toggle. It must still work: the popup re-injects the page script, and any older copy removes itself first.
-
-## Regenerating the icons
-
-The twelve PNGs in `extension/icons/` are generated, not hand-drawn. The source lives in `tools/icons/` — `mark-large.svg` for the 48 and 128 px art, `mark-small.svg` for the simplified 16 and 32 px art — which sits outside `extension/`, so Chrome never loads it. Run from the repository root:
+Everything Darkrai remembers is one versioned object in `chrome.storage.local`, shown here with its defaults. `upgrade()` in `extension/shared/settings.js` accepts anything (missing, partial, from an older build or corrupted) and returns a complete schema-2 store without throwing.
 
 ```
-node tools\icons\build-icons.js
+                         ┌──────────────────────────────────┐
+                         │ chrome.storage.local  (schema 2) │
+                         └────────────────┬─────────────────┘
+      ┌──────────────────┬────────────────┴─────────┬──────────────────────┐
+      │                  │                          │                      │
+┌─────▼─────┐  ┌─────────▼─────────┐   ┌────────────▼────────────┐  ┌──────▼───────┐
+│ schema: 2 │  │ settings          │   │ sites                   │  │ debug: false │
+└───────────┘  │ enabled: true     │   │ { host: entry }         │  │ dev timing   │
+               │ defaultMode: auto │   └────────────┬────────────┘  └──────────────┘
+               │ look: gray        │                │ (N hosts)
+               │ brightness: 100   │   ┌────────────▼────────────┐
+               │ contrast: 100     │   │ mode: auto | on | off   │
+               │ warmth: 0         │   │ engine?: smart | filter │
+               │ dimImages: false  │   │ fixes[]?: up to 200     │
+               │ schedule          │   └────────────┬────────────┘
+               └─────────┬─────────┘                │ (N)
+               ┌─────────▼─────────┐   ┌────────────▼────────────┐
+               │ type: always      │   │ selector: CSS selector  │
+               │ from: 19:00       │   │ action: readable|invert │
+               │ to: 07:00         │   └─────────────────────────┘
+               └───────────────────┘
 ```
 
-That rasterises both SVGs at all four sizes with the same headless `chrome-headless-shell` the test suites use, then derives the other two states from the coloured one: `off-*` by converting to true greyscale with Rec. 709 luma weights and dimming the result in RGB, and `native-*` by desaturating 30% and dropping everything but a one-pixel rim to 45% alpha. `off-*` copies `on-*`'s alpha channel byte for byte, which is what `tests/unit/icon-files.test.js` asserts — the proof that the two states are one mark rather than two drawings. The run prints what it did: the route it took, the source for each size, every file with its byte count, the measured colour and ink-mass figures, and how much of each 16 px icon clears 3:1 on a white toolbar and on a near-black one.
+### Key Fields Explained:
+*   **schema**: the store format, now 2. Schema 2 added `debug`; older stores, including the pre-schema `siteList` shape, are upgraded in place.
+*   **settings**: the master switch (`enabled`), what new sites start as (`defaultMode`: `auto`, `on` for Always, `off` for Never), the look (`gray`, `black` or `soft`), brightness and contrast (clamped to 50-150), warmth (0-100), `dimImages`, and the schedule (`always`, `system` or `hours`, with `from` and `to`).
+*   **sites**: one entry per registrable domain or host. A subdomain follows its parent's entry unless it has its own, and public suffixes such as `co.uk` are never matched. `mode` is always present; `engine` (`filter` is Simple mode) and `fixes` are optional. The default store ships one entry: `docs.google.com` as `{ mode: "on", engine: "filter" }`.
+*   **fixes**: what the picker saved, up to 200 per site, each a CSS selector and an action (`readable` or `invert`). A newer fix for the same selector replaces the older one.
+*   **debug**: dev-only timing marks, off for everybody. `chrome.storage.local.set({ debug: true })` from Darkrai's own DevTools console turns them on.
 
-With no headless shell on the machine it downloads nothing. It keeps the committed `on-*` artwork, re-derives `off-*` and `native-*` from it, says so plainly and exits 0.
+---
 
-To use your own image instead:
+## 🔄 How a Page Is Decided
 
-```
-node tools\icons\build-icons.js --from "C:\path\to\my-icon.png"
-```
-
-It accepts a PNG (8-bit, non-interlaced) or an SVG, and writes all twelve files from it — full colour for `on-*`, luma greyscale for `off-*`, ghosted for `native-*` — at 16, 32, 48 and 128 px, resampling with premultiplied alpha so the edges do not halo. `--out <dir>` writes somewhere else and `--chrome <path>` names a headless binary instead of discovery. Whatever image you supply is your own responsibility: third-party character art, logos and other people's drawings should not be redistributed in an extension.
-
-## Run the tests
-
-Node.js is needed only for the tests; the extension itself has no build step, no bundler and no dependencies, and nothing here is installed or downloaded. Run them from the repository's `tests` folder:
+The page script runs at `document_start` in every frame and makes one decision per page, in `decideForPage()` (`extension/shared/settings.js`) and `runDecision()` (`extension/content/main.js`):
 
 ```
+ [page script starts: document_start, every frame]
+                     │
+                     ▼
+            settings.enabled? ───── no ─────► skip
+                     │ yes
+                     ▼
+          inside the schedule? ──── no ─────► skip
+                     │ yes
+                     ▼
+    site mode: own entry → parent domain → defaultMode
+                     │
+     ┌───────────────┼──────────────────┐
+     │ Never         │ Always           │ Auto
+     ▼               ▼                  ▼
+   skip           darken        detect.measure()
+                          declared color-scheme, 3×3 samples, text
+                                        │
+                              ┌─────────┴───────────┐
+                              ▼                     ▼
+                        already dark          no dark theme
+                    native: left alone,       darken: engine,
+                    0 style nodes,            readability guard,
+                    ghosted icon              colour icon
+                              │                     │
+                              └─────────┬───────────┘
+                                        ▼
+                      watcher: <html>/<body> attributes, <meta>,
+                      prefers-color-scheme, in-app navigation
+                      → measure again, throttled to 500 ms
+```
+
+### Decision Details:
+1.  **Settings First**: if Darkrai is off, the schedule says not now, or the site is set to Never, the page is skipped. Anything Darkrai applied is removed, `<html data-darkrai="off">` is set and the toolbar icon goes grey.
+2.  **Always Darkens Without Measuring**: only Auto measures first, with `detect.measure()`.
+3.  **Already Dark Means Hands Off**: the page is marked `native`, nothing is applied (0 style nodes, 0 adopted sheets) and the toolbar shows the ghosted icon.
+4.  **Watching for Theme Switches**: in Auto, theme attributes, `<meta>` changes, `prefers-color-scheme` and in-app navigation re-run the decision, so flipping YouTube's Appearance setting is followed without a reload. An unclear first result is checked again 1.5 s later.
+5.  **Frames**: every frame runs the same script with its own darkness check and follows the top page's site setting.
+
+---
+
+## 🎨 Colour Pipeline
+
+Smart mode turns each page colour into its dark counterpart in `extension/content/engine-smart.js` and `extension/shared/color.js`, then checks the result on screen:
+
+```
+ page stylesheet ──► colour declarations ──► role mapping ──► OKLCH transform
+ (inline styles,                              bg · fg · bd           │
+  SVG, shadow                                                        ▼
+  roots, adopted,    lightness fix ◄── readability guard ◄── override sheet
+  cross-origin)      (hue kept)        (measured on screen)  (@media screen)
+```
+
+### Pipeline Details:
+1.  **Sources**: every page stylesheet, recursing into `@media`, `@supports`, `@layer`, `@container` and `@import`, plus inline styles, SVG `fill` and `stroke`, legacy `bgcolor` and `color` attributes, open shadow roots and `adoptedStyleSheets`. Sheets from another origin, which the page script cannot read, are fetched by the worker (no cookies, 5 MB cap, 10 s timeout) and parsed with `CSSStyleSheet.replaceSync`.
+2.  **Role Mapping**: the property decides the role: `bg`, `fg` or `bd`. In a rule that also sets a CSS mask, `background-color` paints a mask icon's glyph, so it takes `fg`. Custom properties get role variants: `var(--x)` used as a background becomes `var(--dr-bg--x, var(--x))`, including `var()` inside `background` and `border` shorthands, and colours inside `var()` fallbacks are recoloured too.
+3.  **OKLCH Transform**: a background with L ≥ 0.5 becomes base + (1 − L) × 0.6 with chroma × 0.8, text with L < 0.6 becomes top − L × 0.35, and borders land between 0.30 and 0.55. The look sets base and top (Dark gray: 0.21 and 0.90). Hue and alpha are kept, out-of-gamut results lose chroma, and results are cached in an LRU of 10,000 entries.
+4.  **Override Sheet**: the same selectors with the transformed declarations, inserted right after the original so the cascade order holds, `!important` only where the original had it, all inside `@media screen`.
+5.  **Readability Guard and Lightness Fix**: `extension/content/readability.js` measures each visible text run and icon against the composited stack behind it. Below 4.5:1 (3:1 for large text and icons), a new lightness is binary-searched with the hue kept and written as one generated rule for that element.
+
+### Role Mapping (verbatim from `extension/shared/color.js`):
+```js
+  function roleForProperty(prop, opts) {
+    if (!prop) return null;
+    var p = String(prop).toLowerCase().trim();
+    if (p.charAt(0) === '-' && p.charAt(1) === '-') return null; // custom property: role comes from usage
+    if (opts && opts.masked && (p === 'background-color' || p === 'background')) return 'fg';
+    if (BG_PROPS[p]) return 'bg';
+    if (FG_PROPS[p]) return 'fg';
+    if (BD_PROPS[p]) return 'bd';
+    if (/(^|-)border.*color$/.test(p)) return 'bd';
+    if (/color$/.test(p)) return 'fg';
+    return null;
+  }
+```
+
+---
+
+## 🧪 Testing & Verification
+
+Four layers of tests, using Node built-ins only and downloading nothing: unit tests, fixture pages and UI checks in a headless shell, and a harness that drives installed Google Chrome over a pipe:
+
+```
+   Node harness                       Google Chrome 157                     Public sites
+run-real-chrome.js                    throwaway profile                    and chrome://
+         │                                    │                                   │
+         │──[spawn --remote-debugging-pipe]──►│                                   │
+         │──[fd 3: Extensions.loadUnpacked]──►│                                   │
+         │◄─────────────[fd 4: extension id]──│                                   │
+         │──[fd 3: new tab, emulate scheme]──►│                                   │
+         │                                    │──[load YouTube, MDN, BBC …]──────►│
+         │                                    │◄──────────────[pages and frames]──│
+         │──[fd 3: probes, screenshots]──────►│                                   │
+         │◄─────────[fd 4: readings, pixels]──│                                   │
+         │──[fd 3: Browser.close]────────────►│                                   │
+         │                                    │                                   │
+         ▼                                    ▼                                   ▼
+REAL-CHROME-REPORT.md                  profile deleted
+results/<run>/report.json
+```
+
+### Harness Details:
+1.  **Real Chrome, Isolated**: installed Google Chrome 157.0.8103.39 on a fresh throwaway profile, never your own, with the extension loaded by `Extensions.loadUnpacked` and CDP spoken over file descriptors 3 and 4 instead of a TCP port.
+2.  **Real Sites**: YouTube in both of its themes, MDN's live theme switch, Wikipedia, Hacker News, BBC News, Stack Overflow, old.reddit, GitHub, Google, and the pages Chrome restricts (`chrome://extensions`, `chrome://settings`, the Web Store, a PDF).
+3.  **Measured, Not Eyeballed**: text and icon contrast read from screenshots, light regions on darkened pages explained or reported, and long tasks and main-thread answers timed during 20 rapid toggles.
+4.  **Clean Exit**: Chrome closes through `Browser.close` and the profile is deleted. A leftover process is matched by the profile root on its command line, never by process name.
+
+### Latest Results (2026-11-06, from [docs/VERIFICATION.md](docs/VERIFICATION.md))
+
+| Suite (run from `tests/`) | Result |
+| :--- | :--- |
+| `node --test` | 171 tests, 171 pass, 0 fail |
+| `node browser/run-fixtures.js` | 13 of 13 fixtures pass; the three already-dark pages end at 0 style nodes and 0 adopted sheets |
+| `node browser/run-ui-checks.js` | All 11 families pass in place, and the behaviour replay is identical (27 actions, 92 `chrome.*` calls, 20 storage writes). Popup paint medians were 68 and 64 ms against a 100 ms budget; from a fresh-clone copy on headless 148, the paint family missed (108 and 124 ms) |
+| `node fixtures/run-rapid-toggle.js` | Pass: 0 long tasks over 20 toggles on a 3,000-row page, down from 38 before the release pass |
+| `node browser/check-manifest.js` | 34 declared paths resolve, 6 of 6 icon gates pass |
+| `node browser/run-perf.js` | First paint 1.7-5.4 ms after Darkrai's decision, settled 8-16 ms after it |
+
+Real Chrome 157, three runs (one full run, then two of the problem-1, popup and reset groups):
+
+| Check | Pass / ran |
+| :--- | :---: |
+| P1-1a popup opens while the worker sleeps | 3 / 3 |
+| P1-1b Never to Auto, no reload | 3 / 3 |
+| P1-1e restricted pages explained (4 pages per run) | 12 / 12 |
+| P1-2a YouTube's own dark theme left alone, 0 style nodes, 0 adopted sheets | 1 / 1 |
+| P1-2b YouTube's light theme darkened | 1 / 1 |
+| P1-2c MDN live theme switch, no reload | 1 / 1 |
+| P1-3 readability on 7 sites, 0 text runs and 0 icons below target | 7 / 7 |
+| P3 hard reset from the Options danger area | 3 / 3 |
+| **P4 every control in the real toolbar popup** | **49 / 51** |
+| **P1-3L no unexplained light regions** | **5 / 7** |
+| **P1-1c 20 rapid toggles end equal to a fresh load** | **0 / 3** |
+| **P1-1c-main-thread tab answers within 1 s** | **0 / 3** |
+
+The misses: both P4 misses were the toolbar popup closing on its own mid-check, and each of those checks passed in the other two runs. P1-3L found MDN's sponsor banner and a BBC News cross-origin ad frame still white. After 20 rapid toggles the page ended under-applied, once even `off` while the switch said on, and the tab left debugging probes unanswered for more than 5 s; reloading the tab restores it. Text runs below target / measured in the full run: Wikipedia 0/110, Hacker News 0/230, Stack Overflow 0/94, MDN 0/48, BBC News 0/34, old.reddit 0/15, YouTube light 0/7.
+
+Three checks need a person, because automation cannot do them: the physical Alt+Shift+D (CDP cannot press browser shortcuts), reloading the extension and then using a tab that was already open (crbug.com/402532200), and a real click on the toolbar icon. They are on the [manual checklist](docs/GUIDE.md#manual-test-checklist).
+
+---
+
+## 📂 Project Structure
+
+```text
+Darkrai/
+├── extension/                    # ← the folder you load in chrome://extensions
+│   ├── manifest.json             # MV3, Chrome 120+, three permissions, Alt+Shift+D
+│   ├── background.js             # Stateless worker: re-injection, shortcut, early background, alarms, icon
+│   ├── preload.css               # Early dark background at document_start (no white flash)
+│   ├── preload-system.css        # The same, for the "Follow system" schedule
+│   ├── content/                  # Page scripts, injected into every frame
+│   │   ├── main.js               # Lifecycle: decide, apply, remove, retire older copies
+│   │   ├── detect.js             # Already-dark detection and the theme watcher
+│   │   ├── engine-smart.js       # Role-based OKLCH recolouring
+│   │   ├── engine-simple.js      # Simple mode: whole-page invert, media re-inverted
+│   │   ├── readability.js        # The contrast guard
+│   │   ├── icons.js              # Icon rescue for small dark icons
+│   │   └── picker.js             # "Fix something unreadable"
+│   ├── shared/                   # Loaded by the pages, the worker and the Node tests, plus shared CSS
+│   │   ├── color.js              # Colour parsing, OKLCH maths, role mapping, WCAG contrast
+│   │   ├── settings.js           # Storage schema 2, upgrade(), site matching, schedule
+│   │   ├── reset.js              # Hard reset and per-site reset
+│   │   ├── preload-reg.js        # Early-background registration and the schedule alarm
+│   │   ├── restricted.js         # Pages Chrome blocks, and what the popup says there
+│   │   ├── motion.js             # "Should this move right now?" for both surfaces
+│   │   ├── timing.js             # Dev-only timing marks, off unless debug is set
+│   │   ├── handheld.css          # Pokédex tokens and the accessibility fallbacks
+│   │   └── select.css            # Themed dropdown lists (customizable select)
+│   ├── popup/                    # The Pokédex popup: popup.html, .css, .js, art/, fonts/, pixel sprites
+│   ├── options/                  # Options page: look, schedule, site list, danger area
+│   └── icons/                    # 12 toolbar icons: on, native, off at 16, 32, 48, 128 px
+├── tests/                        # Node built-ins only; package.json has no dependencies
+│   ├── unit/                     # 18 node:test files, 171 tests
+│   ├── fixtures/                 # Self-checking test pages and two standalone runners
+│   ├── browser/                  # Headless suites, behaviour baseline, DOM contract, screenshots/
+│   ├── real-chrome/              # Real-Chrome harness, REAL-CHROME-REPORT.md, evidence/
+│   └── shim/                     # Fake chrome.* for the fixtures, the UI checks and the reset tests
+├── tools/
+│   ├── icons/                    # build-icons.js, the pixel-sprite grids, the original crescent SVGs
+│   └── lovable-assets/           # The Lovable design's original 4× art
+├── docs/                         # GUIDE.md, VERIFICATION.md, perf-report.md
+├── licenses/                     # lucide-LICENSE.txt
+├── PLAN.md                       # Design record: the problems, engine details, schema, divergences
+└── README.md
+```
+
+---
+
+## 🛠️ Installation & Setup
+
+Follow these steps to run Darkrai from source:
+
+### 1. Prerequisites
+*   Google Chrome 120 or later. The themed dropdown lists need Chrome 135 or later; the release pass was verified on Chrome 157.
+*   Node.js, only to run the tests. The suites were last run on Node v24.12.0. Run `node --test` from the `tests` folder: on Node 24, `node --test unit` fails, because it reads the folder name as a single file.
+
+### 2. Clone the Repository
+```bash
+git clone https://github.com/Souravshukla007/Darkrai.git
+cd Darkrai
+```
+
+### 3. Load the Extension Unpacked
+1. Open `chrome://extensions` and switch on **Developer mode** (top right).
+2. Click **Load unpacked** and choose the `extension` folder: not the repository root, and not a zip.
+3. After editing any file, press **Reload** on the Darkrai card.
+
+Chrome warns that Darkrai can "read and change all your data on all websites". Any extension that restyles pages needs that access.
+
+### 4. Pin It and Use the Shortcut
+Click the puzzle-piece **Extensions** icon next to the address bar, then the pin next to Darkrai. The icon shows the current tab's state: in colour when Darkrai is darkening it, ghosted when the site's own dark theme is left alone, greyscale when off. **Alt+Shift+D** turns Darkrai on or off for the current site; change it at `chrome://extensions/shortcuts`.
+
+### 5. Run the Tests
+```bash
 cd tests
 node --test
+node browser/check-manifest.js
 node browser/run-fixtures.js
 node browser/run-ui-checks.js
-node browser/check-manifest.js
-node browser/dom-contract.js snapshot %TEMP%\dom-now.json
-node browser/dom-contract.js compare browser/dom-contract.before.json %TEMP%\dom-now.json
-node browser/run-perf.js %TEMP%\perf.json
 node fixtures/run-colour-fixtures.js
 node fixtures/run-rapid-toggle.js
 node real-chrome/run-real-chrome.js
 ```
+`node --test` and `check-manifest.js` need nothing but Node. The headless suites look for a `chrome-headless-shell` already on the machine (or the one `DARKRAI_CHROME` names) and print SKIPPED when there is none. The real-Chrome run opens a visible Chrome window on a throwaway profile and needs a network connection; the full run took 402 s in the release pass. The performance run and the DOM contract are in the [guide](docs/GUIDE.md#run-the-tests).
 
-Environment variables (all optional; on Windows `cmd`, `set NAME=value` before the command, and `set NAME=` to clear it):
+### 6. Regenerate the Icons and Art
+```bash
+node tools/icons/build-icons.js
+```
+Run it from the repository root. It rebuilds the twelve toolbar icons and the two popup sprites from the pixel grids in `tools/icons/`, with no browser needed. `--sprites-only` rebuilds only the sprites, `--svg` builds the icons from the original crescent marks (it needs a headless shell), and `--from <png|svg>` uses your own image. The popup's Lovable art in `extension/popup/art/` is replaced by hand: see [Replacing the art](docs/GUIDE.md#replacing-the-art).
+
+---
+
+## ⚙️ Configuration
+
+Darkrai needs no setup before use: no `.env` file, no API keys and no account. Everything you can change lives in the extension:
+
+*   **The Popup**: the master switch, This site (Auto / Always / Never), Mode (Smart / Simple), the Look, the picker, the Schedule, and the Reset this site and Hard reset… buttons.
+*   **The Options Page** (`chrome://extensions` > Darkrai > Details > Extension options, or the Options button in the popup): the same look and schedule controls, what new sites start as, the whole site list with search, per-site editing, fix clearing and removal, and the danger area with both resets.
+*   **The Shortcut**: `chrome://extensions/shortcuts`.
+
+The test harnesses read a few optional environment variables. On Windows `cmd`, use `set NAME=value` before the command and `set NAME=` to clear it:
 
 | Variable | Used by | What it does |
-|---|---|---|
-| `DARKRAI_CHROME` | headless suites, `run-perf.js`, `build-icons.js`, and `run-real-chrome.js` | The browser binary. For the headless suites it should be a `chrome-headless-shell`; without it they look for one already unpacked under `~/.cache/puppeteer`, `~/AppData/Local/ms-playwright`, `~/.cache/ms-playwright` or two folders above the repository, each only if it exists, and print SKIPPED when there is none. For `run-real-chrome.js` it must be real Google Chrome (the harness needs `Extensions.loadUnpacked`); the default is `C:\Program Files\Google\Chrome\Application\chrome.exe`. Clear it before a real-Chrome run if you set it to a headless shell. |
-| `DARKRAI_UI_FAMILY` | `run-ui-checks.js` | Runs only these families, e.g. `b,f`. Clear it for a full run. |
-| `DARKRAI_EXTENSION` | `run-real-chrome.js` | Loads a copy of `extension/` instead of the repository's own. |
-| `DARKRAI_RESULTS` | `run-real-chrome.js` | Writes that run's results and its `REAL-CHROME-REPORT.md` to this folder instead of `tests/real-chrome/`. |
-| `DARKRAI_PROFILE_ROOT` | `run-real-chrome.js` | Where the throwaway profiles go, `<root>\profile-<ms>`. Default `%TEMP%\darkrai-realchrome`. A Chrome left behind by a killed run is the one whose command line holds `--user-data-dir=<root>\profile-`. |
+| :--- | :--- | :--- |
+| `DARKRAI_CHROME` | headless suites, `run-perf.js`, `build-icons.js`, `run-real-chrome.js` | The browser binary: a `chrome-headless-shell` for the headless suites, and real Google Chrome for `run-real-chrome.js`, which needs `Extensions.loadUnpacked` |
+| `DARKRAI_UI_FAMILY` | `run-ui-checks.js` | Runs only the named check families, for example `b,f` |
+| `DARKRAI_EXTENSION` | `run-real-chrome.js` | Loads a copy of `extension/` instead of the repository's own |
+| `DARKRAI_RESULTS` | `run-real-chrome.js` | Writes that run's results and its report to this folder instead of `tests/real-chrome/` |
+| `DARKRAI_PROFILE_ROOT` | `run-real-chrome.js` | Where the throwaway profiles go; the default is `%TEMP%\darkrai-realchrome` |
 
-**`node --test`** — the unit suite. Run it from the `tests` folder so the runner finds the files itself (`node --test "unit/*.test.js"` works too). Naming the folder, as in `node --test unit`, **fails on Node 24**: it reads the folder as a single file. Last run here: **171 tests, 171 passed, 0 failed** (v24.12.0, about 1.2 s), 21 of them added by the release pass: the early-dark-background registration race (8), the content-script file lists in `manifest.json`, `background.js` and `reset.js` agreeing (1), colours inside `var()` fallbacks and lost longhands (6), and the light-region detector the real-Chrome probe uses (6).
+---
 
-It covers the colour maths, contrast and the readability targets, the text role a masked element's background colour takes, colour shorthands that hold `var()`, already-dark detection, the storage schema and its upgrades, site matching, the picker's remembered fixes, the icon-rescue decision, the schedule, the dev-only timing module, the early dark background and alarm registration, the motion and surface-mode decisions, the twelve toolbar icon files, and the resets — that a hard reset restores the exact factory defaults, that running it twice changes nothing more, that resetting one site leaves every other site byte-identical, and that a `chrome.*` call which rejects, times out or is missing altogether is reported as a failed step while the other steps still run.
+## 📸 Screenshots
 
-Four of those cases exist to stop the reset from flattering itself: a registration that Chrome refused is reported as a step that did not finish rather than as done, an alarm that could not be created is told apart from an alarm that was never needed, and a tab that was re-injected keeps its live icon even when the old styles had to be swept and the sweep failed.
+Here is Darkrai's own UI as the release pass captured it:
 
-The sweeper — the function injected into a tab that will not answer — is pinned twice: here as a string, that it leaves the root marker at `off` instead of removing it and that it reaches inside open shadow roots, and in the UI suite against a real document.
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="tests/browser/screenshots/popup-on.png" width="260" alt="Darkrai popup in its red Pokédex casing, green LED lit, status line reading Darkened by Darkrai"><br>
+      <b>Darkening a light page</b><br>Green LED and status dot.
+    </td>
+    <td align="center" width="50%">
+      <img src="tests/browser/screenshots/popup-native.png" width="260" alt="Darkrai popup with the ice-blue LED lit, the LCD art faded and the status line reading This site's own dark theme, left alone"><br>
+      <b>A site's own dark theme</b><br>Ice-blue LED, LCD art at 60 %, left alone.
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <img src="tests/browser/screenshots/popup-off.png" width="260" alt="Darkrai popup with the master switch off, the amber LED half lit and the status line reading Darkrai is off everywhere"><br>
+      <b>Off everywhere</b><br>The half-lit amber LED and a grey status dot.
+    </td>
+    <td align="center" width="50%">
+      <img src="tests/real-chrome/evidence/popup-real.png" width="260" alt="The real Darkrai toolbar popup captured in Chrome 157 on en.wikipedia.org, darkening the page"><br>
+      <b>The real toolbar popup</b><br>Chrome 157 on en.wikipedia.org, 360 × 600.
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <img src="tests/browser/screenshots/popup-dropdown-look.png" width="260" alt="Darkrai popup with the Look preset list open, showing Dark gray checked, True black and Soft in dark rows"><br>
+      <b>Themed dropdowns</b><br>The Look list as a customizable select.
+    </td>
+    <td align="center" width="50%">
+      <img src="tests/real-chrome/evidence/popup-dropdown-schedule-bottom.png" width="260" alt="Darkrai popup scrolled to the bottom with the Schedule list open above its pill, showing Always, Follow system and Custom hours"><br>
+      <b>Room-aware lists</b><br>At the bottom of the screen, the Schedule list opens above its pill (real Chrome).
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <img src="tests/browser/screenshots/options.png" width="260" alt="Darkrai Options page with the red header band and dark panels for Look, Schedule, Sites and the Danger area"><br>
+      <b>The Options page</b><br>Look, schedule, site list and the danger area.
+    </td>
+    <td align="center" width="50%">
+      <img src="tests/browser/screenshots/toolbar-icons.png" width="260" alt="Grid of Darkrai toolbar icons: the pixel-art Darkrai in colour, ghosted and in greyscale at four sizes, over transparent, white and near-black backgrounds"><br>
+      <b>The toolbar icon</b><br>In colour, ghosted and greyscale at all four sizes, over transparent, white and near-black.
+    </td>
+  </tr>
+</table>
 
-The seven icon tests decode the PNGs rather than checking that the files exist, because "the file is on disk" would also pass against the flat placeholders this build replaced. They assert all twelve are valid 8-bit non-interlaced RGBA at exactly their nominal size, that every `off-*` is true greyscale with no transparent pixel carrying stray colour, that every `on-*` really is coloured, that each `native-*` sits between the two on both chroma and ink mass, and that `on-*` and `off-*` have byte-identical alpha channels while `native-*`'s differs.
+All screenshots are of Darkrai's own UI: headless captures from `tests/browser/screenshots/` and real-Chrome captures from `tests/real-chrome/evidence/`. Screenshots of third-party sites stay in the git-ignored `tests/real-chrome/results/`.
 
-**`node browser/run-fixtures.js`** — the thirteen fixture pages under `tests/fixtures/`, each of which checks itself. Last run here: **all 13 fixture checks passed**, with `native-dark.html`, `meta-dark.html` and `runtime-theme-switch.html` each reporting zero Darkrai style nodes and zero adopted Darkrai sheets, which is the line that says an already-dark site was really left alone. Two pages were added for the readability pass:
+---
 
-- `mask-icons.html` holds two icons drawn the Wikimedia Codex way, as the background colour of a masked span. Its glyphs read 3.23:1 and 8.52:1 on #181818; on the earlier engine they read 1.10:1 and 1.76:1.
-- `var-shorthand.html` holds a cookie-banner-style `background: var(--x, #f0f4ff) !important`, a guide panel and an inline style, each with `var()` inside the `background` shorthand. All three come out dark, where the earlier engine left all three light.
+## 🔮 Future Improvements
 
-You can also open `tests/fixtures/index.html` by hand in any browser.
+- [ ] **A Consistent End State After Rapid Toggles**: after 20 fast toggles in real Chrome, the page can end under-applied, and once `off` while the switch said on (P1-1c). The likely mechanism, the popup re-injecting a tab that is still busy, is not verified yet.
+- [ ] **MDN's Sponsor Banner and BBC News's Ad Frame**: the two light regions left on darkened pages (P1-3L), one inside an open shadow root, the other a cross-origin Google ad frame the probe cannot see into.
+- [ ] **A Ghosting That Suits the Lovable Tile**: so the Lovable design's Darkrai tile can become the toolbar icon. Ghosted at 16 px, it kept 29.1 % of its ink at 3:1 on a white toolbar, against the 30 % gate.
+- [ ] **The Picker Inside Iframes**: today it runs in the top frame only.
+- [ ] **Settings Sync and Export / Import**: settings are local only, so a hard reset has nothing to restore from.
+- [ ] **Edge and Firefox Packages**.
 
-Two more fixture runners came with the release pass, each reporting through the same protocol:
+---
 
-- **`node fixtures/run-colour-fixtures.js`** opens `var-fallback.html` (Wikipedia's fade, a `var()` shorthand followed by its own longhand, and a colour inside a `var()` fallback) and also checks real screenshot pixels inside the elements it names. Last run here (release pass, from a fresh-clone copy): **PASS**, the fade's last stop at OKLCH L 0.21 and both `var(--token, #fff)` backgrounds at L 0.21. On the engine before the fix it failed twice: the fade's last stop and `#plain` stayed white.
-- **`node fixtures/run-rapid-toggle.js`** opens `rapid-toggle.html` (3,000 rows, 900 rules), toggles `settings.enabled` 20 times about 20 ms apart, and requires no long task and a style set equal to a fresh load. Last run here (release pass, fresh-clone copy): **PASS**, 0 long tasks and the style set equal to the fresh load's. On the code before the fix: 38 long tasks, the longest 350 ms, 5,076 ms of blocking, and one leaked adopted sheet. It drives storage directly, so it does not cover the popup's re-injection path that the real-Chrome P1-1c goes through.
+## ⚠️ Known Limits
 
-**`node browser/run-ui-checks.js`** — eleven check families, (a) to (k), against the popup and the Options page (`set DARKRAI_UI_FAMILY=b,f` runs a subset): pixel-measured contrast, that the Pokedex frame renders (casing, both hardware strips, both Poke Balls, LCD, LED, speaker dots, screen, avatar) and follows the On / Native / Off state, saving `tests/browser/screenshots/popup-on.png`, `popup-native.png`, `popup-off.png`, `popup-hours.png`, `popup-look-open.png` and `options.png`, that no layout property is animated, a visible focus ring on every control, no layout shift under the three media settings, the popup's paint and size budget, the hard-reset dialog (that it is a real modal, that focus starts on Cancel, that Tab stays inside it — before the reset, *while it runs* with both buttons disabled, and after it has finished with the Continue button hidden — that its own text clears contrast over its own blurred backdrop, that its buttons show a ring, that the itemised result is inside the live region so a screen reader hears which steps failed, and that Esc gives focus back to the trigger), the two-click route from the toolbar icon (that "Hard reset…" really opens `options/options.html#danger` and closes the popup, and that the fragment moves focus into the danger area), the sweeper against a real document dressed up as a darkened tab, and (j) the behaviour replay: 27 popup actions, each in a fresh popup, whose `chrome.*` calls, storage writes and read-out must match `tests/browser/popup-behaviour.baseline.json`, recorded before the redesigns, and (k) the themed dropdowns: every `<select>` on both pages opened with a real click, its list inside the viewport, lined up with the pill, the chosen row silver and the others dark with no default light-blue pixel, text at 4.5:1 or better, Esc closing the list with the value kept, Enter / ArrowDown / Enter picking the next option with one `change`, reduced motion and forced colours (screenshots `popup-dropdown-look.png`, `popup-dropdown-schedule.png`, `options-dropdown.png`). `node browser/dom-contract.js compare browser/dom-contract.before.json <snapshot>` is the other half of that oracle: every id, name, `for`, role, `aria-*`, `type`, `tabindex`, `data-*` and event binding of the popup and Options page must still be there (`snapshot <file>` writes the current one).
+*   **Blocked Pages**: Chrome blocks every extension on `chrome://` pages, the Chrome Web Store, the built-in PDF viewer and other extensions' pages. The popup says so instead of failing quietly.
+*   **Closed Shadow DOM** cannot be reached, so a component built that way keeps its own colours.
+*   **Canvas-Drawn Apps** need Simple mode. The Google Docs preset is part of the default store, so removing or resetting `docs.google.com` brings it back on the next read; set it to Never instead.
+*   **The Picker** runs in the top frame only.
+*   **The Popup's Paint Budget** of 100 ms is load-sensitive: medians of 68 and 64 ms in place, but 108 and 124 ms from a fresh-clone copy on an older headless build.
+*   **Rapid Toggling and Two Light Regions** are still open (see the results above).
+*   **No Sync, Export or Import**: settings are local, and a hard reset cannot be undone.
 
-Last run here, in the release pass (2026-11-06, quiet machine): **all UI checks passed**, every family (a) to (k). (f) read **80, 64, 40 ms, median 64 ms** against the 100 ms budget. (g) ran the hard reset end to end against the shim, 7 steps, 0 failed. (j) still **27 actions, 92 `chrome.*` calls and 20 storage writes, identical**, and the DOM contract still 281 items with the one `#lcd-art` difference. (k) passed every select on both pages, including the popup's Schedule list with its pill at the very bottom of the scrolled screen, which now opens **above** the pill (y 399.5-499.5, a 6 px gap, the full 304 px width). Run from a fresh-clone copy, which found an older headless build (chrome-headless-shell 148), every family passed again except (f): the popup's median read 108 ms and then 124 ms, and the unbudgeted Options page slowed by the same factor (100 and 124 ms against 56-64 ms), so the paint budget is sensitive to the headless build as well as to load. Two test-side changes came with that run, both recorded in [docs/VERIFICATION.md](docs/VERIFICATION.md): the UI shim now keeps the dynamic content scripts it is given (it used to answer every read-back with an empty list, so the hard reset's new read-back could never pass against it), and (k)'s default-blue grid skips the option labels' own glyph boxes, where the 3 "blue" pixels on the Options page's Reset-this-site list were LCD subpixel anti-aliasing with an orange twin on the other side of each stem. The blue threshold and the any-sample-fails rule are unchanged.
+The full list, with the reasoning behind each item, is in [docs/GUIDE.md](docs/GUIDE.md#known-limits).
 
-Earlier, after the readability pass: **every family green except the popup's paint budget (f), so the command exits 1.**
+---
 
-- In that full run, (i) and (j) stopped on harness timeouts (`Page.enable` / `Target.createTarget` after 8 s). A re-run of `f`, `i` and `j` passed both.
-- Worst contrast is 7.3:1 in the popup (the host line) and 4.99:1 on Options. The weakest focus rings are 12.57:1 and 3.57:1. 175 and 136 boxes stayed put under the three media settings.
-- Popup paint:
-  - full run: **104, 116, 84 ms, median 104 ms**, against the 100 ms budget, with the unbudgeted Options page at 72 ms;
-  - the re-run: 128 ms, with Options at 140 ms;
-  - before this pass: 108 ms and 128 ms;
-  - a quiet run during the port: 92 ms.
-- No popup file changed in this pass. The figure is load-sensitive and sits just around the budget (see Known limits). The fit at 360 × 600: the page never scrolls, the screen scrolls with 653 px of content in 420 px by default, 673 px with Custom hours and 843 px with Look open, and no text is clipped in any of them. The frame group: 12 of 12 pieces visible, Poke Balls at 52 and 44 px (hidden from assistive technology, unfocusable, no handler), 3 speaker holes, LED green / blue / amber for On / Native / Off, the LCD art at full strength / 60 % / full strength. The replay group: 27 actions, **92 `chrome.*` calls and 20 storage writes, identical to the baseline**. The DOM contract: 281 items checked, one deliberate difference (`#lcd-art` now points at `art/lcd-darkrai.png`). The dialog group: `role="dialog" aria-modal="true"` named "Hard reset everything?", focus on Cancel, the page behind it inert, Tab and Shift+Tab contained over both stops and while the reset ran, rings at 12.31:1, worst dialog contrast 4.99:1 over its own backdrop, Esc returning focus to the trigger, and all seven steps reported done against the test shim. The sweeper group: `<html>` kept `data-darkrai="off"`, the page's own content and its shadow content survived, no `style[data-darkrai]` or `data-dr-id` left in the document **or inside the open shadow root**, and both tagged adopted sheets were dropped while the page's own was kept.
+## 📜 Attribution & Licenses
 
-**`node browser/check-manifest.js`** — pure Node, so it never skips and needs no browser. It parses `manifest.json`, resolves every path the manifest names plus the ones only registered at runtime, and reads the three 16 px icons: it composites each over white and over near-black and reports what share of the mark's ink reaches 3:1 against that background, with gates of 40% for `on-16`, 30% for `native-16` and 15% for `off-16`, and checks that `native-16` keeps at most 0.80 of `on-16`'s ink mass so the two stay tellable apart. Last run here: **34 declared paths, every one resolves**, all twelve icon files among them, and the six icon-on-background figures (white / near-black) at **78.3% / 60.5%** for `on-16`, **67.4% / 50.7%** for `native-16` and **78.3% / 51.6%** for `off-16`, `native-16` at 0.608 of `on-16`'s ink mass, exit 0. The gate is set lower for `native-16`, whose ghosted interior is meant to be faint while its rim carries the mark.
+*   **Pokémon, Poké Ball and Darkrai** are trademarks of Nintendo, Creatures Inc. and GAME FREAK. The popup's art in `extension/popup/art/` comes from the Lovable design and is fan art for personal use; the pixel-art toolbar icons and the Options page sprite, drawn for this project, show Darkrai too. A Chrome Web Store listing with this art would likely be rejected or taken down. To publish, replace the art first ([how](docs/GUIDE.md#replacing-the-art)); `node tools/icons/build-icons.js --svg` rebuilds the toolbar icons from the original crescent marks, which show no character.
+*   **Icons**: [Lucide](https://lucide.dev) (lucide-static 0.575.0), inlined as one SVG sprite. ISC License, © Lucide Contributors; portions MIT, © Cole Bemis (Feather). Full text in [`licenses/lucide-LICENSE.txt`](licenses/lucide-LICENSE.txt).
+*   **Font**: Nunito Sans (variable, latin subset). SIL Open Font License 1.1, © The Nunito Sans Project Authors. Full text in [`extension/popup/fonts/OFL.txt`](extension/popup/fonts/OFL.txt).
+*   **Darkrai's Own Code** has no LICENSE file yet.
 
-**`node real-chrome/run-real-chrome.js`** — the extension in your installed Google Chrome against real public sites. It **opens a visible Chrome window** on a fresh throwaway profile (your own profile, history and extensions are never touched), loads `extension/` unpacked, runs the checks, closes Chrome through the debugging connection and deletes the profile. It needs a network connection, takes about 7 minutes and is capped at 14. `--only=problem1,problem2,problem3,p4,p2,p3` runs a subset and merges it into the previous report, and `--sites=wikipedia,youtube` (for debugging) limits problem 3 to the URLs that contain one of those words. Results go to `tests/real-chrome/REAL-CHROME-REPORT.md` and `tests/real-chrome/results/<run>/report.json`, with off/on screenshots per site and the Chrome log. `results/` is git-ignored, because it holds screenshots of third-party sites; the copies of Darkrai's own UI screenshots from the release run (the popup and its dropdowns) are committed in `tests/real-chrome/evidence/`. Before and after a run, a leftover harness process is the one whose command line holds the profile root (`%TEMP%\darkrai-realchrome\profile-` by default), never matched by image name, so your own Chrome is never touched.
+---
 
-Last runs here, in the release pass (2026-11-06, Chrome 157.0.8103.39, the repository's own `extension/` folder): one full run (`2026-11-06T08-55-09-476`, 402 s, **42 PASS, 6 FAIL, 2 NOT RUN**), then two more runs of `--only=problem1,p4,p3` to measure flakiness. Problem 2 and 3 and the P2 checks ran once; problem 1, P4 and P3 ran three times. The per-check table with the pass count of every check is in [docs/VERIFICATION.md](docs/VERIFICATION.md). Every run closed Chrome through the debugging connection and removed its throwaway profile.
+## 🎖️ Why This Project Matters (Recruiter Corner)
 
-- **Problem 1, the popup sometimes does not open.**
-  - P1-1a, the popup opening and showing the tab's real state while the service worker is asleep: **PASS in 3 of 3 runs**.
-  - P1-1b, Never → Auto applied with no reload: **PASS in 3 of 3 runs**.
-  - P1-1e, the restricted-page message on `chrome://extensions`, `chrome://settings`, the Web Store and a PDF: **4 of 4 PASS in each of the 3 runs**.
-  - **P1-1c, 20 rapid master-switch toggles: FAIL in 3 of 3 runs, still open.** No run left a duplicate style, but none ended equal to a fresh load (17 override sheets, 4 adopted). In runs 1 and 2 the page ended switched on but under-applied, with 5 and 6 override sheets and 3 adopted. In run 3 it ended with `data-darkrai="off"` and 4 override sheets left, while the store and the switch both said on. The run before this pass ended under-applied the same way (4 against 15). Reloading the tab restores it: the P4 checks that follow load the same tab again and find it fully darkened.
-  - **P1-1c-main-thread: FAIL in 3 of 3 runs.** The release pass took Darkrai's own long tasks out of the burst (the longest task in the real tab is now 54-108 ms, total blocking 4-66 ms; the 3,000-row fixture went from 38 long tasks to 0), but after the toggles the tab still leaves `Runtime.evaluate` probes unanswered for more than 5 s, with no long task showing in the page meanwhile. The cause is not found yet.
-  - Not automatable, on the manual checklist: P1-1f, the physical Alt+Shift+D (NOT RUN by design), and P1-1d, an old tab after an extension reload (FAIL "no new service worker": a CDP-loaded unpacked extension stays disabled after a scripted reload, crbug.com/402532200).
-- **P4, every control in the real toolbar popup: 17 checks, 49 of 51 PASS across the 3 runs (run 1 17 of 17, run 2 16 of 17, run 3 16 of 17).** This site Always on YouTube's own dark theme, the master switch, Never → Auto, Smart → Simple → Smart, a brightness change, reopening the popup, the picker, Custom hours and its alarm, the themed dropdowns (including the Schedule list flipping above its pill at the bottom of the screen), Reset this site, Hard reset… opening `options.html#danger`, Options, Reload this tab, the shortcut's binding and handler, the screenshot ([`tests/real-chrome/evidence/popup-real.png`](tests/real-chrome/evidence/popup-real.png), 360 × 600) and the fit (the page does not scroll, the screen does, 653 px of content in 420 px, the content keeps 304 px, no clipped text). The two misses were the toolbar popup closing on its own mid-check, P4-shot in run 2 (NOT RUN) and P4-dropdowns in run 3 (FAIL); each passed in the other two runs (see Known limits).
-- **Problem 2, overriding a site's own dark theme.**
-  - P1-2a PASS: YouTube in its own dark theme was left alone, with `data-darkrai="native"`, 0 style nodes and 0 adopted sheets.
-  - P1-2b PASS: YouTube in its light theme was darkened.
-  - P1-2c PASS: MDN switched its own theme live under the emulated scheme. Darkrai went `native` with 0 style nodes and 0 adopted sheets once MDN turned dark, and darkened it again when it turned light, with no reload.
-  - P2-gh-dark FAIL: GitHub did not render dark under the emulated scheme, so Darkrai darkened a light page; GitHub light PASS. Google's dark-scheme results PASS (`native`); the light-scheme tab met the bot check (NOT RUN). Both stay on the manual checklist.
-  - P2-errors PASS: no exception or console error in the popup, the Options page, Darkrai's isolated worlds or the worker.
-- **Problem 3, unreadable text and icons.** Text and icons below target / measured, all at 0 below target: Wikipedia (Moon) 0/110 text and 0/14 icons, Hacker News 0/230 and 0/1, MDN 0/48 and 0/0, BBC 0/34 and 0/3, Stack Overflow 0/94 and 0/5, Reddit 0/15 and 0/5 (it redirects to its login page), YouTube light 0/7 and 0/13. Text inside disabled controls is counted as exempt rather than judged (WCAG 1.4.3): 2 text runs on Stack Overflow, 3 on Reddit and 3 on YouTube.
-  - The new light-region check (P1-3L) found no unexplained light area on Wikipedia (its two sticky-header fades are now dark; the one light region is the Moon photo), Hacker News, Stack Overflow, Reddit or YouTube.
-  - **Two light regions are left, both open:** MDN's top sponsor banner, painted white by `div.top-placement` inside the open shadow root of `mdn-placement-top` (1265 × 56 px), and on BBC News a 728 × 90 cross-origin Google ad frame whose whole box painted white while the frame element has `color-scheme: dark`.
-- **P3, the hard reset** from `options.html#danger`: **PASS in 3 of 3 runs**. Each time it restored the factory defaults, registered the early dark background, left no alarm and put the open tab back on, and the dialog reported every step done. Before this pass it reported "Partly done" with the same correct end state (`Duplicate script ID 'darkrai-preload'`), in `2026-11-03T11-04-11-169` and again in `2026-11-03T18-00-23-469`.
+Darkrai is a small rendering pipeline more than a stylesheet: it has to be right on pages it has never seen, on a platform that can stop its background worker at any moment.
 
-The two headless suites (fixtures and UI checks) look for a `chrome-headless-shell` already on the machine (or `DARKRAI_CHROME`), and **print SKIPPED and exit 0** when there is none. Neither one ever downloads a browser, installs a package or launches your everyday Chrome. `node browser/run-perf.js` is the fourth, optional suite: it records the timing numbers below.
+1.  **It Decides Before It Acts**: a per-page measurement (declared colour scheme, nine screen samples, text against background) separates sites with their own dark theme from those without, and keeps watching for theme switches, so a site's own design is respected by default.
+2.  **Colour Science Instead of Inversion**: an OKLCH pipeline remaps each colour by role with its hue intact and reaches into custom properties, `var()` shorthands, mask-painted icons, shadow roots, adopted and cross-origin sheets, while the readability guard proves the result on screen.
+3.  **Built for the Manifest V3 Lifecycle**: storage is the single source of truth, so the popup, the page scripts and even the hard reset keep working while the service worker sleeps, and stale copies of the page script retire themselves after an update.
+4.  **Evidence You Can Re-Run**: every number on this page comes from a command in `tests/`, from Node unit tests up to a harness that drives installed Chrome over a pipe, and `docs/VERIFICATION.md` keeps the misses next to the passes.
 
-The timing those suites read is off unless you ask for it. `chrome.storage.local.set({ debug: true })` from Darkrai's own devtools console turns it on; it is off for everybody by default and costs one boolean test when off.
-
-## Measured performance
-
-Real numbers from the development machine, recorded by `node browser/run-perf.js` before and after the optimisation pass (written up side by side in [docs/perf-report.md](docs/perf-report.md), headless Chrome, software rendering). The release pass of 2026-11-06 measured the same fixtures again before and after its engine changes; those numbers are in [docs/VERIFICATION.md](docs/VERIFICATION.md). The two columns below are **before → after** the optimisation pass. The timings are the gaps inside the page — how long after Darkrai's decision its first styles paint, and how long until it settles — because the absolute marks also carry however long the page itself took to load that run, which swings by 100 ms either way and says nothing about Darkrai.
-
-`run-perf.js` writes to `.agents/tasks/perf-before.json` (a git-ignored folder) unless it is given a path. To keep a run somewhere else, give it one: `node browser/run-perf.js <file>.json`.
-
-| fixture | first paint after decision (ms) | settled after decision (ms) | style nodes | adopted sheets | elements the guard measured | RecalcStyleCount | forced reads (proxy) |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| light | 4.2 → 3.7 | 16.1 → 19.1 | 2 → 2 | 0 → 0 | 24 → 20 | 7 → 7 | 0 → 0 |
-| css-variables | 3.3 → 2.3 | 12.8 → 9.4 | 3 → 2 | 0 → 2 | 12 → 12 | 17 → 10 | 6 → 0 |
-| inline | 2.8 → 2.4 | 13.6 → 11.4 | 2 → 1 | 0 → 1 | 14 → 14 | 8 → 7 | 0 → 0 |
-| low-contrast | 3.0 → 3.5 | 10.3 → 11.1 | 2 → 2 | 0 → 1 | 16 → 14 | 8 → 12 | 6 → 0 |
-| shadow-dom | 2.3 → 2.7 | 13.0 → 11.3 | 2 → 2 | 3 → 3 | 20 → 20 | 8 → 8 | 0 → 0 |
-| small-icons | 2.9 → 2.5 | 10.8 → 8.9 | 3 → 2 | 0 → 2 | 24 → 18 | 11 → 10 | 11 → 0 |
-| native-dark (control) | n/a | n/a | 0 → 0 | 0 → 0 | 0 → 0 | 4 → 4 | 0 → 0 |
-
-What actually moved:
-
-- **Forced style reads are gone.** The readability guard now measures a whole slice before it writes anything, so the 6, 6 and 11 read-after-write proxies on `css-variables`, `low-contrast` and `small-icons` are all 0. That is the change with the clearest effect on a big page.
-- **Chrome's own `RecalcStyleCount` fell where the work was**: 17 → 10 on `css-variables`. It **rose on `low-contrast`, 8 → 12**, which is the one number in this table that went the wrong way: that page's whole point is contrast rescue, and the constructed stylesheet it now writes into is mutated rule by rule instead of being re-serialised in one go. It is 12 recalculations on a page that used to do 8, against a page-wide total that is still well inside budget, so it was left as it is rather than traded back for the O(n²) re-serialisation.
-- **Darkrai writes fewer DOM nodes.** The wholesale-rebuilt sheets moved to constructed `adoptedStyleSheets`, so `style` nodes drop and adopted sheets appear in their place — one object mutated in place instead of a text node re-parsed on every flush.
-- **A site with its own dark theme still costs almost nothing**: `native-dark` ends at 0 style nodes, 0 adopted sheets, 0 elements measured and 4 style recalculations for the whole page, Darkrai's share of which is the one decision.
-
-Against the targets in `PLAN.md` section 6.9:
-
-- *under 20 ms of blocking work before first paint* — **met**: 2.3–3.7 ms between the decision and Darkrai's first styles on every fixture.
-- *guard slices of 8 ms or less* — **met** by construction; the slice budget and its 2 ms floor are unchanged.
-- *about 150 ms to idle on an article page* — **met**: 9–19 ms after the decision.
-- *under 5 ms on a page that is already dark* — **not measurable this way, and reported as such.** `native-dark` is read as 0 nodes and 0 measured elements, and the page-wide `RecalcStyleDuration` is 1.0 ms, but that figure covers the fixture's own scripts too, so it is not Darkrai's 5 ms.
-- *popup paint under 100 ms* — **met, but on a median of three loads rather than on one cold load. The number did not move; the way it is measured did, and here are all the readings behind that.**
-  - Single-load readings of this build, as the check used to take them: **88, 100, 100, 112, 116, 124, 132, 160 and 184 ms** — median 116 ms. On that method the figure was missed.
-  - The build before the reset work measured **72–80 ms** in the same harness. Part of the difference is real and is **the popup's one blurred `.dr-glass` surface**: a liquid-glass panel costs paint time, and that panel is the look this build exists to deliver.
-  - Part of it is machine load. The Options page, which has no budget, measured 168 ms before this work and swung **172–252 ms** across the same runs — the same proportional spread on a page the reset work barely touched.
-  - So the check now loads each page **three times in one run**, prints every reading and gates the popup's **median** against the same **100 ms**. The three runs recorded on that method: **124, 76, 44 ms — median 76 ms**; **100, 92, 76 ms — median 92 ms**; and the last one **68, 36, 36 ms — median 36 ms**, with the Options page reading 140, 88, 108 ms in that same run. Later loads in a run are warmer than the first, so the first reading is the one to compare with the older single-load numbers.
-  - A 100 ms gate on the median still has teeth: the glass-era single-load median of 116 ms would fail it. An earlier pass had set the gate to 150 ms, which was looser than the thing it measures; it is back to 100. The reasoning is recorded in `PLAN.md` section 14 item 13 and in a comment at the threshold in `tests/browser/run-ui-checks.js`. Dropping the popup's glass to buy a faster cold load was considered and rejected.
-  - The size budget is met: the Lovable popup is 360 px wide and **600 px** tall against the 600 px a toolbar popup gets; the design's extra height scrolls inside its screen.
-  - These readings predate the Handheld reskin, which replaced the glass surface, and the Lovable port after it. The Handheld popup measured 128, 68, 56 ms, median 68 ms. **The Lovable popup is heavier and sits around the budget:** a quiet isolated run during the port read a 92 ms median, the latest full UI run **236, 104, 108 ms, median 108 ms** (the Options page 76 ms in that run), and a re-run under real-Chrome load 128 ms (Options 168 ms). The release pass (2026-11-06) dropped the font preload, after an interleaved A/B in one headless session put the median 26% lower without it; the full UI runs on a quiet machine then read **100, 68, 36 ms (median 68 ms)** and **80, 64, 40 ms (median 64 ms)**.
-- *The readability pass (2026-11-03)*, measured on the same fixtures and the same headless shell as an engine copy with the three fixes neutralised. It moved nothing beyond run-to-run noise:
-  - decision → first paint 2.5–3.9 ms, against 2.1–4.0 ms before;
-  - decision → idle 11–21 ms, against 9–19 ms;
-  - style nodes and adopted sheets identical on every fixture, and 0 forced reads.
-  - The new mask-icon candidates run inside the existing 8 ms guard slices, and `SLICE_MS`, `MIN_SLICE_MS` and `BATCH` are unchanged.
-- *60 fps animation* — **not measurable honestly** in `--disable-gpu` headless. What is checked instead is structural: only `transform` and `opacity` are animated anywhere on either surface, asserted by check family (c) over every stylesheet rule and every `@keyframes` block.
-
-## Known limits
-
-- Chrome blocks every extension on `chrome://` pages, the Chrome Web Store, the built-in PDF viewer and other extensions' pages. Darkrai says so rather than failing quietly.
-- Closed shadow DOM cannot be reached, so a page component built that way keeps its own colours.
-- Apps that draw their text on a canvas need Simple mode. Docs, Sheets and Slides are preset; anything else is one switch in the popup.
-- A few complex sites may still need the picker or Simple mode.
-- The picker runs in the top frame only, so an unreadable element inside an embedded frame cannot be picked yet.
-- Picker selectors are built from ids, stable-looking classes and position. A site that rebuilds its markup can outgrow a saved fix; clear it from the Options page and pick again.
-- Icon rescue reads image pixels. Same-origin images are analysed in the page, and images from other domains are analysed in the background worker, which answers only yes or no. An image behind a login or a signed URL that the worker cannot fetch is left as it is.
-- The Google Docs Simple-mode preset is part of the default store, so removing `docs.google.com` from the Options list — or resetting that one site — brings it back on the next read. Set it to **Never** instead if you do not want it. Resetting that one site in the Options danger area says so on the spot rather than promising more than it can do.
-- A hard reset cannot be undone, and there is no export or import to take a copy first. Reinstalling Darkrai is the only step beyond it.
-- A hard reset tries to put every open tab back on the restored defaults without a reload. A tab it could not re-inject — one that has gone unresponsive, say — is **left cleaned but with no Darkrai running in it: the page shows as the site styles it, and the toolbar icon goes colourless to match. Reloading that tab is what brings the restored defaults back.** The reset says how many tabs that was rather than quietly rounding up. A tab that *was* re-injected keeps its live icon even if the old styles had to be swept from outside and that sweep failed; the report counts the two separately.
-- When a tab has to be cleaned from the outside, the sweeper leaves `data-darkrai="off"` on the page root rather than removing it. The early dark background is a stylesheet that is already live in every open tab and cannot be taken back out of one, and it keys off that attribute being absent — so removing it would paint a dark background under light page content. This is asserted against a real document by the UI suite.
-- Settings are stored locally only. There is no sync, and no export or import, in this version. The hard reset still clears `chrome.storage.session` and `chrome.storage.sync` when the APIs exist, and says in its report that Darkrai keeps nothing in them.
-- The Chrome "Settings > Appearance > Mode: Dark" tip is a Chrome behaviour that was not verified in a real browser during this build.
-- The Lovable popup's first paint is load-sensitive. The release pass dropped the font preload (the woff2 was fetched ahead of the popup's scripts, and paint waits on those), and on a quiet machine UI family (f) then read medians of **68 ms and 64 ms** in two full runs (2026-11-06) against the 100 ms budget. Under load it has read up to 172 ms, so (f) can still fail on a busy machine. The tradeoff: on a slow open the first frame can briefly use the fallback face before Nunito Sans swaps in (`font-display: swap`).
-- **After 20 very fast on/off toggles a page can end up wrong**: never with duplicate styles, but under-applied, with fewer recoloured sheets than a fresh load (Wikipedia in real Chrome: 4-6 override sheets against 17), and in one of three runs left `off` while the switch said on. The check failed in all three release runs, and in the run before the pass. Reloading the tab restores it. A likely mechanism, not verified: the popup re-injects the page script when the tab does not answer in time, and a new copy takes the old one down while the old one is mid-apply. The release pass coalesced settings changes, which took Darkrai's long tasks out of the burst, but the tab still stops answering the debugging protocol for several seconds after the burst with no long task in the page; the cause is not found yet (P1-1c and P1-1c-main-thread in [docs/VERIFICATION.md](docs/VERIFICATION.md)).
-- Two light regions are left in real Chrome: **MDN's top sponsor banner**, painted white by `div.top-placement` inside the open shadow root of `mdn-placement-top`, and on **BBC News a 728 × 90 cross-origin Google ad frame** whose whole box painted white while the frame element has `color-scheme: dark`. Neither is text Darkrai left unreadable (both pages read 0 text runs below target), but both are bright areas on a darkened page.
-- The real-Chrome text probe no longer judges text inside disabled controls (WCAG 1.4.3 exempts inactive components): Reddit's disabled "Log In" button is drawn just as faint by the site's own light page. The icon probe skips `*-noicon` elements and elements with their own text, such as Wikipedia's "Talk" tab, which the text probe measures instead. No threshold moved.
-- In the real-Chrome suite the toolbar popup closed on its own twice in three runs, each time in a different check: once during a 900 ms wait before P4-shot's screenshot (NOT RUN) and once on a real click on the "True black" option in P4-dropdowns (FAIL). Both checks passed in the other two runs. The popup only closes itself after the picker starts, Options, Hard reset… or Reload this tab, so neither close came from a Darkrai code path; the cause, likely a focus change in the automated window, is not established.
-- The hard reset in real Chrome restored the factory defaults and reported every step done in all three release runs. Before the release pass it could report "Partly done" (`Duplicate script ID 'darkrai-preload'`) with the same correct end state, because the background worker re-registered the early dark background in the middle of the reset's own step; registration is now serialised and read back (PLAN section 6.8).
-- All thirteen fixture pages were run in a headless Chrome on this build and every check passed, including the contrast assertions, the two CSS-mask icons, the three `var()` background shorthands, the three already-dark pages being left untouched at zero style nodes and zero adopted sheets, shadow DOM, the embedded frame, and the canvas app falling back to Simple mode. Re-run them with `node browser/run-fixtures.js`, or open `tests/fixtures/index.html` by hand.
-- The fixture and UI suites run in a headless `chrome-headless-shell` against a local file server, so the popup's paint figure is not a real toolbar click, and it is machine-load sensitive (see the performance section). The real-Chrome suite does load the extension in installed Chrome, but it cannot press the toolbar icon or the keyboard shortcut, cannot measure content inside cross-origin frames, and samples one point per text line; the items it could not cover are marked in the manual checklist.
-- The popup, the toolbar icon and the picker ask the top frame for its state. An embedded frame still styles itself and still follows your settings, but its state is not what the popup reports.
-- The popup's Pokedex, Poke Ball and Darkrai art is fan art of trademarked characters (see the attribution note under [The popup's Lovable design](#the-popups-lovable-design)). It is fine for personal use, not for a Chrome Web Store listing; replace `extension/popup/art/` first.
-- The Lovable design is taller than a toolbar popup, so the popup's dark screen scrolls in every state, the default one included: Reset this site, Hard reset… and Options sit below its fold. The casing and its hardware never scroll.
-- The live Lovable preview needs a login, so the port was matched against the design's source (`DarkraiPopup.tsx` and its tokens), not against a live rendering. The design's toast and its Options / Hard reset modal were not ported, because Darkrai's status line and Options page already do those jobs, and its hover colour transitions are instant here, because only `transform` and `opacity` animate.
-- The themed open list needs Chrome 135 or later (customizable select). Older Chrome shows its default list, with dark option rows where it allows them. The From / To time picker popup cannot be styled from CSS and keeps Chrome's own look.
-- On the Options page the closed selects' arrow is a drawn chevron of about the same size as Chrome's classic arrow, which a customizable select cannot draw; the pills keep their size and the popup's closed pills are pixel-identical.
-- Firefox and Edge packages, translations, and switching a site's own dark CSS on directly are not in this version.
+---
+*Built with 🖤 for people who browse at night.*

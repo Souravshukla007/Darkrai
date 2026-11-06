@@ -133,4 +133,4 @@ Darkrai's own UI screenshots from run 1 are committed in `tests/real-chrome/evid
 - **Reload the extension** at `chrome://extensions`, then use a tab that was already open (open the popup, toggle). A CDP-loaded unpacked extension stays disabled after a scripted reload (crbug.com/402532200), so P1-1d cannot cover it.
 - **Click the real toolbar icon** and look at the popup: red Pokedex casing, both Poke Balls and the LCD art whole, only the dark screen scrolls.
 - **GitHub in its own dark theme** (it does not render dark under an emulated scheme) and **a Google results page** (the throwaway profile meets the bot check).
-- The rest of the README's manual checklist.
+- The rest of the manual checklist in [GUIDE.md](GUIDE.md#manual-test-checklist).
